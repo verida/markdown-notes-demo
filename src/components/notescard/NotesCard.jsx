@@ -1,9 +1,12 @@
 import { makeStyles } from '@material-ui/core';
-import React from 'react'
+import React, { useContext } from 'react'
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import useActions from '../../hooks/useActions';
+import { AppContext } from '../../contextApi/ContextProvider';
+import BackDropLoader from '../appLoaders/BackDropLoader';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -30,21 +33,27 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-const NotesCard = () => {
+const NotesCard = ({ item }) => {
   const classes = useStyles();
+  const { deleteContent } = useActions();
+  const { isLoading } = useContext(AppContext);
+  const { toggleDrawer } = useContext(AppContext);
 
   return (
     <div className={classes.root}>
-      <Typography variant="h5" className={classes.title}>
-        Title Here
+      {isLoading && <BackDropLoader load />}
+      <Typography variant="h6" className={classes.title}>
+        {item.title}
       </Typography>
       <div className={classes.bottom}>
         <div></div>
         <div>
-          <IconButton>
+          <IconButton
+            onClick={toggleDrawer('right', true, item)}
+          >
             <EditIcon />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={() => deleteContent(item)}>
             <DeleteOutlineIcon color="error" />
           </IconButton>
         </div>

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
+import { AppContext } from '../../contextApi/ContextProvider';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -17,27 +18,16 @@ const useStyles = makeStyles((theme) => ({
     width: 'auto',
   },
   button: {
-    background: theme.palette.black
+    margin: theme.spacing(1, 0)
   }
 
 }));
 
-const SwipeableSideMenu = ({ children, position = "right" }) => {
+const position = "right"
+
+const SwipeableSideMenu = ({ children, onClickAction }) => {
   const classes = useStyles();
-  const [state, setState] = React.useState({
-    top: false,
-    left: false,
-    bottom: false,
-    right: false,
-  });
-
-  const toggleDrawer = (anchor, open) => (event) => {
-    if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return;
-    }
-
-    setState({ ...state, [anchor]: open });
-  };
+  const { toggleDrawer, slideOpen } = useContext(AppContext);
 
   const list = (anchor) => (
     <div
@@ -60,12 +50,12 @@ const SwipeableSideMenu = ({ children, position = "right" }) => {
           size="large"
           className={classes.button}
           endIcon={<AddIcon />}
-          variant="contained"
+          variant="outlined"
           color="secondary"
           onClick={toggleDrawer(position, true)}>Add Note</Button>
         <SwipeableDrawer
           anchor={position}
-          open={state[position]}
+          open={slideOpen[position]}
           onClose={toggleDrawer(position, false)}
           onOpen={toggleDrawer(position, true)}
         >

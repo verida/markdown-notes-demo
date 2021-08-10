@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -13,7 +13,10 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import SideMenu from '../components/sideMenu/SideMenu';
 import useAuthentication from '../hooks/useAuthentication';
-import { Backdrop } from '@material-ui/core';
+import BackDropLoader from '../components/appLoaders/BackDropLoader';
+import AppTextPopover from '../components/popover/Popover';
+import { AppContext } from '../contextApi/ContextProvider';
+import appLogo from '../assets/images/verida_logo.svg'
 
 
 const drawerWidth = 400;
@@ -53,12 +56,14 @@ const useStyles = makeStyles((theme) => ({
   },
   drawerOpen: {
     width: drawerWidth,
+    background: '#37D5C7',
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
   drawerClose: {
+    background: '#37D5C7',
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -93,6 +98,7 @@ const useStyles = makeStyles((theme) => ({
 const AppLayouts = ({ children }) => {
   const classes = useStyles();
   const { initializeApp, isConnecting } = useAuthentication()
+  const { appData } = useContext(AppContext);
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
@@ -104,16 +110,14 @@ const AppLayouts = ({ children }) => {
     setOpen(false);
   };
 
+  console.log(appData);
+
   return (
     <div className={classes.root}>
-      {/* <Backdrop open style={{
-        zIndex: 2
-      }} /> */}
+      {isConnecting && <BackDropLoader load />}
       <AppBar
         style={{
-          boxShadow: "0px 35px 45px rgba(7, 14, 39, 0.05)",
-          background:
-            "linear-gradient(91.26deg, rgba(55, 213, 199, 0.8) 12.36%, rgba(255, 0, 204, 0.8) 36.84%, rgba(55, 213, 199, 0.8) 69.13%, rgba(201, 105, 174, 0.8) 94.13%)"
+          boxShadow: "0px 35px 45px rgba(7, 14, 39, 0.05)"
         }}
         color="inherit"
         position="fixed"
@@ -135,20 +139,25 @@ const AppLayouts = ({ children }) => {
           </IconButton>
           <Typography
             className={classes.title} variant="h5" noWrap>
-            Verida Note
+            <img src={appLogo} alt="app" />
           </Typography>
-          <Button
-            size="large"
-            onClick={initializeApp}
-            className={classes.button}
-            variant="contained"
-            color="secondary"
-          >
-            Connect
-          </Button>
+          {appData?.user ? <AppTextPopover
+            primaryText={`${appData?.user?.did?.slice(0, 15)}...`}
+            secondaryText={appData?.user?.did}
+          /> :
+            <Button
+              size="large"
+              onClick={initializeApp}
+              className={classes.button}
+              variant="contained"
+              color="secondary"
+            >
+              Connect
+            </Button>}
         </Toolbar>
       </AppBar>
       <Drawer
+        color="inherit"
         elevation={0}
         variant="permanent"
         className={clsx(classes.drawer, {
@@ -159,12 +168,13 @@ const AppLayouts = ({ children }) => {
           paper: clsx({
             [classes.drawerOpen]: open,
             [classes.drawerClose]: !open,
-          }),
+          })
         }}
       >
         <div className={classes.toolbar}>
           <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            {theme.direction === 'rtl' ?
+              <ChevronRightIcon /> : <ChevronLeftIcon />}
           </IconButton>
         </div>
         <Divider />

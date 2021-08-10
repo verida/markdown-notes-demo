@@ -6,6 +6,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import NotesIcon from '@material-ui/icons/Notes';
 import StarIcon from '@material-ui/icons/Star';
+import { makeStyles } from '@material-ui/core';
 
 const NavItems = [
   {
@@ -20,13 +21,24 @@ const NavItems = [
   },
 ]
 
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    color: theme.palette.white
+  },
+  icon: {
+    color: theme.palette.white
+  }
+}));
+
 const SideMenu = () => {
+  const classes = useStyles();
   return (
     <>
-      <List>
+      <List className={classes.root}>
         {NavItems.map((item) => (
           <ListItem button key={item.title}>
-            <ListItemIcon>{item.icon}</ListItemIcon>
+            <ListItemIcon color="inherit" className={classes.icon}>{item.icon}</ListItemIcon>
             <ListItemText primary={item.title} />
           </ListItem>
         ))}

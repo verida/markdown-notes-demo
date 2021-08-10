@@ -3,11 +3,12 @@ import Verida from '@verida/datastore';
 import { AppContext } from '../contextApi/ContextProvider'
 
 const useAuthentication = () => {
-  const { setAppData } = useContext(AppContext);
-  const [isConnecting, setIsConnecting] = useState(true);
+  const { setAppData, startUp } = useContext(AppContext);
+  const [isConnecting, setIsConnecting] = useState(false);
 
 
   const initializeApp = async () => {
+    startUp()
     setIsConnecting(true)
     try {
       const web3Provider = await Verida.Helpers.wallet.connectWeb3('ethr');
@@ -21,16 +22,15 @@ const useAuthentication = () => {
         address: address[0],
         web3Provider: web3Provider
       });
-       let connected = await veridaDApp.connect(true);
+      let connected = await veridaDApp.connect(true);
       console.log(veridaDApp)
       setAppData(veridaDApp)
       console.log(connected);
     } catch (error) {
-      console.log(error)
+      console.log({ error })
     } finally {
       setIsConnecting(false)
     }
-
   }
 
 
