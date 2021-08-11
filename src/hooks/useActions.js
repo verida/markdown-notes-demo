@@ -1,65 +1,54 @@
 import { useContext } from "react";
 import { toast } from "react-toastify";
+import appServices from "../api/services";
 import { AppContext } from "../contextApi/ContextProvider";
 
 
 
 
 const useActions = () => {
-  const { appData, setIsLoading, setNotes } = useContext(AppContext);
+  const { appData, setNotes } = useContext(AppContext);
 
-  const postContent = async ({ title, markdownVal }) => {
-    setIsLoading(true)
-    try {
-      let db = await appData.openDatabase('notes');
-      await db.save({
-        title: title,
-        isFavorite:false,
-        body: markdownVal
-      });
-      let items = await db.getMany();
-      setNotes(items)
+  let dataStore = appData.dataStore;
+
+  const postContent = async (data) => {
+    appServices.postContent(
+      data,
+      dataStore
+    ).then(data => {
+      setNotes(data)
       toast.success('Note successfully Added', {
         toastId: 'ww'
       })
-    } catch (error) {
-    } finally {
-      setIsLoading(false)
-    }
+    });
   };
 
-  const deleteContent = async (item) => {
-    setIsLoading(true)
-    try {
-      const db = await appData.openDatabase('notes');
-      await db.delete(item);
-      const items = await db.getMany();
-      setNotes(items)
-      toast.success('Note successfully deleted', {
+  const deleteContent = (item) => {
+    appServices.deleteContent(
+      item,
+      dataStore
+    ).then(data => {
+      setNotes(data)
+      toast.success('Note Deleted', {
         toastId: 'ww'
       })
-    } catch (error) {
-    } finally {
-      setIsLoading(false)
-    }
+    })
   };
 
-  const updateContent =async (item) => {
-    setIsLoading(true)
-    try {
-      const db = await appData.openDatabase('notes');
-      await db.save(item);
-      const items = await db.getMany();
-      setNotes(items)
-      console.log(items);
+
+  const updateContent = (item) => {
+    appServices.updateContent(
+      item,
+      dataStore
+    ).then(data => {
+      setNotes(data)
       toast.success('Note updated', {
         toastId: 'ww'
       })
-    } catch (error) {
-    } finally {
-      setIsLoading(false)
-    }
+    })
   };
+
+
   return {
     postContent,
     deleteContent,

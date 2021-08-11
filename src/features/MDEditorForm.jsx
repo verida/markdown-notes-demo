@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
 const MDEditorForm = () => {
   const classes = useStyles();
   const [error, setError] = useState('')
-  const { postContent, updateContent } = useActions();
+  const { updateContent, postContent } = useActions();
   const {
     markdownVal,
     setMarkdownVal,
@@ -32,7 +32,7 @@ const MDEditorForm = () => {
     noteTitle,
     selectedNote,
     setNoteTitle,
-    appData
+    appData,
   } = useContext(AppContext);
 
 

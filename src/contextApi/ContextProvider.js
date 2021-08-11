@@ -56,10 +56,10 @@ const ContextProvider = ({ children }) => {
    */
 
   const toggleDrawer = (anchor, open, item) => (event) => {
+    
     if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
-
     if (!open) {
       setSelectedNote('');
     }
