@@ -7,6 +7,7 @@ const ContextProvider = ({ children }) => {
   const [appData, setAppData] = useState('');
   const [notes, setNotes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedNote, setSelectedNote] = useState('');
   const [markdownVal, setMarkdownVal] = useState("# title");
   const [noteTitle, setNoteTitle] = useState('New Task')
   const [open, setOpen] = useState(false);
@@ -16,7 +17,7 @@ const ContextProvider = ({ children }) => {
     isError: false,
     title: '',
   })
-  const [slideOpen, setSlideOpen] =useState({
+  const [slideOpen, setSlideOpen] = useState({
     top: false,
     left: false,
     bottom: false,
@@ -31,7 +32,7 @@ const ContextProvider = ({ children }) => {
       const items = await db.getMany();
       setNotes(items)
     } catch (error) {
-    }finally{
+    } finally {
       setIsLoading(false)
     }
   };
@@ -46,43 +47,49 @@ const ContextProvider = ({ children }) => {
         title: 'Not Supported Ethereum Browser',
         isError: true
       })
-     return setOpen(!open)
+      return setOpen(!open)
     }
   }
 
   /**
    * Custom Swipeable Menu
    */
-  
-  const toggleDrawer = (anchor, open,item) => (event) => {
+
+  const toggleDrawer = (anchor, open, item) => (event) => {
     if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
+
+    if (!open) {
+      setSelectedNote('');
+    }
     if (item) {
+      setSelectedNote(item)
       setMarkdownVal(item.body);
       setNoteTitle(item.title)
     }
     setSlideOpen({ ...slideOpen, [anchor]: open });
   };
 
-
   const values = {
     appData,
     startUp,
     error,
-    open, 
-    notes, 
+    open,
+    notes,
     setNotes,
     setOpen,
     setAppData,
-    markdownVal, 
+    markdownVal,
     setMarkdownVal,
     setIsLoading,
     isLoading,
     getAllNotes,
     toggleDrawer,
     slideOpen,
-    noteTitle, 
+    noteTitle,
+    selectedNote,
+    setSelectedNote,
     setNoteTitle
   }
 

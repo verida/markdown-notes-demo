@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react'
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
+import Alert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core';
@@ -8,6 +9,7 @@ import RichTextEditor from '../components/markdown/RichEditor';
 import { AppContext } from '../contextApi/ContextProvider';
 import useActions from '../hooks/useActions';
 import BackDropLoader from '../components/appLoaders/BackDropLoader';
+import { toast } from 'react-toastify';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -15,21 +17,46 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1, 2),
     '& > *': {
       margin: theme.spacing(2, 'auto'),
-      // width: '95%'
     },
   },
 }));
 
 const MDEditorForm = () => {
   const classes = useStyles();
-  const { postContent } = useActions();
+  const [error, setError] = useState('')
+  const { postContent, updateContent } = useActions();
   const {
     markdownVal,
     setMarkdownVal,
     isLoading,
     noteTitle,
-    setNoteTitle
+    selectedNote,
+    setNoteTitle,
+    appData
   } = useContext(AppContext);
+
+
+  const onSubmitNote = () => {
+    if (!noteTitle || !markdownVal) {
+      return setError('All Fields are required')
+    };
+    if (!appData) {
+      return toast.warning('Please connect this App with the  verida datastore')
+    };
+    setError('')
+    if (selectedNote) {
+      const { title, body, ...rest } = selectedNote
+      const editedItem = {
+        title: noteTitle,
+        body: markdownVal,
+        ...rest,
+      }
+      updateContent(editedItem)
+    } else {
+      postContent({ title: noteTitle, markdownVal })
+    }
+
+  }
 
   return (
     <div className={classes.root}>
@@ -39,15 +66,14 @@ const MDEditorForm = () => {
           Notes
         </Typography>
         <Button
-          onClick={() => {
-            postContent({ title: noteTitle, markdownVal })
-          }}
+          onClick={onSubmitNote}
           variant="contained"
           color="secondary"
         >
-          Save
+          {selectedNote ? 'Update' : 'Save'}
         </Button>
       </Box>
+      {error && <Alert severity="error">{error}</Alert>}
       <TextField onChange={(e) => {
         setNoteTitle(e.target.value)
       }} id="outlined-basic"

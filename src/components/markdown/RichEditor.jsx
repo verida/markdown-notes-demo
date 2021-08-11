@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/core';
-import React, { useState } from 'react';
+import React from 'react';
 import MarkdownEditor from "@uiw/react-markdown-editor";
 
 const useStyles = makeStyles((theme) => ({
@@ -22,7 +22,7 @@ const RichTextEditor = ({ markdownVal, setMarkdownVal }) => {
     >
       <MarkdownEditor
         value={markdownVal}
-        height={500}
+        height={400}
         onChange={(editor, data, value) => {
           setMarkdownVal(value);
         }}

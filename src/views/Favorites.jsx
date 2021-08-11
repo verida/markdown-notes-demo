@@ -1,22 +1,27 @@
 import React, { useContext } from 'react'
 import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
 import NotesCard from '../components/notescard/NotesCard';
-import SwipeableSideMenu from '../components/swippeableSideBar/SwippeableSideBar'
-import MDEditorForm from '../features/MDEditorForm';
 import { AppContext } from '../contextApi/ContextProvider';
 
 
-
-const Home = () => {
+const Favorites = () => {
   const { notes } = useContext(AppContext);
+
+  const getAllFavorites = (items) => {
+    const data = items.filter(item => item.isFavorite);
+    return data
+  }
 
   return (
     <div>
-      <SwipeableSideMenu children={<MDEditorForm />} />
+      <Typography variant="h5" noWrap>
+        My favorite notes
+      </Typography>
       {notes.length
         ?
         <Grid container spacing={2}>
-          {notes.map(list => (
+          {getAllFavorites(notes).map(list => (
             <Grid item md={4} sm={12} xs={12} key={list._id}>
               <NotesCard item={list} />
             </Grid>
@@ -29,4 +34,4 @@ const Home = () => {
   )
 }
 
-export default Home;
+export default Favorites;

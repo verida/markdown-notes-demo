@@ -23,10 +23,11 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-const position = "right"
+const position = "right";
 
-const SwipeableSideMenu = ({ children, onClickAction }) => {
+const SwipeableSideMenu = ({ children }) => {
   const classes = useStyles();
+
   const { toggleDrawer, slideOpen } = useContext(AppContext);
 
   const list = (anchor) => (
