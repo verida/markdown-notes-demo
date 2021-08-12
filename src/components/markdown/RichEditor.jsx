@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core';
-import React from 'react';
-import { Editor } from 'react-draft-wysiwyg';
+import React, { useState } from 'react';
+import MarkdownEditor from "@uiw/react-markdown-editor";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -11,23 +11,21 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'scroll',
 
   },
-
 }));
 
-const RichTextEditor = ({ state, setState }) => {
+const RichTextEditor = ({ markdownVal, setMarkdownVal }) => {
   const classes = useStyles();
 
   return (
     <div
       className={classes.root}
     >
-      <Editor
-        editorState={state}
-        wrapperClassName="wrapper-class"
-        editorClassName="editor-class"
-        toolbarClassName="toolbar-class"
-        onEditorStateChange={setState}
-        placeholder="Enter your notes"
+      <MarkdownEditor
+        value={markdownVal}
+        height={500}
+        onChange={(editor, data, value) => {
+          setMarkdownVal(value);
+        }}
       />
     </div>
   );

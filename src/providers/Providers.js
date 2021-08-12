@@ -1,5 +1,6 @@
 import { createTheme, CssBaseline, ThemeProvider } from '@material-ui/core';
 import React from 'react'
+import { ToastContainer } from 'react-toastify';
 import ContextProvider from '../contextApi/ContextProvider';
 
 const theme = createTheme({
@@ -26,6 +27,7 @@ const Providers = ({ children }) => {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         {children}
+        <ToastContainer  />
       </ThemeProvider>
     </ContextProvider>
   )
