@@ -1,11 +1,11 @@
 
 
 
-/**
- * React- Editor rich text
- */
+// /**
+//  * React- Editor rich text
+//  */
 
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+// import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 
 

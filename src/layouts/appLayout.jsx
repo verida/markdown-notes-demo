@@ -19,8 +19,7 @@ import { AppContext } from '../contextApi/ContextProvider';
 import appLogo from '../assets/images/verida_logo.svg'
 
 
-const drawerWidth = 400;
-
+const drawerWidth = 320;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -92,6 +91,7 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
     color: theme.palette.white,
+    margin: theme.spacing(0.4, 0, 0, 0),
   },
 }));
 
@@ -110,7 +110,6 @@ const AppLayouts = ({ children }) => {
     setOpen(false);
   };
 
-  console.log(appData);
 
   return (
     <div className={classes.root}>

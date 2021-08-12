@@ -14,6 +14,7 @@ const useActions = () => {
       let db = await appData.openDatabase('notes');
       await db.save({
         title: title,
+        isFavorite:false,
         body: markdownVal
       });
       let items = await db.getMany();
@@ -47,10 +48,11 @@ const useActions = () => {
     setIsLoading(true)
     try {
       const db = await appData.openDatabase('notes');
-      await db.update(item);
+      await db.save(item);
       const items = await db.getMany();
       setNotes(items)
-      toast.success('Note successfully updated', {
+      console.log(items);
+      toast.success('Note updated', {
         toastId: 'ww'
       })
     } catch (error) {
