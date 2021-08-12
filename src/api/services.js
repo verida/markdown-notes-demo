@@ -1,9 +1,15 @@
 import Verida from '@verida/datastore';
-import markdownSchema from '../assets/schemas/markdown/schema.json'
 
 
 
 class MarkDownServices {
+  veridaDapp;
+  dataStore;
+
+  async initApp() {
+    if(this.dataStore) return;
+    await this.connectVault();
+  }
 
   async connectVault() {
     try {
@@ -17,55 +23,59 @@ class MarkDownServices {
         address: address[0],
         web3Provider: web3Provider
       });
-       await veridaDApp.connect(true);
-      const dataStore = await veridaDApp.openDatastore('http://localhost:3008/assets/schemas/markdown/schema.json');
+      await veridaDApp.connect(true);
+      this.dataStore = await veridaDApp.openDatastore('http://localhost:3008/schema.json');
+      this.veridaDapp = veridaDApp
       return {
-        app:veridaDApp,
-        dataStore
+        app: veridaDApp,
       }
     } catch (error) {
       return error
     }
   }
 
-  async postContent( data, database ) {
+  async postContent(data) {
+    await this.initApp()
     try {
-      await database.save({
+      await this.dataStore.save({
         title: data.title,
         isFavorite: false,
         body: data.markdownVal
       });
-      let response = await database.getMany();
+      let response = await this.dataStore.getMany();
       return response;
     } catch (error) {
-      console.log({error})
+      console.log({error});
       return error;
     }
   };
 
-  async deleteContent(item, database) {
+  async deleteContent(item) {
+    await this.initApp()
     try {
-      await database.delete(item);
-      let response = await database.getMany();
-      return response;
-    } catch (error) {
-      return error;
-    }
-  };
-
-  async updateContent(item , database) {
-    try {
-      await database.save(item);
-      let response = await database.getMany();
+      await this.dataStore.delete(item);
+      let response = await this.dataStore.getMany();
       return response;
     } catch (error) {
       return error;
     }
   };
 
-  async getNotes(database) {
+  async updateContent(item) {
+    await this.initApp()
     try {
-      const response = await database.getMany();
+      await this.dataStore.save(item);
+      let response = await this.dataStore.getMany();
+      return response;
+    } catch (error) {
+      return error;
+    }
+  };
+
+  async getNotes() {
+    await this.initApp()
+    try {
+      const response = await this.dataStore.getMany();
       return response;
     } catch (error) {
       return error;

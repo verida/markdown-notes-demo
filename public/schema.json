@@ -19,7 +19,7 @@
         }
     },
     "allOf": [
-        {"$ref": "/base/schema.json"},
+        {"$ref": "https://schemas.verida.io/base/schema.json"},
         {
             "properties": {
                 "title": {
