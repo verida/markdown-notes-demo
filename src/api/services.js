@@ -1,4 +1,6 @@
 import Verida from '@verida/datastore';
+import markdownSchema from '../assets/schemas/markdown/schema.json'
+
 
 
 class MarkDownServices {
@@ -16,7 +18,7 @@ class MarkDownServices {
         web3Provider: web3Provider
       });
        await veridaDApp.connect(true);
-      const dataStore = await veridaDApp.openDatabase('notes');
+      const dataStore = await veridaDApp.openDatastore('http://localhost:3008/assets/schemas/markdown/schema.json');
       return {
         app:veridaDApp,
         dataStore
@@ -36,6 +38,7 @@ class MarkDownServices {
       let response = await database.getMany();
       return response;
     } catch (error) {
+      console.log({error})
       return error;
     }
   };

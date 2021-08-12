@@ -1,0 +1,41 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://localhost:3008/assets/schemas/schema.json",
+    "name": "markdown/notes",
+    "title": "Notes",
+    "titlePlural": "Markdown Notes",
+    "description": "Markdown Notes for saving users data",
+    "type": "object",
+    "database": {
+        "name": "markdown_notes",
+        "indexes": {
+            "title": ["title"]
+        }
+    },
+    "appearance": {
+        "style": {
+            "color": "#FF886E",
+            "icon": "../../images/verida_logo.svg"
+        }
+    },
+    "allOf": [
+        {"$ref": "/base/schema.json"},
+        {
+            "properties": {
+                "title": {
+                    "title": "Title",
+                    "type": "string"
+                },
+                "body": {
+                    "title": "Body",
+                    "type": "string"
+                },
+                "isFavorite": {
+                    "title": "Favorite",
+                    "type": "boolean"
+                }
+            },
+            "required": ["title", "body"]
+        }
+    ]
+  }

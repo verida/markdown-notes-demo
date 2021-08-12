@@ -20,6 +20,10 @@ const useActions = () => {
       toast.success('Note successfully Added', {
         toastId: 'ww'
       })
+    }).catch(()=>{
+       toast.error('Note successfully Added', {
+        toastId: 'ww'
+      })
     });
   };
 
