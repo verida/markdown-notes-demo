@@ -8,3 +8,4 @@ export const initializeWeb3 = () => {
   }
   return isEthereumSupported;
 }
+

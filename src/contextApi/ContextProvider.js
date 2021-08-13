@@ -1,22 +1,17 @@
-import React, { createContext, useState } from 'react';
-import { initializeWeb3 } from '../utils/app.utils';
+import React, { createContext, useState, useEffect } from 'react';
+import appServices from '../api/services';
 
 export const AppContext = createContext()
 
 const ContextProvider = ({ children }) => {
   const [appData, setAppData] = useState('');
+  const [avatar, setAvatar] = useState('');
   const [notes, setNotes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedNote, setSelectedNote] = useState('');
   const [markdownVal, setMarkdownVal] = useState("# title");
   const [noteTitle, setNoteTitle] = useState('New Task')
   const [open, setOpen] = useState(false);
-  const [error, setError] = useState({
-    type: '',
-    message: '',
-    isError: false,
-    title: '',
-  })
   const [slideOpen, setSlideOpen] = useState({
     top: false,
     left: false,
@@ -24,39 +19,49 @@ const ContextProvider = ({ children }) => {
     right: false,
   });
 
-
-  const getAllNotes = async () => {
-    setIsLoading(true)
-    try {
-      const db = await appData.openDatabase('notes');
-      const items = await db.getMany();
-      setNotes(items)
-    } catch (error) {
-    } finally {
-      setIsLoading(false)
-    }
-  };
-
-
-  const startUp = () => {
-    const isEthereum = initializeWeb3();
-    if (!isEthereum) {
-      setError({
-        message: 'You need to install a browser wallet consider installing meta mask!',
-        type: 'ethereum',
-        title: 'Not Supported Ethereum Browser',
-        isError: true
-      })
-      return setOpen(!open)
+  const displayAvatar = (profileAvatar) => {
+    if (profileAvatar) {
+      const parseAvatarValue = JSON.parse(profileAvatar)
+      setAvatar(`data:image/${parseAvatarValue.format};base64,${parseAvatarValue.base64}`)
     }
   }
 
-  /**
-   * Custom Swipeable Menu
-   */
+  const userEvent = (db) => {
+    const { PouchDB, userDB } = db
+    PouchDB.changes({
+      since: 'now',
+      live: true
+    }).on('change', async function (info) {
+      const row = await userDB.get(info.id, {
+        rev: info.changes[0].rev
+      });
+      console.log(row);
+      if (row.key === 'avatar') {
+        displayAvatar(row.value)
+      }else{
+        setAppData({[row.key]: row.value })
+      }
+      
+    });
+  }
+
+  useEffect(() => {
+    if (window.veridaDApp) {
+      appServices.profileEventSubscription()
+        .then((data) => {
+          userEvent(data)
+        });
+
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [appData])
+
+
+
+
 
   const toggleDrawer = (anchor, open, item) => (event) => {
-    
+
     if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
@@ -73,8 +78,6 @@ const ContextProvider = ({ children }) => {
 
   const values = {
     appData,
-    startUp,
-    error,
     open,
     notes,
     setNotes,
@@ -84,10 +87,11 @@ const ContextProvider = ({ children }) => {
     setMarkdownVal,
     setIsLoading,
     isLoading,
-    getAllNotes,
     toggleDrawer,
     slideOpen,
     noteTitle,
+    avatar,
+    displayAvatar,
     selectedNote,
     setSelectedNote,
     setNoteTitle

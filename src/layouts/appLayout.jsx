@@ -13,10 +13,10 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import SideMenu from '../components/sideMenu/SideMenu';
 import useAuthentication from '../hooks/useAuthentication';
-import BackDropLoader from '../components/appLoaders/BackDropLoader';
-import AppTextPopover from '../components/popover/Popover';
 import { AppContext } from '../contextApi/ContextProvider';
 import appLogo from '../assets/images/verida_logo.svg'
+import { Avatar } from '@material-ui/core';
+import PopOverMenu from '../components/popover/Popover';
 
 
 const drawerWidth = 320;
@@ -93,15 +93,31 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.white,
     margin: theme.spacing(0.4, 0, 0, 0),
   },
+  large: {
+    // width: theme.spacing(7),
+    // height: theme.spacing(7),
+  },
+  profile: {
+    margin: theme.spacing(0, 1.4),
+    fontWeight: 600,
+    [theme.breakpoints.down('sm')]: {
+      display: 'none',
+    },
+  },
+  img: {
+    margin: theme.spacing(0.8, 0, 0, 0),
+  }
 }));
+
 
 const AppLayouts = ({ children }) => {
   const classes = useStyles();
   const { initializeApp, isConnecting } = useAuthentication()
-  const { appData } = useContext(AppContext);
+  const { appData, avatar } = useContext(AppContext);
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  let appUser = appData?.app?.user
+
+
 
 
   const handleDrawerOpen = () => {
@@ -113,9 +129,9 @@ const AppLayouts = ({ children }) => {
   };
 
 
+
   return (
     <div className={classes.root}>
-      {isConnecting && <BackDropLoader load />}
       <AppBar
         style={{
           boxShadow: "0px 35px 45px rgba(7, 14, 39, 0.05)"
@@ -140,12 +156,18 @@ const AppLayouts = ({ children }) => {
           </IconButton>
           <Typography
             className={classes.title} variant="h5" noWrap>
-            <img src={appLogo} alt="app" />
+            <img className={classes.img} src={appLogo} alt="app" />
           </Typography>
-          {appUser ? <AppTextPopover
-            primaryText={`${appUser.did?.slice(0, 15)}...`}
-            secondaryText={appUser.did}
-          /> :
+          {appData?.name ?
+            <>
+              <span className={classes.profile}> {appData?.name}</span>
+              <Avatar
+                alt={appData?.name}
+                src={avatar}
+                className={classes.large}
+              />
+              <PopOverMenu />
+            </> :
             <Button
               size="large"
               disabled={isConnecting}

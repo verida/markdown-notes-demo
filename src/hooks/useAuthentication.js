@@ -3,18 +3,25 @@ import { AppContext } from '../contextApi/ContextProvider'
 import appServices from '../api/services';
 
 const useAuthentication = () => {
-  const { setAppData, startUp } = useContext(AppContext);
+  const {
+    setAppData,
+    displayAvatar,
+    setNotes
+  } = useContext(AppContext);
   const [isConnecting, setIsConnecting] = useState(false);
 
 
-  const initializeApp =  () => {
-    startUp()
+  const appInit = (data) => {
+    const { avatar } = data?.userProfile
+    setNotes(data.notes);
+    setAppData(data.userProfile)
+    displayAvatar(avatar)
+    setIsConnecting(false)
+  }
+
+  const initializeApp = () => {
     setIsConnecting(true)
-    appServices.connectVault()
-    .then(data => {
-      setAppData(data)
-    })
-    .finally(()=> setIsConnecting(false))
+    appServices.connectVault(appInit)
   }
 
   return {

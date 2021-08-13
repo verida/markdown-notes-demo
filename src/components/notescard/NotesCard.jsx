@@ -46,6 +46,7 @@ const NotesCard = ({ item }) => {
   const { toggleDrawer } = useContext(AppContext);
   const [itemId, setItemId] = useState('');
 
+  const reduceText = (value) => value.length > 30 ? `${value.substr(0, 30)}...` : value;
 
   const onFavorite = (note, type) => {
     const { isFavorite, ...rest } = note
@@ -53,13 +54,13 @@ const NotesCard = ({ item }) => {
       isFavorite: type === 'add' ? true : false,
       ...rest,
     }
-    updateContent(editedItem)
+    updateContent(editedItem);
   }
 
   return (
     <div className={classes.root}>
       <Typography variant="h6" className={classes.title}>
-        {item.title}
+        {reduceText(item.title)}
       </Typography>
       <div className={classes.bottom}>
         <div></div>

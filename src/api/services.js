@@ -1,41 +1,71 @@
 import Verida from '@verida/datastore';
-
-
+import { veridaVaultLogin } from '@verida/vault-auth-client'
+import { APP_NAME, DATASTORE_SCHEMA, LOGIN_URI, SERVER_URI } from '../constants';
 
 class MarkDownServices {
   veridaDapp;
   dataStore;
+  profileInstance;
 
-  async initApp() {
-    if(this.dataStore) return;
-    await this.connectVault();
+   initApp() {
+    if (this.dataStore) return;
+     this.connectVault();
   }
 
-  async connectVault() {
-    try {
-      const web3Provider = await Verida.Helpers.wallet.connectWeb3('ethr');
-      const address = await web3Provider.instance.eth.getAccounts();
-      Verida.setConfig({
-        appName: 'markdown notes'
-      });
-      const veridaDApp = new Verida({
-        chain: 'ethr',
-        address: address[0],
-        web3Provider: web3Provider
-      });
-      await veridaDApp.connect(true);
-      this.dataStore = await veridaDApp.openDatastore('http://localhost:3008/schema.json');
-      this.veridaDapp = veridaDApp
-      return {
-        app: veridaDApp,
+  connectVault(appCallbackFn) {
+    veridaVaultLogin({
+      loginUri: LOGIN_URI,
+      serverUri: SERVER_URI,
+      appName: APP_NAME,
+      callback: async (response) => {
+
+        const veridaDApp = new Verida({
+          did: response.did,
+          signature: response.signature,
+          appName: 'Verida: Auth client demo'
+        })
+
+        await veridaDApp.connect(true)
+        window.veridaDApp = veridaDApp
+
+        this.dataStore = await window.veridaDApp.openDatastore(DATASTORE_SCHEMA)
+        const notes = await this.dataStore.getMany();
+
+
+        this.profileInstance = await window.veridaDApp.openProfile(response.did, 'Verida: Vault');
+
+        const data = await this.profileInstance.getMany()
+        const userProfile = data.reduce((result, item) => {
+          result[item.key] = item.value;
+          return result;
+        }, {});
+
+       if (appCallbackFn) {
+          appCallbackFn({
+          notes,
+          userProfile
+        })
+       }
+       
       }
-    } catch (error) {
-      return error
-    }
+
+    })
   }
+
+  async profileEventSubscription() {
+    this.initApp()
+
+    const userDB = await this.profileInstance._store.getDb();
+    const PouchDB = await userDB.getInstance();
+
+    return {
+      userDB,
+      PouchDB,
+    }
+  };
 
   async postContent(data) {
-    await this.initApp()
+    this.initApp()
     try {
       await this.dataStore.save({
         title: data.title,
@@ -45,13 +75,12 @@ class MarkDownServices {
       let response = await this.dataStore.getMany();
       return response;
     } catch (error) {
-      console.log({error});
       return error;
     }
   };
 
   async deleteContent(item) {
-    await this.initApp()
+     this.initApp()
     try {
       await this.dataStore.delete(item);
       let response = await this.dataStore.getMany();
@@ -62,7 +91,7 @@ class MarkDownServices {
   };
 
   async updateContent(item) {
-    await this.initApp()
+     this.initApp()
     try {
       await this.dataStore.save(item);
       let response = await this.dataStore.getMany();
@@ -73,7 +102,7 @@ class MarkDownServices {
   };
 
   async getNotes() {
-    await this.initApp()
+     this.initApp()
     try {
       const response = await this.dataStore.getMany();
       return response;
@@ -81,9 +110,20 @@ class MarkDownServices {
       return error;
     }
   };
+
+   logout() {
+    window.veridaDapp = null;
+    this.dataStore = {};
+    this.veridaDapp = {};
+    // this.profileInstance = {};
+  };
+
 }
 
 
 
 const appServices = new MarkDownServices();
+
+
+
 export default appServices;
