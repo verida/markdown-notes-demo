@@ -1,62 +1,65 @@
-import React from 'react';
-import Popover from '@material-ui/core/Popover';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useContext } from 'react';
+import IconButton from '@material-ui/core/IconButton';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { AppContext } from '../../contextApi/ContextProvider';
+import appServices from '../../api/services';
 
-const useStyles = makeStyles((theme) => ({
-  popover: {
-    pointerEvents: 'none',
-  },
-  paper: {
-    padding: theme.spacing(1),
-  },
-}));
 
-export default function AppTextPopover({ primaryText, secondaryText }) {
-  const classes = useStyles();
+
+export default function PopOverMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const {
+    setAppData,
+    displayAvatar,
+    setNotes,
+    appData
+  } = useContext(AppContext);
 
-  const handlePopoverOpen = (event) => {
+  const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handlePopoverClose = () => {
+  const handleClose = () => {
     setAnchorEl(null);
   };
 
-  const open = Boolean(anchorEl);
+
+  const handleSignOut = () => {
+    appServices.logout();
+    setNotes([]);
+    setAppData({});
+    displayAvatar('');
+  };
 
   return (
-    <div>
-      <Typography
-        aria-owns={open ? 'mouse-over-popover' : undefined}
+    <div style={{
+      margin: '0 0 0 0.3rem'
+    }}>
+      <IconButton
+        aria-label="more"
+        aria-controls="long-menu"
         aria-haspopup="true"
-        onMouseEnter={handlePopoverOpen}
-        onMouseLeave={handlePopoverClose}
+        onClick={handleClick}
       >
-        {primaryText}
-      </Typography>
-      <Popover
-        id="mouse-over-popover"
-        className={classes.popover}
-        classes={{
-          paper: classes.paper,
-        }}
-        open={open}
+        <MoreVertIcon />
+      </IconButton>
+      <Menu
+        id="long-menu"
         anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-        onClose={handlePopoverClose}
-        disableRestoreFocus
+        keepMounted
+        open={open}
+        onClose={handleClose}
       >
-        <Typography>{secondaryText}</Typography>
-      </Popover>
+        <MenuItem>
+          {appData.name}
+        </MenuItem>
+        <MenuItem onClick={handleSignOut}>
+          Logout
+        </MenuItem>
+      </Menu>
     </div>
   );
 }
