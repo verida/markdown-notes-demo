@@ -7,27 +7,25 @@ import { AppContext } from "../contextApi/ContextProvider";
 
 
 const useActions = () => {
-  const { appData, setNotes } = useContext(AppContext);
-
-  let dataStore = appData.dataStore;
+  const {setNotes } = useContext(AppContext);
 
   const postContent = async (data) => {
-    appServices.postContent(
-      data,
-      dataStore
-    ).then(data => {
+    appServices.postContent(data)
+    .then(data => {
       setNotes(data)
       toast.success('Note successfully Added', {
+        toastId: 'ww'
+      })
+    }).catch(()=>{
+       toast.error('Note successfully Added', {
         toastId: 'ww'
       })
     });
   };
 
   const deleteContent = (item) => {
-    appServices.deleteContent(
-      item,
-      dataStore
-    ).then(data => {
+    appServices.deleteContent(item)
+    .then(data => {
       setNotes(data)
       toast.success('Note Deleted', {
         toastId: 'ww'
@@ -37,10 +35,8 @@ const useActions = () => {
 
 
   const updateContent = (item) => {
-    appServices.updateContent(
-      item,
-      dataStore
-    ).then(data => {
+    appServices.updateContent(item)
+    .then(data => {
       setNotes(data)
       toast.success('Note updated', {
         toastId: 'ww'
