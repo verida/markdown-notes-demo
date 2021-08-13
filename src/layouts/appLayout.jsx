@@ -101,6 +101,8 @@ const AppLayouts = ({ children }) => {
   const { appData } = useContext(AppContext);
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  let appUser = appData?.app?.user
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -140,19 +142,21 @@ const AppLayouts = ({ children }) => {
             className={classes.title} variant="h5" noWrap>
             <img src={appLogo} alt="app" />
           </Typography>
-          {appData?.user ? <AppTextPopover
-            primaryText={`${appData?.user?.did?.slice(0, 15)}...`}
-            secondaryText={appData?.user?.did}
+          {appUser ? <AppTextPopover
+            primaryText={`${appUser.did?.slice(0, 15)}...`}
+            secondaryText={appUser.did}
           /> :
             <Button
               size="large"
+              disabled={isConnecting}
               onClick={initializeApp}
               className={classes.button}
               variant="contained"
               color="secondary"
             >
-              Connect
-            </Button>}
+              {isConnecting ? 'Connecting...' : 'Connect'}
+            </Button>
+          }
         </Toolbar>
       </AppBar>
       <Drawer

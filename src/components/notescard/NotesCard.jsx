@@ -64,20 +64,22 @@ const NotesCard = ({ item }) => {
       <div className={classes.bottom}>
         <div></div>
         <div>
-          <IconButton
 
-          >
-            {item.isFavorite
-              ? <StarIcon color="primary" onClick={() => {
-                setItemId(item._id)
-                onFavorite(item, 'remove')
-              }} />
-              : <StarBorderIcon color="primary" onClick={() => {
-                setItemId(item._id)
-                onFavorite(item, 'add')
-              }} />
-            }
-          </IconButton>
+          {item.isFavorite ?
+            <IconButton onClick={() => {
+              setItemId(item._id)
+              onFavorite(item, 'remove')
+            }}>
+              <StarIcon color="primary" />
+            </IconButton>
+            :
+            <IconButton onClick={() => {
+              setItemId(item._id)
+              onFavorite(item, 'add')
+            }} >
+              <StarBorderIcon color="primary" />
+            </IconButton>
+          }
           <IconButton
             onClick={toggleDrawer('right', true, item)}
           >
@@ -100,7 +102,7 @@ const NotesCard = ({ item }) => {
           <LinearProgress color="primary" />
         </div>
       }
-    </div>
+    </div >
   )
 }
 

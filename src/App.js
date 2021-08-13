@@ -1,4 +1,4 @@
-import React from 'react';
+import React  from 'react';
 import AppLayouts from './layouts/appLayout';
 import Providers from './providers/Providers';
 
@@ -8,6 +8,7 @@ import Routes from './routes/Routes';
 
 
 const App = () => {
+
   return (
     <Providers>
       <AppLayouts>
