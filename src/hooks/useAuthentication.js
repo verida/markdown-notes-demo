@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
 import { AppContext } from '../contextApi/ContextProvider'
 import appServices from '../api/services';
+import { toast } from 'react-toastify';
 
 const useAuthentication = () => {
   const {
@@ -12,6 +13,10 @@ const useAuthentication = () => {
 
 
   const appInit = (data) => {
+    if (data?.error) {
+      setIsConnecting(false)
+      return toast.error(data?.error?.message)
+    }
     const { avatar } = data?.userProfile
     setNotes(data.notes);
     setAppData(data.userProfile)

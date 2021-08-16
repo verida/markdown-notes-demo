@@ -1,54 +1,64 @@
 import Verida from '@verida/datastore';
 import { veridaVaultLogin } from '@verida/vault-auth-client'
-import { APP_NAME, DATASTORE_SCHEMA, LOGIN_URI, SERVER_URI } from '../constants';
+import { CLIENT_AUTH_NAME, DATASTORE_SCHEMA, LOGIN_URI, SERVER_URI } from '../constants';
 
 class MarkDownServices {
   veridaDapp;
   dataStore;
   profileInstance;
 
-   initApp() {
+  initApp() {
     if (this.dataStore) return;
-     this.connectVault();
+    this.connectVault();
   }
+
+
+  
 
   connectVault(appCallbackFn) {
     veridaVaultLogin({
       loginUri: LOGIN_URI,
       serverUri: SERVER_URI,
-      appName: APP_NAME,
+      appName: CLIENT_AUTH_NAME,
       callback: async (response) => {
+        try {
+          const veridaDApp = new Verida({
+            did: response.did,
+            signature: response.signature,
+            appName: CLIENT_AUTH_NAME
+          })
 
-        const veridaDApp = new Verida({
-          did: response.did,
-          signature: response.signature,
-          appName: 'Verida: Auth client demo'
-        })
+          await veridaDApp.connect(true)
+          window.veridaDApp = veridaDApp
 
-        await veridaDApp.connect(true)
-        window.veridaDApp = veridaDApp
-
-        this.dataStore = await window.veridaDApp.openDatastore(DATASTORE_SCHEMA)
-        const notes = await this.dataStore.getMany();
+          this.dataStore = await window.veridaDApp.openDatastore(DATASTORE_SCHEMA)
+          const notes = await this.dataStore.getMany();
 
 
-        this.profileInstance = await window.veridaDApp.openProfile(response.did, 'Verida: Vault');
+          this.profileInstance = await window.veridaDApp.openProfile(response.did, 'Verida: Vault');
 
-        const data = await this.profileInstance.getMany()
-        const userProfile = data.reduce((result, item) => {
-          result[item.key] = item.value;
-          return result;
-        }, {});
+          const data = await this.profileInstance.getMany()
+          const userProfile = data.reduce((result, item) => {
+            result[item.key] = item.value;
+            return result;
+          }, {});
 
-       if (appCallbackFn) {
-          appCallbackFn({
-          notes,
-          userProfile
-        })
-       }
-       
+          if (appCallbackFn) {
+            appCallbackFn({
+              notes,
+              userProfile,
+              error: null
+            })
+          }
+        } catch (error) {
+           if (appCallbackFn) {
+            appCallbackFn({
+            notes: null,
+            userProfile: null,
+            error
+          })
+        }}
       }
-
     })
   }
 
@@ -80,7 +90,7 @@ class MarkDownServices {
   };
 
   async deleteContent(item) {
-     this.initApp()
+    this.initApp()
     try {
       await this.dataStore.delete(item);
       let response = await this.dataStore.getMany();
@@ -91,7 +101,7 @@ class MarkDownServices {
   };
 
   async updateContent(item) {
-     this.initApp()
+    this.initApp()
     try {
       await this.dataStore.save(item);
       let response = await this.dataStore.getMany();
@@ -102,7 +112,7 @@ class MarkDownServices {
   };
 
   async getNotes() {
-     this.initApp()
+    this.initApp()
     try {
       const response = await this.dataStore.getMany();
       return response;
@@ -111,7 +121,7 @@ class MarkDownServices {
     }
   };
 
-   logout() {
+  logout() {
     window.veridaDapp = null;
     this.dataStore = {};
     this.veridaDapp = {};
