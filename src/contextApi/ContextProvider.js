@@ -35,13 +35,11 @@ const ContextProvider = ({ children }) => {
       const row = await userDB.get(info.id, {
         rev: info.changes[0].rev
       });
-      console.log(row);
       if (row.key === 'avatar') {
         displayAvatar(row.value)
       }else{
         setAppData({[row.key]: row.value })
       }
-      
     });
   }
 
