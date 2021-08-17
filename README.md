@@ -2,7 +2,6 @@
 
 
 
-
 ### Deployment
 
 1. `yarn`  to install dependencies
@@ -20,10 +19,22 @@ Open [http://localhost:3008](http://localhost:3008) to view it in the browser.
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
-### `yarn test`
+### `Add Verida-Auth-Client Dependency` 
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+To get the `@verida-auth-client` library working locally on your machines please follow these steps:
+
+1. Clone the verida auth client repo [https://github.com/verida/vault-auth-client](https://github.com/verida/vault-auth-client)
+
+2. npm install
+
+3. npm run build
+
+4. npm link
+
+5. Then go to the markdown project and run npm link @verida/vault-auth-client
+
+
+That will register the library to the project.
 
 ### `yarn build`
 
