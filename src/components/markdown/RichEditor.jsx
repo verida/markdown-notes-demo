@@ -1,9 +1,8 @@
+import React from 'react';
 import { makeStyles } from '@material-ui/core';
-import React, { useContext } from 'react';
 import MarkdownEditor from "@uiw/react-markdown-editor";
-import { AppContext } from '../../contextApi/ContextProvider';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   root: {
     height: 500,
     width: 500,
@@ -17,12 +16,9 @@ const useStyles = makeStyles((theme) => ({
 
 const RichTextEditor = ({ markdownVal, setMarkdownVal }) => {
   const classes = useStyles();
-  const { selectedNote } = useContext(AppContext);
 
   return (
-    <div
-      className={classes.root}
-    >
+    <div className={classes.root}>
       <MarkdownEditor
         value={markdownVal}
         height={500}
