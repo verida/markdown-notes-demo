@@ -4,15 +4,24 @@ import NotesCard from '../components/notescard/NotesCard';
 import SwipeableSideMenu from '../components/swippeableSideBar/SwippeableSideBar'
 import MDEditorForm from '../features/MDEditorForm';
 import { AppContext } from '../contextApi/ContextProvider';
+import ModalAlert from '../components/modalAlert/ModalAlert';
+import ModalPreview from '../features/ModalPreview';
 
 
 
 const Home = () => {
-  const { notes } = useContext(AppContext);
+  const {
+    notes,
+    openPreview,
+    setOpenPreview
+  } = useContext(AppContext);
 
   return (
     <div>
-      <SwipeableSideMenu children={<MDEditorForm />} />
+      <ModalAlert open={openPreview} setOpen={setOpenPreview} >
+        <ModalPreview />
+      </ModalAlert>
+      <SwipeableSideMenu children={<MDEditorForm showTitle />} />
       {notes.length
         ?
         <Grid container spacing={2}>

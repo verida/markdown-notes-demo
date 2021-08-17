@@ -12,12 +12,24 @@ const ContextProvider = ({ children }) => {
   const [markdownVal, setMarkdownVal] = useState("# title");
   const [noteTitle, setNoteTitle] = useState('New Task')
   const [open, setOpen] = useState(false);
+  const [openPreview, setOpenPreview] = useState(false);
   const [slideOpen, setSlideOpen] = useState({
     top: false,
     left: false,
     bottom: false,
     right: false,
   });
+
+  useEffect(() => {
+    if (window.veridaDApp) {
+      appServices.profileEventSubscription()
+        .then((data) => {
+          userEvent(data)
+        });
+
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [appData])
 
   const displayAvatar = (profileAvatar) => {
     if (profileAvatar) {
@@ -37,33 +49,27 @@ const ContextProvider = ({ children }) => {
       });
       if (row.key === 'avatar') {
         displayAvatar(row.value)
-      }else{
-        setAppData({[row.key]: row.value })
+      } else {
+        setAppData({ [row.key]: row.value })
       }
     });
   }
 
-  useEffect(() => {
-    if (window.veridaDApp) {
-      appServices.profileEventSubscription()
-        .then((data) => {
-          userEvent(data)
-        });
-
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [appData])
 
 
 
+  const openMarkDownView = (open = false, item) => {
+    singleNoteAction(open, item);
+    //TODO 
+    /**
+     * Add Modal Open state for Markdown Preview
+     */
+    setOpenPreview(open)
+  }
 
 
-  const toggleDrawer = (anchor, open, item) => (event) => {
-
-    if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return;
-    }
-    if (!open) {
+  const singleNoteAction = (open, item) => {
+    if (!open || !item) {
       setSelectedNote('');
     }
     if (item) {
@@ -71,28 +77,51 @@ const ContextProvider = ({ children }) => {
       setMarkdownVal(item.body);
       setNoteTitle(item.title)
     }
+  }
+
+  const toggleDrawer = (anchor, open, item) => (event) => {
+
+    if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    singleNoteAction(open, item)
     setSlideOpen({ ...slideOpen, [anchor]: open });
   };
 
   const values = {
-    appData,
+
+    avatar,
+    slideOpen,
+
     open,
+    setOpen,
+
     notes,
     setNotes,
-    setOpen,
+    
+
+    appData,
     setAppData,
+
     markdownVal,
     setMarkdownVal,
-    setIsLoading,
-    isLoading,
-    toggleDrawer,
-    slideOpen,
+
+    openPreview,
+    setOpenPreview,
+
     noteTitle,
-    avatar,
-    displayAvatar,
+    setNoteTitle,
+
     selectedNote,
     setSelectedNote,
-    setNoteTitle
+
+    setIsLoading,
+    isLoading,
+
+
+    toggleDrawer,
+    displayAvatar,
+    openMarkDownView
   }
 
   return (

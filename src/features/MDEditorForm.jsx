@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MDEditorForm = () => {
+const MDEditorForm = ({ showTitle }) => {
   const classes = useStyles();
   const [error, setError] = useState('')
   const { updateContent, postContent } = useActions();
@@ -33,6 +33,8 @@ const MDEditorForm = () => {
     selectedNote,
     setNoteTitle,
     appData,
+    setOpenPreview,
+    toggleDrawer
   } = useContext(AppContext);
 
 
@@ -51,9 +53,11 @@ const MDEditorForm = () => {
         body: markdownVal,
         ...rest,
       }
-      updateContent(editedItem)
+      updateContent(editedItem);
+      setOpenPreview(false);
     } else {
-      postContent({ title: noteTitle, markdownVal })
+      postContent({ title: noteTitle, markdownVal });
+      toggleDrawer('right', false);
     }
 
   }
@@ -63,7 +67,7 @@ const MDEditorForm = () => {
       {isLoading && <BackDropLoader load />}
       <Box justifyContent="space-between" display="flex">
         <Typography variant="h4" noWrap>
-          Notes
+          {showTitle && 'Notes'}
         </Typography>
         <Button
           onClick={onSubmitNote}

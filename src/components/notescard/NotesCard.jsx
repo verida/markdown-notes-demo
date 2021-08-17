@@ -2,7 +2,6 @@ import { LinearProgress, makeStyles } from '@material-ui/core';
 import React, { useContext, useState } from 'react'
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import EditIcon from '@material-ui/icons/Edit';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import useActions from '../../hooks/useActions';
 import { AppContext } from '../../contextApi/ContextProvider';
@@ -19,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     height: 100,
     width: '100%',
     margin: theme.spacing(1, 'auto'),
-    boxSizing: 'border box'
+    boxSizing: 'border box',
   },
   bottom: {
     position: 'absolute',
@@ -27,8 +26,13 @@ const useStyles = makeStyles((theme) => ({
     bottom: '0'
   },
   title: {
-    margin: theme.spacing(1),
-    padding: theme.spacing(1, 0.5),
+    borderRadius: "12px 12px 0px 0px",
+    padding: theme.spacing(1.5, 1),
+    cursor: 'pointer',
+    '&:hover': {
+      border: '1px solid #ccc',
+      background: '#eeeeee'
+    }
   },
   loader: {
     width: '100%',
@@ -42,8 +46,7 @@ const useStyles = makeStyles((theme) => ({
 const NotesCard = ({ item }) => {
   const classes = useStyles();
   const { deleteContent, updateContent } = useActions();
-  const { isLoading } = useContext(AppContext);
-  const { toggleDrawer } = useContext(AppContext);
+  const { openMarkDownView, isLoading } = useContext(AppContext);
   const [itemId, setItemId] = useState('');
 
   const reduceText = (value) => value.length > 30 ? `${value.substr(0, 30)}...` : value;
@@ -59,7 +62,9 @@ const NotesCard = ({ item }) => {
 
   return (
     <div className={classes.root}>
-      <Typography variant="h6" className={classes.title}>
+      <Typography variant="h6" onClick={() => {
+        openMarkDownView(true, item)
+      }} className={classes.title}>
         {reduceText(item.title)}
       </Typography>
       <div className={classes.bottom}>
@@ -81,11 +86,6 @@ const NotesCard = ({ item }) => {
               <StarBorderIcon color="primary" />
             </IconButton>
           }
-          <IconButton
-            onClick={toggleDrawer('right', true, item)}
-          >
-            <EditIcon />
-          </IconButton>
           <IconButton disabled={isLoading}
             onClick={() => {
               setItemId(item._id)

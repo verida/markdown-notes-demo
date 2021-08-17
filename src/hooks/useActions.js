@@ -16,20 +16,13 @@ const useActions = () => {
       toast.success('Note successfully Added', {
         toastId: 'ww'
       })
-    }).catch(()=>{
-       toast.error('Note successfully Added', {
-        toastId: 'ww'
-      })
-    });
+    })
   };
 
   const deleteContent = (item) => {
     appServices.deleteContent(item)
     .then(data => {
-      setNotes(data)
-      toast.success('Note Deleted', {
-        toastId: 'ww'
-      })
+      setNotes(data);
     })
   };
 
