@@ -3,7 +3,6 @@ import { veridaVaultLogin } from '@verida/vault-auth-client'
 import { CLIENT_AUTH_NAME, DATASTORE_SCHEMA, LOGIN_URI, SERVER_URI } from '../constants';
 
 
-
 class MarkDownServices {
   veridaDapp;
   dataStore;
@@ -126,7 +125,7 @@ class MarkDownServices {
   };
 
   async logout() {
-    await window?.veridaDApp?.disconnect();
+    await window.veridaDApp.disconnect();
     window.veridaDapp = null;
     this.dataStore = {};
     this.veridaDapp = {};
