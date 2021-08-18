@@ -2,6 +2,8 @@ import Verida from '@verida/datastore';
 import { veridaVaultLogin } from '@verida/vault-auth-client'
 import { CLIENT_AUTH_NAME, DATASTORE_SCHEMA, LOGIN_URI, SERVER_URI } from '../constants';
 
+
+
 class MarkDownServices {
   veridaDapp;
   dataStore;
@@ -25,11 +27,13 @@ class MarkDownServices {
           const veridaDApp = new Verida({
             did: response.did,
             signature: response.signature,
+            // appName: APP_NAME
             appName: CLIENT_AUTH_NAME
           })
 
           await veridaDApp.connect(true)
           window.veridaDApp = veridaDApp
+          
 
           this.dataStore = await window.veridaDApp.openDatastore(DATASTORE_SCHEMA)
           const notes = await this.dataStore.getMany();
@@ -121,7 +125,8 @@ class MarkDownServices {
     }
   };
 
-  logout() {
+  async logout() {
+    await window?.veridaDApp?.disconnect();
     window.veridaDapp = null;
     this.dataStore = {};
     this.veridaDapp = {};

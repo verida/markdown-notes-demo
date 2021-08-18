@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MDEditorForm = ({ showTitle }) => {
+const MDEditorForm = ({ showTitle, preview }) => {
   const classes = useStyles();
   const [error, setError] = useState('')
   const { updateContent, postContent } = useActions();
@@ -88,6 +88,7 @@ const MDEditorForm = ({ showTitle }) => {
         variant="outlined" />
       <div>
         <RichTextEditor
+          preview
           markdownVal={markdownVal}
           setMarkdownVal={setMarkdownVal}
         />

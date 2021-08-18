@@ -1,51 +1,33 @@
+
 import React from 'react';
-import PropTypes from 'prop-types'
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import MuiDialogTitle from '@material-ui/core/DialogTitle';
-import MuiDialogContent from '@material-ui/core/DialogContent';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
+import CloseIcon from '@material-ui/icons/Close';
+import Slide from '@material-ui/core/Slide';
 
-const styles = (theme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(2),
+const useStyles = makeStyles((theme) => ({
+  appBar: {
+    position: 'relative',
+    background: '#37D5C7'
   },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-    color: theme.palette.grey[500],
+  title: {
+    marginLeft: theme.spacing(2),
+    flex: 1,
   },
+}));
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const DialogTitle = withStyles(styles)((props) => {
-  const { children, classes, onClose, ...other } = props;
-  return (
-    <MuiDialogTitle disableTypography className={classes.root} {...other}>
-      <Typography variant="h6">{children}</Typography>
-      {onClose ? (
-        <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
-          <CloseIcon />
-        </IconButton>
-      ) : null}
-    </MuiDialogTitle>
-  );
-});
+export default function FullScreenDialog({ open, setOpen, children }) {
+  const classes = useStyles();
 
-const DialogContent = withStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2),
-    // minHeight: 500,
-    minWidth: 500
-  },
-}))(MuiDialogContent);
-
-
-
-export default function CustomizedDialogs({ open, setOpen, children }) {
 
   const handleClose = () => {
     setOpen(false);
@@ -53,21 +35,25 @@ export default function CustomizedDialogs({ open, setOpen, children }) {
 
   return (
     <div>
-      <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
-        <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-          Preview
-        </DialogTitle>
-        <DialogContent dividers>
-          {children}
-        </DialogContent>
+      <Dialog style={{
+        width: '80%',
+        height: '80%',
+        margin: ' auto',
+        borderRadius: '8px'
+      }} fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
+        <AppBar position="fixed" className={classes.appBar} >
+          <Toolbar>
+            <Typography variant="h6" className={classes.title}>
+              Preview
+            </Typography>
+            <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+              <CloseIcon />
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+        {children}
       </Dialog>
     </div>
   );
-}
-
-
-
-CustomizedDialogs.prototype = {
-  children: PropTypes.node.isRequired
 }
 
