@@ -13,5 +13,5 @@ export let DATASTORE_SCHEMA;
 if (process.env.NODE_ENV === 'development') {
   DATASTORE_SCHEMA = "http://localhost:3008/schema.json"
 } else {
-  DATASTORE_SCHEMA = "https://markdown-editor.demos.verida.io/schema.json"
+  DATASTORE_SCHEMA = "https://markdown-editor.demos.testnet.verida.io/schema.json"
 }
