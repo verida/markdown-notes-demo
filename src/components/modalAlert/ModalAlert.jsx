@@ -1,64 +1,58 @@
+
 import React from 'react';
-import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import Typography from '@material-ui/core/Typography';
+import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import { makeStyles } from '@material-ui/core';
 
-const Transition = React.forwardRef(function Transition(
-  props,
-  ref,
-) {
-  return <Slide direction="down" ref={ref} {...props} />;
-});
-
-
-
-
-const useStyles = makeStyles(() => ({
-  root: {
-    textAlign: 'center',
-    boxShadow: "0px 35px 45px rgba(7, 14, 39, 0.05)",
+const useStyles = makeStyles((theme) => ({
+  appBar: {
+    position: 'relative',
+    background: '#37D5C7'
   },
-  contentActions: {
-    textAlign: 'center',
-  }
+  title: {
+    marginLeft: theme.spacing(2),
+    flex: 1,
+  },
 }));
 
-export default function ModalAlert({ children, title, open, setOpen }) {
-  const classes = useStyles()
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+export default function FullScreenDialog({ open, setOpen, children }) {
+  const classes = useStyles();
+
+
   const handleClose = () => {
     setOpen(false);
   };
 
   return (
-    <div className={classes.root}>
-      <Dialog
-        open={open}
-        TransitionComponent={Transition}
-        keepMounted
-        // onClose={handleClose}
-        className={classes.contentActions}
-        aria-labelledby="alert-dialog-slide-title"
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <DialogTitle id="alert-dialog-slide-title">
-          {title || "Notification"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-            {children}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions className={classes.contentActions}>
-          <Button onClick={handleClose} color="secondary">
-            Cancel
-          </Button>
-        </DialogActions>
+    <div>
+      <Dialog style={{
+        width: '80%',
+        height: '80%',
+        margin: ' auto',
+        borderRadius: '8px'
+      }} fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
+        <AppBar position="fixed" className={classes.appBar} >
+          <Toolbar>
+            <Typography variant="h6" className={classes.title}>
+              Preview
+            </Typography>
+            <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+              <CloseIcon />
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+        {children}
       </Dialog>
     </div>
   );
 }
+

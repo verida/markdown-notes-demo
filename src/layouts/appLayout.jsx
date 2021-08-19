@@ -169,7 +169,7 @@ const AppLayouts = ({ children }) => {
               <PopOverMenu />
             </> :
             <Button
-              size="large"
+              size="small"
               disabled={isConnecting}
               onClick={initializeApp}
               className={classes.button}

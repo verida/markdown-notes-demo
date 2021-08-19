@@ -28,10 +28,12 @@ export default function PopOverMenu() {
 
 
   const handleSignOut = () => {
-    appServices.logout();
-    setNotes([]);
-    setAppData({});
-    displayAvatar('');
+    appServices.logout().then(() => {
+      setNotes([]);
+      setAppData({});
+      displayAvatar('');
+    });
+
   };
 
   return (
