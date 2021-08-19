@@ -1,6 +1,6 @@
 # Getting Started with Markdown Demo Note
 
-see link here to view App Demo : [markdown-editor](https://markdown-editor.demos.verida.io/)
+see link here to view App Demo : [markdown-editor](https://markdown-editor.demos.testnet.verida.io/)
 
 ---
 ## About 
@@ -22,7 +22,7 @@ Markdown demo note is a Decentralized Note  App which integrates with the verida
 -  [verida Auth Client](https://github.com/verida/vault-auth-client)
 
 
-## Add Verida-Auth-Client Dependency(Locally)`
+## Add Verida-Auth-Client Dependency(Locally)
 
 _____
 
@@ -47,6 +47,7 @@ That will register the library to the project.
 ----
 1. `yarn`  to install dependencies
 2. `yarn build` to generate a compiled build folder for deployment
+3. `deploy.sh` to deploy to the AWS environment defined in the `AWS_PROFILE` environment variable.
 
 ## Available Scripts
 
