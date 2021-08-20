@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -51,14 +52,40 @@ const Home = () => {
   const {
     notes,
     openPreview,
+    isLoading,
+    setIsLoading,
     setOpenPreview
   } = useContext(AppContext);
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-  const { initializeApp, isConnecting } = useAuthentication()
+  const {
+    initializeApp,
+  } = useAuthentication()
+
 
   const openModal = () => setOpen(!open);
-  const isConnected = Store.get(USER_SESSION_KEY)
+  const isConnected = Store.get(USER_SESSION_KEY);
+
+  const modal = document.getElementById('verida-modal');
+  const closeModal = document.getElementById('verida-modal-close');
+
+  const handleClickAway = (event) => {
+    if ((event.target === modal && modal !== null)
+      || (event.target === closeModal && closeModal !== null)) {
+      modal.style.display = 'none';
+      setIsLoading(false)
+    }
+
+  };
+
+  React.useEffect(() => {
+    window.addEventListener('click', handleClickAway);
+
+
+    return () => {
+      window.removeEventListener('click', handleClickAway);
+    };
+  }, [isLoading]);
 
   return (
     <div>
@@ -78,12 +105,12 @@ const Home = () => {
             <Button
               fullWidth
               variant="contained"
-              disabled={isConnecting}
+              disabled={isLoading}
               onClick={initializeApp}
               className={classes.connectButton}
               color="primary"
             >
-              {isConnecting ? 'Connecting...' : 'Connect'}
+              {isLoading ? 'Connecting...' : 'Connect'}
             </Button>
           </CardContent>
         </Card> :

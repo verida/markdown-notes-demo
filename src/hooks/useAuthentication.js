@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { AppContext } from '../contextApi/ContextProvider'
 import appServices from '../api/services';
 import { toast } from 'react-toastify';
@@ -7,31 +7,30 @@ const useAuthentication = () => {
   const {
     setAppData,
     displayAvatar,
-    setNotes
+    setNotes,
+    setIsLoading
   } = useContext(AppContext);
-  const [isConnecting, setIsConnecting] = useState(false);
 
 
   const appInit = (data) => {
     if (data?.error) {
-      setIsConnecting(false)
+      setIsLoading(false)
       return toast.error(data?.error?.message)
     }
     const { avatar } = data?.userProfile
     setNotes(data.notes);
     setAppData(data.userProfile)
     displayAvatar(avatar)
-    setIsConnecting(false)
+    setIsLoading(false)
   }
 
   const initializeApp = () => {
-    setIsConnecting(true)
+    setIsLoading(true)
     appServices.connectVault(appInit)
   }
 
   return {
     initializeApp,
-    isConnecting
   }
 }
 
