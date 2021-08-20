@@ -1,6 +1,6 @@
 import Verida from '@verida/datastore';
 import { veridaVaultLogin } from '@verida/vault-auth-client'
-import { CLIENT_AUTH_NAME, DATASTORE_SCHEMA, LOGIN_URI, SERVER_URI } from '../constants';
+import { CLIENT_AUTH_NAME, DATASTORE_SCHEMA, LOGIN_URI, LOGO_URL, SERVER_URI } from '../constants';
 
 
 class MarkDownServices {
@@ -13,14 +13,12 @@ class MarkDownServices {
     this.connectVault();
   }
 
-
-  
-
   connectVault(appCallbackFn) {
     veridaVaultLogin({
       loginUri: LOGIN_URI,
       serverUri: SERVER_URI,
       appName: CLIENT_AUTH_NAME,
+      logoUrl: LOGO_URL,
       callback: async (response) => {
         try {
           const veridaDApp = new Verida({

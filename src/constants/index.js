@@ -5,6 +5,8 @@
 export const LOGIN_URI = 'https://vault.testnet.verida.io/mobile/auth-request.html';
 export const SERVER_URI = 'wss://auth-server.testnet.verida.io:7001';
 
+export const LOGO_URL = 'https://verida-static-resources.s3.amazonaws.com/verida_logo.svg';
+
 export const CLIENT_AUTH_NAME = 'Verida: Auth client demo';
 export const APP_NAME = 'Markdown notes';
 
