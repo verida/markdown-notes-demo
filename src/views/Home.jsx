@@ -22,12 +22,20 @@ const Home = () => {
   const {
     notes,
     openPreview,
-    setOpenPreview
+    setOpenPreview,
+    setNoteTitle,
+    setMarkdownVal,
+    setSelectedNote
   } = useContext(AppContext);
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
-  const openModal = () => setOpen(!open)
+  const openModal = () => {
+    setNoteTitle('');
+    setMarkdownVal('');
+    setSelectedNote('');
+    setOpen(!open)
+  }
 
   return (
     <div>
@@ -37,7 +45,6 @@ const Home = () => {
       <ModalAlert open={open} setOpen={setOpen} >
         <MDEditorForm showTitle />
       </ModalAlert>
-      {/* <SwipeableSideMenu children={<MDEditorForm showTitle />} /> */}
       <Button
         size="large"
         className={classes.button}

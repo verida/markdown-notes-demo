@@ -9,8 +9,8 @@ const ContextProvider = ({ children }) => {
   const [notes, setNotes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedNote, setSelectedNote] = useState('');
-  const [markdownVal, setMarkdownVal] = useState("# title");
-  const [noteTitle, setNoteTitle] = useState('New Task')
+  const [markdownVal, setMarkdownVal] = useState("");
+  const [noteTitle, setNoteTitle] = useState('')
   const [open, setOpen] = useState(false);
   const [openPreview, setOpenPreview] = useState(false);
   const [slideOpen, setSlideOpen] = useState({
@@ -71,6 +71,8 @@ const ContextProvider = ({ children }) => {
   const singleNoteAction = (open, item) => {
     if (!open || !item) {
       setSelectedNote('');
+      setNoteTitle('');
+      setMarkdownVal('');
     }
     if (item) {
       setSelectedNote(item)
