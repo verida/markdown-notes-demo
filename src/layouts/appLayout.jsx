@@ -1,22 +1,17 @@
 import React, { useContext } from 'react';
 import clsx from 'clsx';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
+import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import Button from '@material-ui/core/Button';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import SideMenu from '../components/sideMenu/SideMenu';
-import useAuthentication from '../hooks/useAuthentication';
 import { AppContext } from '../contextApi/ContextProvider';
 import appLogo from '../assets/images/verida_logo.svg'
-import { Avatar } from '@material-ui/core';
+import { Avatar, Container, IconButton } from '@material-ui/core';
 import PopOverMenu from '../components/popover/Popover';
+import LayoutDrawer from './layoutDrawer';
+import Store from '../utils/store';
+import { USER_SESSION_KEY } from '../constants';
 
 
 const drawerWidth = 320;
@@ -93,10 +88,6 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.white,
     margin: theme.spacing(0.4, 0, 0, 0),
   },
-  large: {
-    // width: theme.spacing(7),
-    // height: theme.spacing(7),
-  },
   profile: {
     margin: theme.spacing(0, 1.4),
     fontWeight: 600,
@@ -112,22 +103,15 @@ const useStyles = makeStyles((theme) => ({
 
 const AppLayouts = ({ children }) => {
   const classes = useStyles();
-  const { initializeApp, isConnecting } = useAuthentication()
   const { appData, avatar } = useContext(AppContext);
-  const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
-
+  const isConnected = Store.get(USER_SESSION_KEY)
 
 
   const handleDrawerOpen = () => {
     setOpen(true);
   };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-
 
 
   return (
@@ -143,72 +127,42 @@ const AppLayouts = ({ children }) => {
         })}
       >
         <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            className={clsx(classes.menuButton, {
-              [classes.hide]: open,
-            })}
-          >
-            <MenuIcon />
-          </IconButton>
+          {isConnected &&
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              className={clsx(classes.menuButton, {
+                [classes.hide]: open,
+              })}
+            >
+              <MenuIcon />
+            </IconButton>
+          }
           <Typography
             className={classes.title} variant="h5" noWrap>
             <img className={classes.img} src={appLogo} alt="app" />
           </Typography>
-          {appData?.name ?
+          {appData?.name &&
             <>
               <span className={classes.profile}> {appData?.name}</span>
               <Avatar
                 alt={appData?.name}
                 src={avatar}
-                className={classes.large}
               />
               <PopOverMenu />
-            </> :
-            <Button
-              size="small"
-              disabled={isConnecting}
-              onClick={initializeApp}
-              className={classes.button}
-              variant="contained"
-              color="secondary"
-            >
-              {isConnecting ? 'Connecting...' : 'Connect'}
-            </Button>
+            </>
           }
         </Toolbar>
       </AppBar>
-      <Drawer
-        color="inherit"
-        elevation={0}
-        variant="permanent"
-        className={clsx(classes.drawer, {
-          [classes.drawerOpen]: open,
-          [classes.drawerClose]: !open,
-        })}
-        classes={{
-          paper: clsx({
-            [classes.drawerOpen]: open,
-            [classes.drawerClose]: !open,
-          })
-        }}
-      >
-        <div className={classes.toolbar}>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ?
-              <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
-        </div>
-        <Divider />
-        <SideMenu />
-      </Drawer>
-      <main className={classes.content}>
-        <div className={classes.toolbar} />
-        {children}
-      </main>
+      {isConnected && <LayoutDrawer classes={classes} open={open} setOpen={setOpen} />}
+      <Container fixed>
+        <main className={classes.content}>
+          <div className={classes.toolbar} />
+          {children}
+        </main>
+      </Container>
     </div>
   );
 }

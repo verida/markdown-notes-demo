@@ -8,6 +8,9 @@ export const SERVER_URI = 'wss://auth-server.testnet.verida.io:7001';
 export const CLIENT_AUTH_NAME = 'Verida: Auth client demo';
 export const APP_NAME = 'Markdown notes';
 
+
+export const USER_SESSION_KEY = 'verida_user_loggedin';
+
 export let DATASTORE_SCHEMA;
 
 if (process.env.NODE_ENV === 'development') {
