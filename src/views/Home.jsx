@@ -51,14 +51,23 @@ const Home = () => {
   const {
     notes,
     openPreview,
-    setOpenPreview
+    setOpenPreview,
+    setNoteTitle,
+    setMarkdownVal,
+    setSelectedNote
   } = useContext(AppContext);
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const { initializeApp, isConnecting } = useAuthentication()
 
-  const openModal = () => setOpen(!open);
+
   const isConnected = Store.get(USER_SESSION_KEY)
+  const openModal = () => {
+    setNoteTitle('');
+    setMarkdownVal('');
+    setSelectedNote('');
+    setOpen(!open)
+  }
 
   return (
     <div>
