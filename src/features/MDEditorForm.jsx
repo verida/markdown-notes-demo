@@ -9,7 +9,6 @@ import RichTextEditor from '../components/markdown/RichEditor';
 import { AppContext } from '../contextApi/ContextProvider';
 import useActions from '../hooks/useActions';
 import BackDropLoader from '../components/appLoaders/BackDropLoader';
-import { toast } from 'react-toastify';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -32,7 +31,6 @@ const MDEditorForm = ({ showTitle, preview }) => {
     noteTitle,
     selectedNote,
     setNoteTitle,
-    appData,
     setOpenPreview,
     toggleDrawer
   } = useContext(AppContext);
@@ -42,12 +40,9 @@ const MDEditorForm = ({ showTitle, preview }) => {
     if (!noteTitle || !markdownVal) {
       return setError('All Fields are required')
     };
-    if (!appData) {
-      return toast.warning('Please connect this App with the  verida datastore')
-    };
     setError('')
     if (selectedNote) {
-      const { title, body, ...rest } = selectedNote
+      const { title, body, ...rest } = selectedNote;
       const editedItem = {
         title: noteTitle,
         body: markdownVal,
@@ -59,7 +54,6 @@ const MDEditorForm = ({ showTitle, preview }) => {
       postContent({ title: noteTitle, markdownVal });
       toggleDrawer('right', false);
     }
-
   }
 
   return (
