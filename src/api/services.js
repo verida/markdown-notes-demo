@@ -1,6 +1,6 @@
 import Verida from '@verida/datastore';
 import { veridaVaultLogin } from '@verida/vault-auth-client'
-import { CLIENT_AUTH_NAME, DATASTORE_SCHEMA, LOGIN_URI, LOGO_URL, SERVER_URI, USER_SESSION_KEY } from '../constants';
+import { CLIENT_AUTH_NAME, DATASTORE_SCHEMA, LOGIN_URI, LOGO_URL, SERVER_URI, USER_SESSION_KEY, VERIDA_USER_SIGNATURE } from '../constants';
 import Store from '../utils/store';
 
 
@@ -126,6 +126,10 @@ class MarkDownServices {
   async logout() {
     await window.veridaDApp.disconnect();
     Store.remove(USER_SESSION_KEY)
+
+    //TODO : action from datastore library.
+    
+    Store.remove(VERIDA_USER_SIGNATURE)
     window.veridaDapp = null;
     this.dataStore = {};
     this.veridaDapp = {};

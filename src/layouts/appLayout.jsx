@@ -1,9 +1,14 @@
-import React, { useContext } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useContext, useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import MenuIcon from '@material-ui/icons/Menu';
 import { AppContext } from '../contextApi/ContextProvider';
 import appLogo from '../assets/images/verida_logo.svg'
@@ -11,7 +16,8 @@ import { Avatar, Container, IconButton } from '@material-ui/core';
 import PopOverMenu from '../components/popover/Popover';
 import LayoutDrawer from './layoutDrawer';
 import Store from '../utils/store';
-import { USER_SESSION_KEY } from '../constants';
+import { USER_SESSION_KEY, VERIDA_USER_SIGNATURE } from '../constants';
+import useAuthentication from '../hooks/useAuthentication';
 
 
 const drawerWidth = 320;
@@ -97,21 +103,75 @@ const useStyles = makeStyles((theme) => ({
   },
   img: {
     margin: theme.spacing(0.8, 0, 0, 0),
-  }
+  },
+  cardContent: {
+    display: 'flex',
+    flexFlow: 'column nowrap',
+    justifyContent: 'center',
+    alignItems: 'center',
+    '& > *': {
+      margin: theme.spacing(1.5, 0),
+      padding: theme.spacing(1.4, 1),
+    }
+  },
+  connectButton: {
+    fontWeight: 600
+  },
+  cardView: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '80%',
+    margin: theme.spacing(2, 'auto'),
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+    }
+  },
 }));
 
 
 const AppLayouts = ({ children }) => {
   const classes = useStyles();
-  const { appData, avatar } = useContext(AppContext);
+  const {
+    appData,
+    avatar,
+    isLoading,
+    setIsLoading
+  } = useContext(AppContext);
+  const {
+    initializeApp,
+  } = useAuthentication()
   const [open, setOpen] = React.useState(false);
 
+  const decryptedSignature = Store.get(VERIDA_USER_SIGNATURE);
   const isConnected = Store.get(USER_SESSION_KEY)
 
+
+  const modal = document.getElementById('verida-modal');
+  const closeModal = document.getElementById('verida-modal-close');
+
+  const handleClickAway = (event) => {
+    if ((event.target === modal && modal !== null)
+      || (event.target === closeModal && closeModal !== null)) {
+      modal.style.display = 'none';
+      setIsLoading(false)
+    }
+  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
   };
+
+  useEffect(() => {
+    if (decryptedSignature) {
+      initializeApp()
+    }
+    window.addEventListener('click', handleClickAway);
+
+    return () => {
+      window.removeEventListener('click', handleClickAway);
+    };
+  }, []);
 
 
   return (
@@ -160,7 +220,36 @@ const AppLayouts = ({ children }) => {
       <Container fixed>
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          {children}
+          {!decryptedSignature && !appData?.name &&
+            <Card className={classes.cardView}>
+              <CardContent className={classes.cardContent}>
+                <Typography variant="h5" color="primary">
+                  Click on the  button to connect with your vault <br />
+                  to use Markdown Notes
+                </Typography>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  disabled={isLoading}
+                  onClick={initializeApp}
+                  className={classes.connectButton}
+                  color="primary"
+                >
+                  {isLoading ? 'Connecting...' : 'Connect'}
+                </Button>
+              </CardContent>
+            </Card>
+          }
+          {isLoading
+            &&
+            decryptedSignature
+            ? <div className={classes.cardContent}>
+              Reconnecting
+              <CircularProgress color="secondary" />
+            </div>
+            :
+            children
+          }
         </main>
       </Container>
     </div>
