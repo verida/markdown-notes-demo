@@ -7,7 +7,7 @@ export const SERVER_URI = 'wss://auth-server.testnet.verida.io:7001';
 
 export const LOGO_URL = 'http://assets.verida.io/verida_logo.svg';
 
-export const CLIENT_AUTH_NAME = 'Verida: Auth client demo';
+export const CLIENT_AUTH_NAME = 'Verida: Markdown Notes Demo';
 export const APP_NAME = 'Markdown notes';
 
 
