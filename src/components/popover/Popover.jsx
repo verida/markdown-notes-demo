@@ -15,7 +15,9 @@ export default function PopOverMenu() {
     setAppData,
     displayAvatar,
     setNotes,
-    appData
+    appData,
+    setNoteTitle,
+    setMarkdownVal,
   } = useContext(AppContext);
 
   const handleClick = (event) => {
@@ -32,6 +34,8 @@ export default function PopOverMenu() {
       setNotes([]);
       setAppData({});
       displayAvatar('');
+      setNoteTitle('');
+      setMarkdownVal('');
     });
 
   };

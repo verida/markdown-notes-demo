@@ -14,14 +14,12 @@ class MarkDownServices {
     this.connectVault();
   }
 
-
-  
-
   connectVault(appCallbackFn) {
     veridaVaultLogin({
       loginUri: LOGIN_URI,
       serverUri: SERVER_URI,
       appName: CLIENT_AUTH_NAME,
+      logoUrl: LOGO_URL,
       callback: async (response) => {
         try {
           const veridaDApp = new Verida({

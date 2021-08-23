@@ -54,7 +54,10 @@ const Home = () => {
     openPreview,
     isLoading,
     setIsLoading,
-    setOpenPreview
+    setOpenPreview,
+    setNoteTitle,
+    setMarkdownVal,
+    setSelectedNote
   } = useContext(AppContext);
   const classes = useStyles();
   const [open, setOpen] = useState(false);
@@ -63,8 +66,6 @@ const Home = () => {
   } = useAuthentication()
 
 
-  const openModal = () => setOpen(!open);
-  const isConnected = Store.get(USER_SESSION_KEY);
 
   const modal = document.getElementById('verida-modal');
   const closeModal = document.getElementById('verida-modal-close');
@@ -86,6 +87,14 @@ const Home = () => {
       window.removeEventListener('click', handleClickAway);
     };
   }, [isLoading]);
+
+  const isConnected = Store.get(USER_SESSION_KEY)
+  const openModal = () => {
+    setNoteTitle('');
+    setMarkdownVal('');
+    setSelectedNote('');
+    setOpen(!open)
+  }
 
   return (
     <div>
