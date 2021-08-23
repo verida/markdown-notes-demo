@@ -1,6 +1,6 @@
 import Verida from '@verida/datastore';
 import { veridaVaultLogin } from '@verida/vault-auth-client'
-import { CLIENT_AUTH_NAME, DATASTORE_SCHEMA, LOGIN_URI, SERVER_URI, USER_SESSION_KEY } from '../constants';
+import { CLIENT_AUTH_NAME, DATASTORE_SCHEMA, LOGIN_URI, LOGO_URL, SERVER_URI, USER_SESSION_KEY } from '../constants';
 import Store from '../utils/store';
 
 
