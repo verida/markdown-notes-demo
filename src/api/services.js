@@ -15,6 +15,9 @@ class MarkDownServices {
   }
 
   connectVault(appCallbackFn) {
+    Verida.setConfig({
+      appName: CLIENT_AUTH_NAME
+    })
     veridaVaultLogin({
       loginUri: LOGIN_URI,
       serverUri: SERVER_URI,
