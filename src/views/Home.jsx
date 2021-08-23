@@ -133,7 +133,7 @@ const Home = () => {
           Add Note
         </Button>
       }
-      {notes.length && isConnected
+      {notes && isConnected
         &&
         <Grid container spacing={2}>
           {notes.map(list => (
