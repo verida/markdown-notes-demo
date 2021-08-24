@@ -153,8 +153,8 @@ const AppLayouts = ({ children }) => {
   const handleClickAway = (event) => {
     if ((event.target === modal && modal !== null)
       || (event.target === closeModal && closeModal !== null)) {
-      modal.style.display = 'none';
       setIsLoading(false)
+      modal.style.display = 'none';
     }
   };
 
@@ -166,12 +166,16 @@ const AppLayouts = ({ children }) => {
     if (decryptedSignature) {
       initializeApp()
     }
+  }, []);
+
+
+  useEffect(() => {
     window.addEventListener('click', handleClickAway);
 
     return () => {
       window.removeEventListener('click', handleClickAway);
     };
-  }, []);
+  }, [isLoading]);
 
 
   return (
