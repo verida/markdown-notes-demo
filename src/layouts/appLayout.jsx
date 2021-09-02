@@ -5,7 +5,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -16,6 +15,7 @@ import { Avatar, Container, IconButton } from '@material-ui/core';
 import PopOverMenu from '../components/popover/Popover';
 import LayoutDrawer from './layoutDrawer';
 import Store from '../utils/store';
+import veridaButtonImage from '../assets/images/connect_with_verida_dark.png'
 import { USER_SESSION_KEY, VERIDA_USER_SIGNATURE } from '../constants';
 import useAuthentication from '../hooks/useAuthentication';
 
@@ -114,9 +114,6 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(1.4, 1),
     }
   },
-  connectButton: {
-    fontWeight: 600
-  },
   cardView: {
     display: 'flex',
     justifyContent: 'center',
@@ -127,6 +124,11 @@ const useStyles = makeStyles((theme) => ({
       width: '100%',
     }
   },
+  connectButton: {
+    '&:disabled': {
+      cursor: "not-allowed"
+    }
+  }
 }));
 
 
@@ -180,6 +182,7 @@ const AppLayouts = ({ children }) => {
 
   return (
     <div className={classes.root}>
+
       <AppBar
         style={{
           boxShadow: "0px 35px 45px rgba(7, 14, 39, 0.05)"
@@ -231,16 +234,19 @@ const AppLayouts = ({ children }) => {
                   Click on the  button to connect with your vault <br />
                   to use Markdown Notes
                 </Typography>
-                <Button
-                  fullWidth
-                  variant="contained"
+                <input
+                  className={classes.connectButton}
                   disabled={isLoading}
                   onClick={initializeApp}
-                  className={classes.connectButton}
-                  color="primary"
-                >
-                  {isLoading ? 'Connecting...' : 'Connect'}
-                </Button>
+                  type="image" src={veridaButtonImage}
+                  alt="button"
+                />
+                {isLoading &&
+                  <div className={classes.cardContent}>
+                    connecting...
+                    <CircularProgress color="secondary" />
+                  </div>}
+
               </CardContent>
             </Card>
           }
