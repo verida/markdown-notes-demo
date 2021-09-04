@@ -1,0 +1,75 @@
+{
+  "parser": "babel-eslint",
+  "env": {
+    "browser": true,
+    "jest": true,
+    "es6": true
+  },
+  "plugins": [
+    "react"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:jsx-a11y/recommended",
+    "plugin:react-hooks/recommended",
+    "airbnb"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "rules": {
+    "object-curly-newline":"off",
+    "operator-linebreak":"off",
+    "import/no-named-as-default": 0,
+    "additional-rule": "off",
+    "no-console": "warn",
+    "arrow-body-style": "off",
+    "comma-dangle": "off",
+    "linebreak-style": "off",
+    "consistent-return": "off",
+    "no-plusplus": "off",
+    "no-unused-vars": "warn",
+    "no-underscore-dangle": "off",
+    "import/no-named-as-default-member": "off",
+    "import/no-extraneous-dependencies": "off",
+    "react/jsx-props-no-spreading": "off",
+    "react/prop-types": "off",
+    "import/prefer-default-export": "off",
+    "react/forbid-prop-types": "off",
+    "react/react-in-jsx-scope": "off",
+    "no-shadow": "off",
+    "no-param-reassign": "off",
+    "react/jsx-filename-extension": "off",
+    "react/no-danger": "off",
+    "jsx-a11y/aria-role": "off",
+    "react/jsx-fragments": "off",
+    "template-curly-spacing" : "off",
+    "indent" : "off",
+    "no-restricted-syntax":"off"
+  },
+  "settings": {
+    "react": {
+      "createClass": "createReactClass",
+      "pragma": "React", 
+      "fragment": "Fragment", 
+      "version": "detect",
+      "flowVersion": "0.53"
+    },
+    "propWrapperFunctions": [
+        "forbidExtraProps",
+        {"property": "freeze", "object": "Object"},
+        {"property": "myFavoriteWrapper"}
+    ],
+    "linkComponents": [
+      "Hyperlink",
+      {"name": "Link", "linkAttribute": "to"}
+    ]
+  }
+}
