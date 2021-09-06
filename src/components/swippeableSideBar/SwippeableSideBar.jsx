@@ -6,24 +6,22 @@ import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
 import { AppContext } from '../../contextApi/ContextProvider';
 
-
 const useStyles = makeStyles((theme) => ({
   list: {
     width: 600,
     [theme.breakpoints.down('sm')]: {
-      width: 350,
+      width: 350
     }
   },
   fullList: {
-    width: 'auto',
+    width: 'auto'
   },
   button: {
     margin: theme.spacing(1, 0)
   }
-
 }));
 
-const position = "right";
+const position = 'right';
 
 const SwipeableSideMenu = ({ children }) => {
   const classes = useStyles();
@@ -33,14 +31,13 @@ const SwipeableSideMenu = ({ children }) => {
   const list = (anchor) => (
     <div
       className={clsx(classes.list, {
-        [classes.fullList]: anchor === 'top' || anchor === 'bottom',
+        [classes.fullList]: anchor === 'top' || anchor === 'bottom'
       })}
       role="presentation"
     >
       {children}
     </div>
   );
-
 
   return (
     <div>
@@ -51,7 +48,10 @@ const SwipeableSideMenu = ({ children }) => {
           endIcon={<AddIcon />}
           variant="outlined"
           color="secondary"
-          onClick={toggleDrawer(position, true)}>Add Note</Button>
+          onClick={toggleDrawer(position, true)}
+        >
+          Add Note
+        </Button>
         <SwipeableDrawer
           anchor={position}
           open={slideOpen[position]}
@@ -63,7 +63,6 @@ const SwipeableSideMenu = ({ children }) => {
       </React.Fragment>
     </div>
   );
-}
-
+};
 
 export default SwipeableSideMenu;

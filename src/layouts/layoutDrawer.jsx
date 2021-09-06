@@ -8,8 +8,6 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import SideMenu from '../components/sideMenu/SideMenu';
 
-
-
 const LayoutDrawer = ({ classes, open, setOpen }) => {
   const theme = useTheme();
   const handleDrawerClose = () => {
@@ -23,27 +21,24 @@ const LayoutDrawer = ({ classes, open, setOpen }) => {
       variant="permanent"
       className={clsx(classes.drawer, {
         [classes.drawerOpen]: open,
-        [classes.drawerClose]: !open,
+        [classes.drawerClose]: !open
       })}
       classes={{
         paper: clsx({
           [classes.drawerOpen]: open,
-          [classes.drawerClose]: !open,
+          [classes.drawerClose]: !open
         })
       }}
     >
       <div className={classes.toolbar}>
         <IconButton onClick={handleDrawerClose}>
-          {theme.direction === 'rtl' ?
-            <ChevronRightIcon /> : <ChevronLeftIcon />}
+          {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
         </IconButton>
       </div>
       <Divider />
       <SideMenu />
     </Drawer>
   );
-}
-
-
+};
 
 export default LayoutDrawer;

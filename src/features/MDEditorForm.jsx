@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import Alert from '@material-ui/lab/Alert';
@@ -10,19 +10,18 @@ import { AppContext } from '../contextApi/ContextProvider';
 import useActions from '../hooks/useActions';
 import BackDropLoader from '../components/appLoaders/BackDropLoader';
 
-
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: theme.spacing(1, 2),
     '& > *': {
-      margin: theme.spacing(2, 'auto'),
-    },
-  },
+      margin: theme.spacing(2, 'auto')
+    }
+  }
 }));
 
-const MDEditorForm = ({ showTitle, preview }) => {
+const MDEditorForm = ({ showTitle }) => {
   const classes = useStyles();
-  const [error, setError] = useState('')
+  const [error, setError] = useState('');
   const { updateContent, postContent } = useActions();
   const {
     markdownVal,
@@ -35,26 +34,25 @@ const MDEditorForm = ({ showTitle, preview }) => {
     toggleDrawer
   } = useContext(AppContext);
 
-
   const onSubmitNote = () => {
     if (!noteTitle || !markdownVal) {
-      return setError('All Fields are required')
-    };
-    setError('')
+      return setError('All Fields are required');
+    }
+    setError('');
     if (selectedNote) {
       const { title, body, ...rest } = selectedNote;
       const editedItem = {
         title: noteTitle,
         body: markdownVal,
-        ...rest,
-      }
+        ...rest
+      };
       updateContent(editedItem);
       setOpenPreview(false);
     } else {
       postContent({ title: noteTitle, markdownVal });
       toggleDrawer('right', false);
     }
-  }
+  };
 
   return (
     <div className={classes.root}>
@@ -63,33 +61,27 @@ const MDEditorForm = ({ showTitle, preview }) => {
         <Typography variant="h4" noWrap>
           {showTitle && 'Notes'}
         </Typography>
-        <Button
-          onClick={onSubmitNote}
-          variant="contained"
-          color="secondary"
-        >
+        <Button onClick={onSubmitNote} variant="contained" color="secondary">
           {selectedNote ? 'Update' : 'Save'}
         </Button>
       </Box>
       {error && <Alert severity="error">{error}</Alert>}
-      <TextField onChange={(e) => {
-        setNoteTitle(e.target.value)
-      }} id="outlined-basic"
+      <TextField
+        onChange={(e) => {
+          setNoteTitle(e.target.value);
+        }}
+        id="outlined-basic"
         fullWidth
         value={noteTitle}
         color="secondary"
         label="Note Title"
-        variant="outlined" />
+        variant="outlined"
+      />
       <div>
-        <RichTextEditor
-          preview
-          markdownVal={markdownVal}
-          setMarkdownVal={setMarkdownVal}
-        />
+        <RichTextEditor preview markdownVal={markdownVal} setMarkdownVal={setMarkdownVal} />
       </div>
-
     </div>
   );
-}
+};
 
-export default MDEditorForm
+export default MDEditorForm;

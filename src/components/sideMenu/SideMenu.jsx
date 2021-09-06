@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
@@ -12,16 +12,15 @@ import { Link } from 'react-router-dom';
 const NavItems = [
   {
     title: 'All Notes',
-    path: "/",
+    path: '/',
     icon: <NotesIcon />
   },
   {
     title: 'Favorites',
     path: '/favorites',
     icon: <StarIcon />
-  },
-]
-
+  }
+];
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -45,7 +44,9 @@ const SideMenu = () => {
         {NavItems.map((item) => (
           <Link className={classes.link} to={item.path} key={item.title}>
             <ListItem button>
-              <ListItemIcon color="inherit" className={classes.icon}>{item.icon}</ListItemIcon>
+              <ListItemIcon color="inherit" className={classes.icon}>
+                {item.icon}
+              </ListItemIcon>
               <ListItemText primary={item.title} />
             </ListItem>
           </Link>
@@ -53,7 +54,7 @@ const SideMenu = () => {
       </List>
       <Divider />
     </>
-  )
-}
+  );
+};
 
-export default SideMenu
+export default SideMenu;

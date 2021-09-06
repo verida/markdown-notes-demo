@@ -2,22 +2,23 @@
 import React, { useContext, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
+import { makeStyles } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import NotesCard from '../components/notescard/NotesCard';
 import MDEditorForm from '../features/MDEditorForm';
 import { AppContext } from '../contextApi/ContextProvider';
 import ModalAlert from '../components/modalAlert/ModalAlert';
 import ModalPreview from '../features/ModalPreview';
-import { makeStyles } from '@material-ui/core';
 import { USER_SESSION_KEY } from '../constants';
 import Store from '../utils/store';
-
-
+import SortBarPanel from '../components/sortBarPanel/SortBarPanel';
+import NotesUI from '../components/editorview/NotesViewUI';
+import { NotesHeader, AppHeader } from '../components/common/index';
 
 const useStyles = makeStyles((theme) => ({
   button: {
     margin: theme.spacing(1, 0)
-  },
+  }
 }));
 
 const Home = () => {
@@ -34,43 +35,48 @@ const Home = () => {
   const [open, setOpen] = useState(false);
   const isConnected = Store.get(USER_SESSION_KEY);
 
-
   const openModal = () => {
     setNoteTitle('');
     setMarkdownVal('');
     setSelectedNote('');
-    setOpen(!open)
-  }
+    setOpen(!open);
+  };
 
   return (
     <div>
-      <ModalAlert open={openPreview} setOpen={setOpenPreview} >
+      <AppHeader />
+      <ModalAlert open={openPreview} setOpen={setOpenPreview}>
         <ModalPreview />
       </ModalAlert>
-      <ModalAlert open={open} setOpen={setOpen} >
+      <ModalAlert open={open} setOpen={setOpen}>
         <MDEditorForm showTitle />
       </ModalAlert>
-      {appData?.name && <Button
-        size="large"
-        className={classes.button}
-        endIcon={<AddIcon />}
-        variant="outlined"
-        color="secondary"
-        onClick={openModal}>
-        Add Note
-      </Button>}
-      {notes && isConnected
-        &&
+      {appData.name && (
+        <Button
+          size="large"
+          className={classes.button}
+          endIcon={<AddIcon />}
+          variant="outlined"
+          color="secondary"
+          onClick={openModal}
+        >
+          Add Note
+        </Button>
+      )}
+      <NotesHeader />
+      <SortBarPanel />
+      {notes && isConnected && (
         <Grid container spacing={2}>
-          {notes.map(list => (
+          {notes.map((list) => (
             <Grid item md={4} sm={12} xs={12} key={list._id}>
               <NotesCard item={list} />
             </Grid>
           ))}
         </Grid>
-      }
+      )}
+      <NotesUI />
     </div>
-  )
-}
+  );
+};
 
 export default Home;

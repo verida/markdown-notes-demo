@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
@@ -16,17 +15,16 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     marginLeft: theme.spacing(2),
-    flex: 1,
-  },
+    flex: 1
+  }
 }));
 
-const Transition = React.forwardRef(function Transition(props, ref) {
+const Transition = React.forwardRef((props, ref) => {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 export default function FullScreenDialog({ open, setOpen, children }) {
   const classes = useStyles();
-
 
   const handleClose = () => {
     setOpen(false);
@@ -34,13 +32,19 @@ export default function FullScreenDialog({ open, setOpen, children }) {
 
   return (
     <div>
-      <Dialog style={{
-        width: '80%',
-        height: '80%',
-        margin: ' auto',
-        borderRadius: '8px'
-      }} fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
-        <AppBar position="fixed" className={classes.appBar} >
+      <Dialog
+        style={{
+          width: '80%',
+          height: '80%',
+          margin: ' auto',
+          borderRadius: '8px'
+        }}
+        fullScreen
+        open={open}
+        onClose={handleClose}
+        TransitionComponent={Transition}
+      >
+        <AppBar position="fixed" className={classes.appBar}>
           <Toolbar>
             <Typography variant="h6" className={classes.title}>
               Preview
@@ -55,4 +59,3 @@ export default function FullScreenDialog({ open, setOpen, children }) {
     </div>
   );
 }
-
