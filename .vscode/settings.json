@@ -1,0 +1,16 @@
+{
+    "editor.codeActionsOnSave": {},
+    "editor.tabCompletion": "on",
+		"editor.formatOnSave": true,
+    "editor.tabSize": 2,
+    "prettier.useTabs": true,
+		"[javascript]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[vue]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[javascriptreact]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+}
