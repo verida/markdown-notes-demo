@@ -1,18 +1,39 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  user: null,
-  error: ''
+  app: null,
+  avatar: null,
+  connecting: false
 };
 
-const connectVault = createSlice({
+const webVault = createSlice({
   initialState,
-  name: 'connectVault',
+  name: 'webVault',
   reducers: {
-    onSuccess(state, action) {
-      const { userData } = action.payload;
-      const currentUser = userData;
-      state.user = currentUser;
+    connectWithVault() {},
+    onSuccessLogin(state, action) {
+      const data = action.payload;
+      const { avatar, name, country } = data?.userProfile;
+      state.app = {
+        name,
+        country
+      };
+      const parseAvatarValue = JSON.parse(avatar);
+      state.avatar = `data:image/${parseAvatarValue.format};base64,${parseAvatarValue.base64}`;
+      state.connecting = !state.connecting;
+      return state;
+    },
+    onConnecting(state) {
+      state.connecting = !state.connecting;
+    },
+    setUserAvatar(state, action) {
+      const parseAvatarValue = JSON.parse(action.payload);
+      state.avatar = `data:image/${parseAvatarValue.format};base64,${parseAvatarValue.base64}`;
+      state.connecting = !state.connecting;
+      return state;
+    },
+    setUserProfile(state, action) {
+      state.app = action.payload;
       return state;
     },
     onError(state, action) {
@@ -23,6 +44,7 @@ const connectVault = createSlice({
   }
 });
 
-export const { onError, onSuccess } = connectVault.actions;
+export const { onError, onSuccessLogin, onConnecting, setUserAvatar, setUserProfile } =
+  webVault.actions;
 
-export default connectVault.reducer;
+export default webVault.reducer;

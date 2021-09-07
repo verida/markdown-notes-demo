@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -24,6 +25,7 @@ export default function UserAvatar() {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  const { avatar } = useSelector((state) => state.webVault);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -41,7 +43,7 @@ export default function UserAvatar() {
         aria-haspopup="true"
         onClick={handleClick}
       >
-        <Avatar className={open ? classes.avatar : ''} alt="appData.name" src="avatar" />
+        <Avatar className={open ? classes.avatar : ''} alt="appData.name" src={avatar} />
       </IconButton>
       <Menu
         id="long-menu"

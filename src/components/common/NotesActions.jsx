@@ -2,12 +2,15 @@ import React from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import { useDispatch } from 'react-redux';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { useHistory } from 'react-router';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import { ListItemIcon, makeStyles, Typography, useMediaQuery } from '@material-ui/core';
 import ShareIcon from '../../assets/icons/Share.svg';
 import TrashIcon from '../../assets/icons/Trash.svg';
 import EditIcon from '../../assets/icons/Edit.svg';
+import { markdownActions, markdownApi, setSelectedNote } from '../../redux/reducers/editor';
 
 const useStyles = makeStyles((theme) => ({
   iconText: {
@@ -26,11 +29,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function NotesAction() {
+export default function NotesAction({ item }) {
   const classes = useStyles();
   const matches = useMediaQuery('(max-width:768px)');
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -38,6 +43,19 @@ export default function NotesAction() {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const onEdit = () => {
+    dispatch(setSelectedNote(item));
+    history.push(`/editor?type=edit&id=${item._id}`);
+  };
+
+  const onDelete = () => {
+    const data = {
+      type: markdownActions.DELETE,
+      data: item
+    };
+    dispatch(markdownApi(data));
   };
 
   return (
@@ -76,7 +94,7 @@ export default function NotesAction() {
             Share
           </Typography>
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={onEdit}>
           <ListItemIcon>
             <img alt="icon" src={EditIcon} />
           </ListItemIcon>
@@ -84,7 +102,7 @@ export default function NotesAction() {
             Rename
           </Typography>
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={onDelete}>
           <ListItemIcon>
             <img alt="icon" src={TrashIcon} />
           </ListItemIcon>

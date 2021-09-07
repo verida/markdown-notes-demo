@@ -1,31 +1,16 @@
 import React, { createContext, useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import appServices from '../api/services';
+import { setUserAvatar, setUserProfile } from '../redux/reducers/auth';
 
 export const AppContext = createContext();
 
 const ContextProvider = ({ children }) => {
-  const [appData, setAppData] = useState('');
-  const [avatar, setAvatar] = useState('');
-  const [notes, setNotes] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedNote, setSelectedNote] = useState('');
-  const [markdownVal, setMarkdownVal] = useState('');
-  const [noteTitle, setNoteTitle] = useState('');
-  const [open, setOpen] = useState(false);
-  const [openPreview, setOpenPreview] = useState(false);
-  const [slideOpen, setSlideOpen] = useState({
-    top: false,
-    left: false,
-    bottom: false,
-    right: false
-  });
+  const [appData] = useState('');
 
-  const displayAvatar = (profileAvatar) => {
-    if (profileAvatar) {
-      const parseAvatarValue = JSON.parse(profileAvatar);
-      setAvatar(`data:image/${parseAvatarValue.format};base64,${parseAvatarValue.base64}`);
-    }
-  };
+  const [open, setOpen] = useState(false);
+
+  const dispatch = useDispatch();
 
   const userEvent = (db) => {
     const { PouchDB, userDB } = db;
@@ -37,9 +22,9 @@ const ContextProvider = ({ children }) => {
         rev: info.changes[0].rev
       });
       if (row.key === 'avatar') {
-        displayAvatar(row.value);
+        dispatch(setUserAvatar(row.value));
       } else {
-        setAppData({ [row.key]: row.value });
+        dispatch(setUserProfile({ [row.key]: row.value }));
       }
     });
   };
@@ -52,67 +37,10 @@ const ContextProvider = ({ children }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appData]);
-  const singleNoteAction = (open, item) => {
-    if (!open || !item) {
-      setSelectedNote('');
-      setNoteTitle('');
-      setMarkdownVal('');
-    }
-    if (item) {
-      setSelectedNote(item);
-      setMarkdownVal(item.body);
-      setNoteTitle(item.title);
-    }
-  };
-
-  const openMarkDownView = (open = false, item) => {
-    singleNoteAction(open, item);
-    /**
-     * Add Modal Open state for Markdown Preview
-     */
-    setOpenPreview(open);
-  };
-
-  // eslint-disable-next-line padded-blocks
-  const toggleDrawer = (anchor, open, item) => (event) => {
-    if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return;
-    }
-    singleNoteAction(open, item);
-    setSlideOpen({ ...slideOpen, [anchor]: open });
-  };
 
   const values = {
-    avatar,
-    slideOpen,
-
     open,
-    setOpen,
-
-    notes,
-    setNotes,
-
-    appData,
-    setAppData,
-
-    markdownVal,
-    setMarkdownVal,
-
-    openPreview,
-    setOpenPreview,
-
-    noteTitle,
-    setNoteTitle,
-
-    selectedNote,
-    setSelectedNote,
-
-    setIsLoading,
-    isLoading,
-
-    toggleDrawer,
-    displayAvatar,
-    openMarkDownView
+    setOpen
   };
 
   return <AppContext.Provider value={values}>{children}</AppContext.Provider>;

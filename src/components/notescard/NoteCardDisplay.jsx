@@ -1,9 +1,11 @@
 import React from 'react';
 import { Avatar, Grid, makeStyles, SvgIcon } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
+import { useSelector } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import { reduceStringLength } from '../../helpers/Editor.helpers';
 import { ReactComponent as StarIcon } from '../../assets/icons/star_filled.svg';
+import UnFilledStarIcon from '../../assets/icons/Star_unfilled.svg';
 import NotesAction from '../common/NotesActions';
 
 const useStyles = makeStyles((theme) => ({
@@ -87,30 +89,30 @@ const useStyles = makeStyles((theme) => ({
 
 const NoteCardDisplay = () => {
   const classes = useStyles();
-
-  const word = `Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ea optio veniam nulla itaque ipsa\
-  orem ipsum dolor sit, amet consectetur adipisicing elit. Ea optio veniam nulla itaque ipsa
-  Ea optio veniam nulla itaque ipsa\
-  orem ipsum dolor sit, amet consectetur adipisicing elit. Ea optio veniam nulla itaque ipsa
-  deserunt laborum, nostrum suscipit, autem dolore ducimus! Natus
-  deserunt laborum, nostrum suscipit, autem dolore ducimus! Natus
-`;
+  const { notes } = useSelector((state) => state.markdownEditor);
 
   return (
     <>
       <Grid container className={classes.tableContainer}>
-        {[1, 2, 3, 4, 5].map((list) => (
-          <Grid item md={3} sm={12} xs={12} key={list}>
+        {notes.map((list) => (
+          <Grid item md={3} sm={12} xs={12} key={list._id}>
             <Box m={2} className={classes.root}>
-              <Box className={classes.contentBox}>{reduceStringLength(word, 200)}</Box>
+              <Box className={classes.contentBox}>{reduceStringLength(list.body, 200)}</Box>
               <Box className={classes.panelTab}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                   <Box display="flex" ml={1} alignItems="center">
-                    <SvgIcon component={StarIcon} />
-                    <Typography className={classes.cartTitle}>Notes title</Typography>
+                    {list.isFavorite ? (
+                      <SvgIcon component={StarIcon} />
+                    ) : (
+                      <img src={UnFilledStarIcon} alt="star" />
+                    )}
+                    <Typography className={classes.cartTitle}>
+                      {/* {reduceStringLength(list.title, 13)} */}
+                      {list.title}
+                    </Typography>
                   </Box>
                   <Box mr={-1}>
-                    <NotesAction />
+                    <NotesAction item={list} />
                     <Box className={classes.avatar} display="flex">
                       <Avatar
                         src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"
@@ -140,13 +142,13 @@ const NoteCardDisplay = () => {
 
       {/* Mobile Version UI */}
       <Grid container className={classes.mobileUI}>
-        {[1, 2, 3, 4, 5].map((list) => (
-          <Grid item md={6} sm={12} xs={6} key={list}>
+        {notes.map((list) => (
+          <Grid item md={6} sm={12} xs={6} key={list._id}>
             <Box m={2} className={classes.rootMobile}>
-              <Box className={classes.contentBoxMobile}>{reduceStringLength(word, 300)}</Box>
+              <Box className={classes.contentBoxMobile}>{reduceStringLength(list.body, 300)}</Box>
               <Box className={classes.panelTabMobile}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
-                  <NotesAction />
+                  <NotesAction item={list} />
                   <Typography className={classes.cartTitle}>Notes title</Typography>
                 </Box>
                 <Box display="flex" ml={2} className={classes.captionContainer}>
@@ -154,7 +156,11 @@ const NoteCardDisplay = () => {
                     Edited 10 weeks ago
                   </Typography>
                   <Box>
-                    <SvgIcon component={StarIcon} />
+                    {list.isFavorite ? (
+                      <SvgIcon component={StarIcon} />
+                    ) : (
+                      <img src={UnFilledStarIcon} alt="star" />
+                    )}
                   </Box>
                 </Box>
               </Box>
