@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import appServices from '../api/services';
 
-export const AppContext = createContext()
+export const AppContext = createContext();
 
 const ContextProvider = ({ children }) => {
   const [appData, setAppData] = useState('');
@@ -9,65 +9,49 @@ const ContextProvider = ({ children }) => {
   const [notes, setNotes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedNote, setSelectedNote] = useState('');
-  const [markdownVal, setMarkdownVal] = useState("");
-  const [noteTitle, setNoteTitle] = useState('')
+  const [markdownVal, setMarkdownVal] = useState('');
+  const [noteTitle, setNoteTitle] = useState('');
   const [open, setOpen] = useState(false);
   const [openPreview, setOpenPreview] = useState(false);
   const [slideOpen, setSlideOpen] = useState({
     top: false,
     left: false,
     bottom: false,
-    right: false,
+    right: false
   });
-
-  useEffect(() => {
-    if (window.veridaDApp) {
-      appServices.profileEventSubscription()
-        .then((data) => {
-          userEvent(data)
-        });
-
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [appData])
 
   const displayAvatar = (profileAvatar) => {
     if (profileAvatar) {
-      const parseAvatarValue = JSON.parse(profileAvatar)
-      setAvatar(`data:image/${parseAvatarValue.format};base64,${parseAvatarValue.base64}`)
+      const parseAvatarValue = JSON.parse(profileAvatar);
+      setAvatar(`data:image/${parseAvatarValue.format};base64,${parseAvatarValue.base64}`);
     }
-  }
+  };
 
   const userEvent = (db) => {
-    const { PouchDB, userDB } = db
+    const { PouchDB, userDB } = db;
     PouchDB.changes({
       since: 'now',
       live: true
-    }).on('change', async function (info) {
+    }).on('change', async (info) => {
       const row = await userDB.get(info.id, {
         rev: info.changes[0].rev
       });
       if (row.key === 'avatar') {
-        displayAvatar(row.value)
+        displayAvatar(row.value);
       } else {
-        setAppData({ [row.key]: row.value })
+        setAppData({ [row.key]: row.value });
       }
     });
-  }
+  };
 
-
-
-
-  const openMarkDownView = (open = false, item) => {
-    singleNoteAction(open, item);
-    //TODO 
-    /**
-     * Add Modal Open state for Markdown Preview
-     */
-    setOpenPreview(open)
-  }
-
-
+  useEffect(() => {
+    if (window.veridaDApp) {
+      appServices.profileEventSubscription().then((data) => {
+        userEvent(data);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [appData]);
   const singleNoteAction = (open, item) => {
     if (!open || !item) {
       setSelectedNote('');
@@ -75,23 +59,30 @@ const ContextProvider = ({ children }) => {
       setMarkdownVal('');
     }
     if (item) {
-      setSelectedNote(item)
+      setSelectedNote(item);
       setMarkdownVal(item.body);
-      setNoteTitle(item.title)
+      setNoteTitle(item.title);
     }
-  }
+  };
 
+  const openMarkDownView = (open = false, item) => {
+    singleNoteAction(open, item);
+    /**
+     * Add Modal Open state for Markdown Preview
+     */
+    setOpenPreview(open);
+  };
+
+  // eslint-disable-next-line padded-blocks
   const toggleDrawer = (anchor, open, item) => (event) => {
-
     if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
-    singleNoteAction(open, item)
+    singleNoteAction(open, item);
     setSlideOpen({ ...slideOpen, [anchor]: open });
   };
 
   const values = {
-
     avatar,
     slideOpen,
 
@@ -100,7 +91,6 @@ const ContextProvider = ({ children }) => {
 
     notes,
     setNotes,
-    
 
     appData,
     setAppData,
@@ -120,17 +110,12 @@ const ContextProvider = ({ children }) => {
     setIsLoading,
     isLoading,
 
-
     toggleDrawer,
     displayAvatar,
     openMarkDownView
-  }
+  };
 
-  return (
-    <AppContext.Provider value={values}>
-      {children}
-    </AppContext.Provider>
-  )
-}
+  return <AppContext.Provider value={values}>{children}</AppContext.Provider>;
+};
 
-export default ContextProvider
+export default ContextProvider;

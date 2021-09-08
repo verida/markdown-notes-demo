@@ -52,7 +52,8 @@
     "react/jsx-fragments": "off",
     "template-curly-spacing" : "off",
     "indent" : "off",
-    "no-restricted-syntax":"off"
+    "no-restricted-syntax":"off",
+    "react/jsx-wrap-multilines":"off"
   },
   "settings": {
     "react": {

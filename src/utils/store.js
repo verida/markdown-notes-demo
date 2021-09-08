@@ -11,7 +11,7 @@ class Store {
     localStorage.clear();
   }
 
-  static get = (name) => {
+  static get(name) {
     const items = localStorage.getItem(name);
     if (items) {
       try {
@@ -22,7 +22,7 @@ class Store {
     } else {
       return null;
     }
-  };
+  }
 }
 
 export default Store;

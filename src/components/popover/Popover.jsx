@@ -6,19 +6,11 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { AppContext } from '../../contextApi/ContextProvider';
 import appServices from '../../api/services';
 
-
-
 export default function PopOverMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-  const {
-    setAppData,
-    displayAvatar,
-    setNotes,
-    appData,
-    setNoteTitle,
-    setMarkdownVal,
-  } = useContext(AppContext);
+  const { setAppData, displayAvatar, setNotes, appData, setNoteTitle, setMarkdownVal } =
+    useContext(AppContext);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -28,7 +20,6 @@ export default function PopOverMenu() {
     setAnchorEl(null);
   };
 
-
   const handleSignOut = () => {
     appServices.logout().then(() => {
       setNotes([]);
@@ -37,13 +28,14 @@ export default function PopOverMenu() {
       setNoteTitle('');
       setMarkdownVal('');
     });
-
   };
 
   return (
-    <div style={{
-      margin: '0 0 0 0.3rem'
-    }}>
+    <div
+      style={{
+        margin: '0 0 0 0.3rem'
+      }}
+    >
       <IconButton
         aria-label="more"
         aria-controls="long-menu"
@@ -52,19 +44,9 @@ export default function PopOverMenu() {
       >
         <MoreVertIcon />
       </IconButton>
-      <Menu
-        id="long-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={open}
-        onClose={handleClose}
-      >
-        <MenuItem>
-          {appData.name}
-        </MenuItem>
-        <MenuItem onClick={handleSignOut}>
-          Logout
-        </MenuItem>
+      <Menu id="long-menu" anchorEl={anchorEl} keepMounted open={open} onClose={handleClose}>
+        <MenuItem>{appData.name}</MenuItem>
+        <MenuItem onClick={handleSignOut}>Logout</MenuItem>
       </Menu>
     </div>
   );
