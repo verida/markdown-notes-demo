@@ -10,7 +10,12 @@ import { ListItemIcon, makeStyles, Typography, useMediaQuery } from '@material-u
 import ShareIcon from '../../assets/icons/Share.svg';
 import TrashIcon from '../../assets/icons/Trash.svg';
 import EditIcon from '../../assets/icons/Edit.svg';
-import { markdownActions, markdownApi, setSelectedNote } from '../../redux/reducers/editor';
+import {
+  markdownActions,
+  markdownApi,
+  setNoteTitle,
+  setSelectedNote
+} from '../../redux/reducers/editor';
 
 const useStyles = makeStyles((theme) => ({
   iconText: {
@@ -47,6 +52,7 @@ export default function NotesAction({ item }) {
 
   const onEdit = () => {
     dispatch(setSelectedNote(item));
+    dispatch(setNoteTitle(item.title));
     history.push(`/editor?type=edit&id=${item._id}`);
   };
 

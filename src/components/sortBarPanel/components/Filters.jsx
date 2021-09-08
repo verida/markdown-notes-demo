@@ -112,7 +112,8 @@ export default function FiltersUI() {
                 elevation={0}
                 style={{
                   margin: '0.4rem  0 0 4.5rem',
-                  width: '12.75rem'
+                  width: '12.75rem',
+                  zIndex: 9999
                 }}
               >
                 <ClickAwayListener onClickAway={handleClose}>

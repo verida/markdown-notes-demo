@@ -8,6 +8,10 @@ const initialState = {
     title: '',
     body: ''
   },
+  noteItem: {
+    title: 'Untitled',
+    isFavorite: false
+  },
   error: ''
 };
 
@@ -57,8 +61,32 @@ const markdownEditor = createSlice({
       const data = action.payload;
       state.selectedNote = {
         title: data.title,
-        body: data.title
+        body: data.body
       };
+    },
+    setNoteTitle(state, action) {
+      const data = action.payload;
+      const prevState = {
+        ...state,
+        noteItem: {
+          ...state.noteItem,
+          title: data
+        }
+      };
+      state = prevState;
+      return state;
+    },
+    setFavoriteItem(state, action) {
+      const data = action.payload;
+      const prevState = {
+        ...state,
+        noteItem: {
+          ...state.noteItem,
+          isFavorite: data
+        }
+      };
+      state = prevState;
+      return state;
     }
   },
   extraReducers: {
@@ -81,7 +109,9 @@ export const {
   onDeleteNote,
   onUpdateNote,
   switchDisplay,
-  setSelectedNote
+  setSelectedNote,
+  setNoteTitle,
+  setFavoriteItem
 } = markdownEditor.actions;
 
 export default markdownEditor.reducer;

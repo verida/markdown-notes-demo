@@ -1,16 +1,19 @@
+/* eslint-disable react/jsx-one-expression-per-line */
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import Moment from 'react-moment';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
-import { Typography } from '@material-ui/core';
+import { useSelector } from 'react-redux';
+import { IconButton, SvgIcon, Typography } from '@material-ui/core';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Box from '@material-ui/core/Box';
 import { ReactComponent as StarIcon } from '../../assets/icons/star_filled.svg';
+import UnFilledStarIcon from '../../assets/icons/Star_unfilled.svg';
 import NotesAction from '../common/NotesActions';
-import { reduceStringLength } from '../../helpers/Editor.helpers';
 
 const useStyles = makeStyles((theme) => ({
   table: {
@@ -36,6 +39,14 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       display: 'block'
     }
+  },
+  tableRow: {
+    borderRadius: theme.shape.borderRadius,
+    '&:hover': {
+      background: '#F5F5FC',
+      height: '3rem',
+      borderRadius: theme.shape.borderRadius
+    }
   }
 }));
 
@@ -51,6 +62,8 @@ const rows = [
 
 export default function NoteTableDisplay() {
   const classes = useStyles();
+  const { notes } = useSelector((state) => state.markdownEditor);
+  const { app } = useSelector((state) => state.webVault);
 
   return (
     <>
@@ -66,25 +79,31 @@ export default function NoteTableDisplay() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.name}>
+            {notes.map((row) => (
+              <TableRow className={classes.tableRow} key={row.name}>
                 <TableCell component="th" scope="row">
                   <Box component="span" display="flex" alignItems="center">
-                    <StarIcon />
-                    <span className={classes.listName}>Note from the last meeting</span>
+                    {row.isFavorite ? (
+                      <IconButton>
+                        <SvgIcon component={StarIcon} />
+                      </IconButton>
+                    ) : (
+                      <IconButton>
+                        <img src={UnFilledStarIcon} alt="star" />
+                      </IconButton>
+                    )}
+                    <span className={classes.listName}>{row.title}</span>
                   </Box>
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  Floyd Miles
+                  {app.name}
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  5 days ago
+                  <Moment fromNow>{row.modifiedAt}</Moment>
                 </TableCell>
+                <TableCell component="th" scope="row" />
                 <TableCell component="th" scope="row">
-                  Marci Senter, Annabel Rohan
-                </TableCell>
-                <TableCell component="th" scope="row">
-                  <NotesAction />
+                  <NotesAction item={row} />
                 </TableCell>
               </TableRow>
             ))}
@@ -97,17 +116,17 @@ export default function NoteTableDisplay() {
           <Box display="flex" alignItems="center" justifyContent="space-between">
             <Box display="flex" alignItems="center" justifyContent="space-between">
               <StarIcon />
-              <span className={classes.listName}>
-                {reduceStringLength('Note from the last meeting he last meeting', 30)}
-              </span>
+              <span className={classes.listName}>{row.title}</span>
             </Box>
             <Box>
-              <NotesAction />
+              <NotesAction item={row} />
             </Box>
           </Box>
           <Box display="flex">
-            <Typography variant="subtitle1">5 days ago</Typography>
-            <Typography variant="subtitle1">Owner : Chris Were</Typography>
+            <Typography variant="subtitle1">
+              <Moment fromNow>{row.modifiedAt}</Moment>
+            </Typography>
+            <Typography variant="subtitle1">Owner :{app.name}</Typography>
           </Box>
         </Box>
       ))}
