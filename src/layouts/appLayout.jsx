@@ -141,7 +141,9 @@ const AppLayouts = ({ children }) => {
             [classes.appBarShift]: open
           })}
         >
-          <AppHeader />
+          <Container fixed>
+            <AppHeader />
+          </Container>
         </AppBar>
       )}
       {app ? (

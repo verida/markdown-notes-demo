@@ -6,7 +6,8 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router';
 import { IconButton, SvgIcon, Typography } from '@material-ui/core';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
@@ -14,6 +15,7 @@ import Box from '@material-ui/core/Box';
 import { ReactComponent as StarIcon } from '../../assets/icons/star_filled.svg';
 import UnFilledStarIcon from '../../assets/icons/Star_unfilled.svg';
 import NotesAction from '../common/NotesActions';
+import { setNoteTitle, setSelectedNote } from '../../redux/reducers/editor';
 
 const useStyles = makeStyles((theme) => ({
   table: {
@@ -42,6 +44,7 @@ const useStyles = makeStyles((theme) => ({
   },
   tableRow: {
     borderRadius: theme.shape.borderRadius,
+    cursor: 'pointer',
     '&:hover': {
       background: '#F5F5FC',
       height: '3rem',
@@ -50,20 +53,18 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0)
-];
-
 export default function NoteTableDisplay() {
   const classes = useStyles();
   const { notes } = useSelector((state) => state.markdownEditor);
   const { app } = useSelector((state) => state.webVault);
+  const history = useHistory();
+  const dispatch = useDispatch();
+
+  const navigateToDetailsPage = (item) => {
+    dispatch(setSelectedNote(item));
+    dispatch(setNoteTitle(item.title));
+    history.push(`/editor?type=edit&id=${item._id}`);
+  };
 
   return (
     <>
@@ -82,7 +83,12 @@ export default function NoteTableDisplay() {
             {notes.map((row) => (
               <TableRow className={classes.tableRow} key={row.name}>
                 <TableCell component="th" scope="row">
-                  <Box component="span" display="flex" alignItems="center">
+                  <Box
+                    onClick={() => navigateToDetailsPage(row)}
+                    component="span"
+                    display="flex"
+                    alignItems="center"
+                  >
                     {row.isFavorite ? (
                       <IconButton>
                         <SvgIcon component={StarIcon} />
@@ -111,10 +117,15 @@ export default function NoteTableDisplay() {
         </Table>
       </TableContainer>
       {/* Mobile Version UI */}
-      {rows.map((row) => (
+      {notes.map((row) => (
         <Box className={classes.mobileUI} key={row.name}>
           <Box display="flex" alignItems="center" justifyContent="space-between">
-            <Box display="flex" alignItems="center" justifyContent="space-between">
+            <Box
+              onClick={() => navigateToDetailsPage(row)}
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+            >
               <StarIcon />
               <span className={classes.listName}>{row.title}</span>
             </Box>
