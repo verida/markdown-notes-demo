@@ -5,12 +5,13 @@ import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { Container } from '@material-ui/core';
+import { Box, CircularProgress, Container } from '@material-ui/core';
 import Store from '../utils/store';
 import { VERIDA_USER_SIGNATURE } from '../constants';
 import AppHeader from '../components/common/Header';
 import markDownServices from '../api/services';
 import { onConnecting, onSuccessLogin } from '../redux/reducers/auth';
+import veridaLogo from '../assets/images/verida_logo.svg';
 import { setMarkdownNotes } from '../redux/reducers/editor';
 
 const drawerWidth = 320;
@@ -82,13 +83,35 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     background: theme.palette.black
+  },
+  authRoot: {
+    height: '100vh',
+    width: '100%',
+    background: 'linear-gradient(313deg, rgba(237,236,251,1) 0%, rgba(142,137,226,1) 75%)',
+    backdropFilter: 'blur(10px)'
+  },
+  authContainer: {
+    width: '24rem',
+    height: '22.7rem',
+    background: theme.palette.white,
+    borderRadius: '12px',
+    padding: '3rem 2.5rem',
+    position: 'absolute',
+    left: '50%',
+    top: '40%',
+    margin: theme.spacing(0, 'auto'),
+    transform: 'translate(-50%,-50%)',
+    boxShadow: '0px 35px 45px rgba(7, 14, 39, 0.05)',
+    [theme.breakpoints.down('sm')]: {
+      width: '22rem'
+    }
   }
 }));
 
 const AppLayouts = ({ children }) => {
   const classes = useStyles();
+  const { app, connecting } = useSelector((state) => state.webVault);
   const [open] = React.useState(false);
-  const { app } = useSelector((state) => state.webVault);
 
   const decryptedSignature = Store.get(VERIDA_USER_SIGNATURE);
 
@@ -114,11 +137,13 @@ const AppLayouts = ({ children }) => {
     }
     dispatch(onSuccessLogin(data));
     dispatch(setMarkdownNotes(data.notes));
-    dispatch(onConnecting());
+    // setConnecting(false);
   };
 
   useEffect(() => {
     if (decryptedSignature) {
+      // setConnecting(!connecting);
+      dispatch(onConnecting());
       markDownServices.connectVault(appInit);
     }
   }, []);
@@ -130,6 +155,33 @@ const AppLayouts = ({ children }) => {
       window.removeEventListener('click', handleClickAway);
     };
   }, []);
+
+  if (connecting) {
+    return (
+      <Box className={classes.authRoot}>
+        <Box
+          className={classes.authContainer}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          flexDirection="column"
+        >
+          <img className={classes.logo} src={veridaLogo} alt="logo" />
+          <Box
+            mt={4}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            flexDirection="column"
+            paddingY={2}
+          >
+            Reconnecting...
+            <CircularProgress color="primary" />
+          </Box>
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <div className={classes.root}>

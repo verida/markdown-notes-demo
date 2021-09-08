@@ -80,11 +80,6 @@ const ConnectVault = ({ history }) => {
     markDownServices.connectVault(appInit);
   };
 
-  // useEffect(() => {
-  //   history.push('/');
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
   return (
     <Box className={classes.root}>
       <Box
