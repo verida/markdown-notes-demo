@@ -1,12 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import { Container } from '@material-ui/core';
-import { AppContext } from '../contextApi/ContextProvider';
 // import LayoutDrawer from './layoutDrawer';
 import Store from '../utils/store';
 import { VERIDA_USER_SIGNATURE } from '../constants';
@@ -89,7 +88,6 @@ const useStyles = makeStyles((theme) => ({
 
 const AppLayouts = ({ children }) => {
   const classes = useStyles();
-  const { isLoading, setIsLoading } = useContext(AppContext);
   const [open] = React.useState(false);
 
   const decryptedSignature = Store.get(VERIDA_USER_SIGNATURE);
@@ -104,7 +102,6 @@ const AppLayouts = ({ children }) => {
       (event.target === modal && modal !== null) ||
       (event.target === closeModal && closeModal !== null)
     ) {
-      setIsLoading(false);
       modal.style.display = 'none';
     }
   };
@@ -132,7 +129,7 @@ const AppLayouts = ({ children }) => {
     return () => {
       window.removeEventListener('click', handleClickAway);
     };
-  }, [isLoading]);
+  }, []);
 
   return (
     <div className={classes.root}>
