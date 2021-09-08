@@ -1,13 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { Container } from '@material-ui/core';
-import { AppContext } from '../contextApi/ContextProvider';
-// import LayoutDrawer from './layoutDrawer';
 import Store from '../utils/store';
 import { VERIDA_USER_SIGNATURE } from '../constants';
 import AppHeader from '../components/common/Header';
@@ -74,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    padding: theme.spacing(0, 1),
+    padding: theme.spacing(0.5, 1),
     // necessary for content to be below app bar
     ...theme.mixins.toolbar
   },
@@ -89,8 +87,8 @@ const useStyles = makeStyles((theme) => ({
 
 const AppLayouts = ({ children }) => {
   const classes = useStyles();
-  const { isLoading, setIsLoading } = useContext(AppContext);
   const [open] = React.useState(false);
+  const { app } = useSelector((state) => state.webVault);
 
   const decryptedSignature = Store.get(VERIDA_USER_SIGNATURE);
 
@@ -104,7 +102,6 @@ const AppLayouts = ({ children }) => {
       (event.target === modal && modal !== null) ||
       (event.target === closeModal && closeModal !== null)
     ) {
-      setIsLoading(false);
       modal.style.display = 'none';
     }
   };
@@ -132,26 +129,31 @@ const AppLayouts = ({ children }) => {
     return () => {
       window.removeEventListener('click', handleClickAway);
     };
-  }, [isLoading]);
+  }, []);
 
   return (
     <div className={classes.root}>
-      <AppBar
-        color="inherit"
-        position="fixed"
-        className={clsx(classes.appBar, {
-          [classes.appBarShift]: open
-        })}
-      >
-        <AppHeader />
-      </AppBar>
-      {/* <LayoutDrawer classes={classes} open={open} setOpen={setOpen} /> */}
-      <Container fixed>
-        <main className={classes.content}>
-          <div className={classes.toolbar} />
-          {children}
-        </main>
-      </Container>
+      {app && (
+        <AppBar
+          color="inherit"
+          position="fixed"
+          className={clsx(classes.appBar, {
+            [classes.appBarShift]: open
+          })}
+        >
+          <AppHeader />
+        </AppBar>
+      )}
+      {app ? (
+        <Container fixed>
+          <main className={classes.content}>
+            <div className={classes.toolbar} />
+            {children}
+          </main>
+        </Container>
+      ) : (
+        children
+      )}
     </div>
   );
 };
