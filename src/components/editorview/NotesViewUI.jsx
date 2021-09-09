@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { editorType } from '../../redux/reducers/editor';
 import NoteCardDisplay from '../notescard/NoteCardDisplay';
 import NoteTableDisplay from '../noteTable/NoteTable';
 
 const NotesUI = () => {
-  const [viewType] = useState('grid');
+  const { editorViewType } = useSelector((state) => state.markdownEditor);
 
-  switch (viewType) {
-    case 'grid':
+  switch (editorViewType) {
+    case editorType.GRID:
       return <NoteCardDisplay />;
-    case 'table':
+    case editorType.TABLE:
       return <NoteTableDisplay />;
     default:
       return <NoteCardDisplay />;

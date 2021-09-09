@@ -1,14 +1,17 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
-import Favorites from '../views/Favorites';
+import { Route, Switch } from 'react-router';
+import ConnectVault from '../views/ConnectVault';
+import Editor from '../views/Editor';
 import Home from '../views/Home';
+import AuthGuard from './AuthGard';
 
 const Routes = () => {
   return (
-    <>
-      <Route path="/" exact component={Home} />
-      <Route path="/favorites" component={Favorites} />
-    </>
+    <Switch>
+      <Route component={ConnectVault} exact path="/connect" />
+      <AuthGuard component={Home} exact path="/" />
+      <AuthGuard component={Editor} exact path="/editor" />
+    </Switch>
   );
 };
 

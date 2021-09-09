@@ -27,6 +27,7 @@ class MarkDownServices {
     Verida.setConfig({
       appName: CLIENT_AUTH_NAME
     });
+
     veridaVaultLogin({
       loginUri: LOGIN_URI,
       serverUri: SERVER_URI,
@@ -55,6 +56,7 @@ class MarkDownServices {
             return result;
           }, {});
           Store.set(USER_SESSION_KEY, true);
+
           if (appCallbackFn) {
             appCallbackFn({
               notes,
@@ -77,7 +79,6 @@ class MarkDownServices {
 
   async profileEventSubscription() {
     this.initApp();
-
     const userDB = await this.profileInstance._store.getDb();
     const PouchDB = await userDB.getInstance();
 
