@@ -3,21 +3,24 @@ import Markdown from 'markdown-to-jsx';
 import Moment from 'react-moment';
 import { Grid, IconButton, makeStyles, SvgIcon } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router';
 import Typography from '@material-ui/core/Typography';
 import { reduceStringLength } from '../../helpers/Editor.helpers';
 import { ReactComponent as StarIcon } from '../../assets/icons/star_filled.svg';
 import UnFilledStarIcon from '../../assets/icons/Star_unfilled.svg';
 import NotesAction from '../common/NotesActions';
+import { setNoteTitle, setSelectedNote } from '../../redux/reducers/editor';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: '16.5rem',
+    width: '16.9rem',
     height: '14.5rem',
     background: '#F7F8F9',
     border: '1px solid #E6E8EB',
     borderRadius: '6px',
     margin: theme.spacing(3, 0),
+    cursor: 'pointer',
     position: 'relative',
     '&:hover': {
       background: '#EDECFB',
@@ -31,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
     border: '1px solid #E6E8EB',
     boxSizing: 'border-box',
     borderRadius: '6px',
+    cursor: 'pointer',
     margin: theme.spacing(3, 0)
   },
   contentBox: {
@@ -63,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
     flex: 'none',
     order: 1,
     flexGrow: 0,
-    margin: '0rem 0.5rem'
+    margin: '0rem 0.2rem'
   },
   caption: {
     fontWeight: 600,
@@ -94,32 +98,43 @@ const useStyles = makeStyles((theme) => ({
   },
   timeIcon: {
     margin: theme.spacing(0, 0.4)
+  },
+  link: {
+    textDecoration: 'none',
+    color: 'inherit'
   }
 }));
 
 const NoteCardDisplay = () => {
   const classes = useStyles();
   const { notes } = useSelector((state) => state.markdownEditor);
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  const onEdit = (item) => {
+    dispatch(setSelectedNote(item));
+    dispatch(setNoteTitle(item.title));
+    history.push(`/editor?type=edit&id=${item._id}`);
+  };
 
   return (
     <>
-      <Grid container className={classes.tableContainer}>
+      <Grid container spacing={1} className={classes.tableContainer}>
         {notes.map((list) => (
           <Grid item md={3} sm={12} xs={12} key={list._id}>
             <Box m={2} className={classes.root}>
-              <Box className={classes.contentBox}>
+              <Box className={classes.contentBox} onClick={() => onEdit(list)}>
                 <Markdown>{list.body}</Markdown>
-                {/* {reduceStringLength(list.body, 200)} */}
               </Box>
               <Box className={classes.panelTab}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                   <Box display="flex" ml={1} alignItems="center">
                     {list.isFavorite ? (
-                      <IconButton>
+                      <IconButton size="small">
                         <SvgIcon component={StarIcon} />
                       </IconButton>
                     ) : (
-                      <IconButton>
+                      <IconButton size="small">
                         <img src={UnFilledStarIcon} alt="star" />
                       </IconButton>
                     )}
@@ -152,7 +167,9 @@ const NoteCardDisplay = () => {
         {notes.map((list) => (
           <Grid item md={6} sm={12} xs={6} key={list._id}>
             <Box m={2} className={classes.rootMobile}>
-              <Box className={classes.contentBoxMobile}>{reduceStringLength(list.body, 300)}</Box>
+              <Box className={classes.contentBoxMobile} onClick={() => onEdit(list)}>
+                {reduceStringLength(list.body, 300)}
+              </Box>
               <Box className={classes.panelTabMobile}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                   <NotesAction item={list} />
@@ -167,11 +184,11 @@ const NoteCardDisplay = () => {
                   </Typography>
                   <Box>
                     {list.isFavorite ? (
-                      <IconButton>
+                      <IconButton size="small">
                         <SvgIcon component={StarIcon} />
                       </IconButton>
                     ) : (
-                      <IconButton>
+                      <IconButton size="small">
                         <img src={UnFilledStarIcon} alt="star" />
                       </IconButton>
                     )}

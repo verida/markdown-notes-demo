@@ -62,9 +62,6 @@ const Editor = ({ history, location }) => {
   const pageType = browserQueries(location).get('type');
   const { noteItem, selectedNote } = useSelector((state) => state.markdownEditor);
 
-  const handleClick = () => () => {
-    setSnackPack(true);
-  };
   const handleView = (type) => {
     if (type === 'editor') {
       setModalView({
@@ -87,7 +84,7 @@ const Editor = ({ history, location }) => {
       type: pageType && pageType === 'edit' ? markdownActions.PATCH : markdownActions.POST
     };
     dispatch(markdownApi(item));
-    handleClick();
+    setSnackPack(!snackPack);
   };
 
   useEffect(() => {
@@ -97,7 +94,10 @@ const Editor = ({ history, location }) => {
   }, [pageType, selectedNote.body]);
   return (
     <div className={classes.root}>
-      <AppSnackBar messageInfo="Note Updated" setSnackPack={setSnackPack} snackPack={snackPack} />
+      {setSnackPack && (
+        <AppSnackBar messageInfo="Note Updated" setSnackPack={setSnackPack} snackPack={snackPack} />
+      )}
+
       <Box justifyContent="space-between" display="flex" alignItems="center">
         <IconButton onClick={() => history.goBack()}>
           <img src={ArrowLeft} className={classes.arrowBackIcon} alt="go-back" />
@@ -127,12 +127,7 @@ const Editor = ({ history, location }) => {
           <IconButton>
             <img className={classes.trashIcon} alt="icon" src={TrashIcon} />
           </IconButton>
-          <Button
-            className={classes.actionButton}
-            onClick={onAddNote}
-            variant="outlined"
-            color="primary"
-          >
+          <Button className={classes.actionButton} variant="outlined" color="primary">
             Share
           </Button>
           <Button

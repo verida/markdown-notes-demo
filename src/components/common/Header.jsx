@@ -14,13 +14,9 @@ import UserAvatar from './UserAvatar';
 import { setFavoriteItem, setNoteTitle } from '../../redux/reducers/editor';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: theme.spacing(0, 1)
-  },
+  root: {},
   title: {
-    // flexGrow: 1,
-    color: theme.palette.white,
-    margin: theme.spacing(0, 0, 0, 8)
+    color: theme.palette.white
   },
   profile: {
     margin: theme.spacing(0, 1.4, 0, 6),
@@ -42,7 +38,8 @@ const useStyles = makeStyles((theme) => ({
     textTransform: 'capitalize',
     margin: theme.spacing(0, 2),
     '&:hover': {
-      background: '#fff'
+      background: '#fff',
+      color: '#041133'
     }
   },
   starIcon: {
