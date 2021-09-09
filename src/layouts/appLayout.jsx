@@ -112,6 +112,7 @@ const useStyles = makeStyles((theme) => ({
 const AppLayouts = ({ children }) => {
   const classes = useStyles();
   const { app, connecting } = useSelector((state) => state.webVault);
+
   const [open] = React.useState(false);
   const history = useHistory();
 
@@ -185,6 +186,7 @@ const AppLayouts = ({ children }) => {
       </Box>
     );
   }
+
 
   return (
     <div className={classes.root}>
