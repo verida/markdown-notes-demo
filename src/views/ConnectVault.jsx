@@ -73,11 +73,11 @@ const ConnectVault = ({ history }) => {
     }
     dispatch(onSuccessLogin(data));
     dispatch(setMarkdownNotes(data.notes));
-    dispatch(onConnecting());
     history.push('/');
   };
 
   const initializeApp = () => {
+    dispatch(onConnecting());
     markDownServices.connectVault(appInit);
   };
 
