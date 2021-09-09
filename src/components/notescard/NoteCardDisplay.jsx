@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Markdown from 'markdown-to-jsx';
 import Moment from 'react-moment';
 import { Grid, IconButton, makeStyles, SvgIcon } from '@material-ui/core';
@@ -9,8 +9,11 @@ import Typography from '@material-ui/core/Typography';
 import { reduceStringLength } from '../../helpers/Editor.helpers';
 import { ReactComponent as StarIcon } from '../../assets/icons/star_filled.svg';
 import UnFilledStarIcon from '../../assets/icons/Star_unfilled.svg';
-import NotesAction from '../common/NotesActions';
+import NotesAction from '../common/editorActions/NotesActions';
 import { setNoteTitle, setSelectedNote } from '../../redux/reducers/editor';
+import AppModalUi from '../modal/AppModal';
+import { DeleteNote, EditName, Sharing } from '../common/editorActions';
+import { noteActionsType } from '../../utils/common.utils';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -107,8 +110,14 @@ const useStyles = makeStyles((theme) => ({
 
 const NoteCardDisplay = () => {
   const classes = useStyles();
+  const [open, setOpen] = useState(false);
   const { notes } = useSelector((state) => state.markdownEditor);
   const dispatch = useDispatch();
+  const [action, setAction] = useState({
+    title: 'delete',
+    type: '',
+    item: {}
+  });
   const history = useHistory();
 
   const onEdit = (item) => {
@@ -117,8 +126,24 @@ const NoteCardDisplay = () => {
     history.push(`/editor?type=edit&id=${item._id}`);
   };
 
+  const renderActionUi = () => {
+    switch (action.type) {
+      case noteActionsType.RENAME:
+        return <EditName item={action.item} />;
+      case noteActionsType.DELETE:
+        return <DeleteNote item={action.item} setOpen={setOpen} />;
+      case noteActionsType.SHARE:
+        return <Sharing />;
+      default:
+        return <EditName />;
+    }
+  };
+
   return (
     <>
+      <AppModalUi open={open} setOpen={setOpen} title={action.title}>
+        {renderActionUi()}
+      </AppModalUi>
       <Grid container spacing={1} className={classes.tableContainer}>
         {notes.map((list) => (
           <Grid item md={3} sm={12} xs={12} key={list._id}>
@@ -144,7 +169,7 @@ const NoteCardDisplay = () => {
                     </Typography>
                   </Box>
                   <Box mr={-1}>
-                    <NotesAction item={list} />
+                    <NotesAction setAction={setAction} setOpen={setOpen} item={list} />
                     <Box className={classes.avatar} display="flex" />
                   </Box>
                 </Box>
