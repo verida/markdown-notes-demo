@@ -187,7 +187,6 @@ const AppLayouts = ({ children }) => {
     );
   }
 
-
   return (
     <div className={classes.root}>
       {app && (
