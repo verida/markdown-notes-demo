@@ -101,6 +101,7 @@ class MarkDownServices {
 
   async deleteContent(item) {
     this.initApp();
+    console.log(item);
     try {
       await this.dataStore.delete(item);
       let response = await this.dataStore.getMany();
@@ -112,6 +113,7 @@ class MarkDownServices {
 
   async updateContent(item) {
     this.initApp();
+    console.log(item);
     try {
       await this.dataStore.save(item);
       let response = await this.dataStore.getMany();

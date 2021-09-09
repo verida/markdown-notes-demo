@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-one-expression-per-line */
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Moment from 'react-moment';
 import Table from '@material-ui/core/Table';
@@ -14,8 +14,11 @@ import TableRow from '@material-ui/core/TableRow';
 import Box from '@material-ui/core/Box';
 import { ReactComponent as StarIcon } from '../../assets/icons/star_filled.svg';
 import UnFilledStarIcon from '../../assets/icons/Star_unfilled.svg';
-import NotesAction from '../common/NotesActions';
+import NotesAction from '../common/editorActions/NotesActions';
 import { setNoteTitle, setSelectedNote } from '../../redux/reducers/editor';
+import { noteActionsType } from '../../utils/common.utils';
+import { DeleteNote, EditName, Sharing } from '../common/editorActions';
+import AppModalUi from '../modal/AppModal';
 
 const useStyles = makeStyles((theme) => ({
   table: {
@@ -57,6 +60,12 @@ export default function NoteTableDisplay() {
   const classes = useStyles();
   const { notes } = useSelector((state) => state.markdownEditor);
   const { app } = useSelector((state) => state.webVault);
+  const [open, setOpen] = useState(false);
+  const [action, setAction] = useState({
+    title: 'delete',
+    type: '',
+    item: {}
+  });
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -66,8 +75,24 @@ export default function NoteTableDisplay() {
     history.push(`/editor?type=edit&id=${item._id}`);
   };
 
+  const renderActionUi = () => {
+    switch (action.type) {
+      case noteActionsType.RENAME:
+        return <EditName item={action.item} />;
+      case noteActionsType.DELETE:
+        return <DeleteNote item={action.item} setOpen={setOpen} />;
+      case noteActionsType.SHARE:
+        return <Sharing />;
+      default:
+        return <EditName />;
+    }
+  };
+
   return (
     <>
+      <AppModalUi open={open} setOpen={setOpen} title={action.title}>
+        {renderActionUi()}
+      </AppModalUi>
       <TableContainer className={classes.tableContainer}>
         <Table className={classes.table} aria-label="caption table">
           <TableHead>
@@ -109,7 +134,7 @@ export default function NoteTableDisplay() {
                 </TableCell>
                 <TableCell component="th" scope="row" />
                 <TableCell component="th" scope="row">
-                  <NotesAction item={row} />
+                  <NotesAction setAction={setAction} setOpen={setOpen} item={row} />
                 </TableCell>
               </TableRow>
             ))}
@@ -130,7 +155,7 @@ export default function NoteTableDisplay() {
               <span className={classes.listName}>{row.title}</span>
             </Box>
             <Box>
-              <NotesAction item={row} />
+              <NotesAction etAction={setAction} setOpen={setOpen} item={row} />
             </Box>
           </Box>
           <Box display="flex">

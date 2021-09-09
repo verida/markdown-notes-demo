@@ -6,7 +6,7 @@ import AppBar from '@material-ui/core/AppBar';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { Box, CircularProgress, Container } from '@material-ui/core';
-import { Container } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 import Store from '../utils/store';
 import { VERIDA_USER_SIGNATURE } from '../constants';
 import AppHeader from '../components/common/Header';
@@ -114,6 +114,7 @@ const AppLayouts = ({ children }) => {
   const { app, connecting } = useSelector((state) => state.webVault);
 
   const [open] = React.useState(false);
+  const history = useHistory();
 
   const decryptedSignature = Store.get(VERIDA_USER_SIGNATURE);
 
@@ -127,6 +128,7 @@ const AppLayouts = ({ children }) => {
       (event.target === modal && modal !== null) ||
       (event.target === closeModal && closeModal !== null)
     ) {
+      dispatch(onConnecting());
       modal.style.display = 'none';
     }
   };
@@ -139,7 +141,7 @@ const AppLayouts = ({ children }) => {
     }
     dispatch(onSuccessLogin(data));
     dispatch(setMarkdownNotes(data.notes));
-    // setConnecting(false);
+    history.push('/');
   };
 
   useEffect(() => {
@@ -156,7 +158,7 @@ const AppLayouts = ({ children }) => {
     return () => {
       window.removeEventListener('click', handleClickAway);
     };
-  }, []);
+  }, [connecting]);
 
   if (connecting) {
     return (
@@ -184,7 +186,6 @@ const AppLayouts = ({ children }) => {
       </Box>
     );
   }
-
 
   return (
     <div className={classes.root}>
