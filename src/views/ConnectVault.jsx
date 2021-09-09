@@ -6,10 +6,8 @@ import markDownServices from '../api/services';
 import veridaButtonImage from '../assets/images/connect_with_verida_dark.png';
 
 import veridaLogo from '../assets/images/verida_logo.svg';
-import { VERIDA_USER_SIGNATURE } from '../constants';
 import { onConnecting, onSuccessLogin } from '../redux/reducers/auth';
 import { setMarkdownNotes } from '../redux/reducers/editor';
-import Store from '../utils/store';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -65,7 +63,6 @@ const ConnectVault = ({ history }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const state = useSelector((state) => state.webVault);
-  const decryptedSignature = Store.get(VERIDA_USER_SIGNATURE);
 
   const appInit = (data) => {
     // Todo: Fix Dispatch actions class
@@ -83,15 +80,6 @@ const ConnectVault = ({ history }) => {
   const initializeApp = () => {
     markDownServices.connectVault(appInit);
   };
-
-
-  useEffect(() => {
-    if (decryptedSignature) {
-      history.push('/');
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <Box className={classes.root}>
