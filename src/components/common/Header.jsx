@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Button, IconButton, useMediaQuery } from '@material-ui/core';
 import { Link, useLocation } from 'react-router-dom';
@@ -12,6 +12,7 @@ import StarIcon from '../../assets/icons/star_filled.svg';
 import UnFilledStarIcon from '../../assets/icons/Star_unfilled.svg';
 import UserAvatar from './UserAvatar';
 import { setFavoriteItem, setNoteTitle } from '../../redux/reducers/editor';
+import { webLinks } from '../../constants';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -50,7 +51,6 @@ const useStyles = makeStyles((theme) => ({
 
 const AppHeader = () => {
   const classes = useStyles();
-  const [isFavorite, setIsFavorite] = useState(false);
   const matches = useMediaQuery('(max-width:768px)');
   const { app } = useSelector((state) => state.webVault);
   const { noteItem } = useSelector((state) => state.markdownEditor);
@@ -62,8 +62,7 @@ const AppHeader = () => {
   };
 
   const handleFavorite = () => {
-    setIsFavorite(!isFavorite);
-    dispatch(setFavoriteItem(!isFavorite));
+    dispatch(setFavoriteItem());
   };
   return (
     <div className={classes.root}>
@@ -83,10 +82,10 @@ const AppHeader = () => {
                   outline: 'none',
                   fontWeight: 600,
                   fontSize: '24px',
-                  width: 100
+                  width: 140
                 }}
               />
-              {isFavorite ? (
+              {noteItem.isFavorite ? (
                 <IconButton className={classes.starIcon} onClick={handleFavorite}>
                   <img src={StarIcon} alt="star-icon" />
                 </IconButton>
@@ -104,7 +103,7 @@ const AppHeader = () => {
               ) : (
                 <>
                   <Button
-                    href="https://docs.datastore.verida.io/#/"
+                    href={webLinks.DOCUMENTATION}
                     className={classes.links}
                     target="_blank"
                     startIcon={<img alt="link" src={LinkIcon} />}
@@ -112,7 +111,7 @@ const AppHeader = () => {
                     Documentation
                   </Button>
                   <Button
-                    href="https://www.verida.io/"
+                    href={webLinks.WEBSITE}
                     target="_blank"
                     className={classes.links}
                     startIcon={<img alt="link" src={LinkIcon} />}

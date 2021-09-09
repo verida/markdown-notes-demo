@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
   activeEditPreview: {
     background: '#EDECFB',
     border: '1px solid #423BCE',
-    borderRadius: '0px 6px 6px 0px',
+    borderRadius: '6px 6px 6px 6px',
     textTransform: 'capitalize'
   },
   buttonGroup: {
@@ -76,15 +76,39 @@ const Editor = ({ history, location }) => {
     }
   };
   const onAddNote = () => {
-    const item = {
-      data: {
-        ...noteItem,
-        body: markdownVal
-      },
-      type: pageType && pageType === 'edit' ? markdownActions.PATCH : markdownActions.POST
-    };
+    let item = {};
+    if (pageType === 'edit') {
+      const { title, isFavorite, body, ...rest } = selectedNote;
+      item = {
+        data: {
+          title: noteItem.title,
+          isFavorite: noteItem.isFavorite,
+          body: markdownVal,
+          ...rest
+        },
+        type: markdownActions.PATCH
+      };
+    } else {
+      item = {
+        data: {
+          title: noteItem.title,
+          isFavorite: noteItem.isFavorite,
+          body: markdownVal
+        },
+        type: markdownActions.POST
+      };
+    }
     dispatch(markdownApi(item));
     setSnackPack(!snackPack);
+    history.push('/');
+  };
+
+  const onDeleteNote = () => {
+    const data = {
+      type: markdownActions.DELETE,
+      data: selectedNote
+    };
+    dispatch(markdownApi(data));
   };
 
   useEffect(() => {
@@ -124,12 +148,14 @@ const Editor = ({ history, location }) => {
           </Button>
         </ButtonGroup>
         <div>
-          <IconButton>
-            <img className={classes.trashIcon} alt="icon" src={TrashIcon} />
-          </IconButton>
-          <Button className={classes.actionButton} variant="outlined" color="primary">
+          {pageType === 'edit' && (
+            <IconButton onClick={onDeleteNote}>
+              <img className={classes.trashIcon} alt="icon" src={TrashIcon} />
+            </IconButton>
+          )}
+          {/* <Button className={classes.actionButton} variant="outlined" color="primary">
             Share
-          </Button>
+          </Button> */}
           <Button
             onClick={onAddNote}
             className={classes.saveButton}

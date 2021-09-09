@@ -178,8 +178,10 @@ const AppLayouts = ({ children }) => {
             justifyContent="center"
             flexDirection="column"
             paddingY={2}
+            fontSize={20}
+            fontWeight={600}
           >
-            Reconnecting...
+            Connecting...
             <CircularProgress color="primary" />
           </Box>
         </Box>

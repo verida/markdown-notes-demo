@@ -7,14 +7,18 @@ import {
   Divider,
   IconButton
 } from '@material-ui/core';
-import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import React from 'react';
 import TableIcon from '../../assets/icons/Table.svg';
-import ImportIcon from '../../assets/icons/Import.svg';
+// import ImportIcon from '../../assets/icons/Import.svg';
 import { ReactComponent as PLusIcon } from '../../assets/icons/Plus.svg';
 import GridIcon from '../../assets/icons/grid_icon.svg';
-import { editorType, switchDisplay } from '../../redux/reducers/editor';
+import {
+  editorType,
+  setNoteItem,
+  setSelectedNote,
+  switchDisplay
+} from '../../redux/reducers/editor';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -48,12 +52,23 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const NotesHeader = () => {
+const NotesHeader = ({ history }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { editorViewType } = useSelector((state) => state.markdownEditor);
   const handleSwitchDisplay = (type) => {
     dispatch(switchDisplay(type));
+  };
+
+  const addNewNote = () => {
+    dispatch(
+      setNoteItem({
+        title: 'Untitled',
+        isFavorite: false
+      })
+    );
+    dispatch(setSelectedNote({}));
+    history.push('/editor');
   };
   return (
     <div>
@@ -83,24 +98,22 @@ const NotesHeader = () => {
               <img src={TableIcon} alt="title" />
             </IconButton>
           )}
-          <Button
+          {/* <Button
             className={classes.button}
             variant="outlined"
             startIcon={<img src={ImportIcon} alt="import" />}
           >
             Import note
+          </Button> */}
+          <Button
+            className={classes.button}
+            variant="contained"
+            color="primary"
+            onClick={addNewNote}
+            startIcon={<SvgIcon component={PLusIcon} />}
+          >
+            New note
           </Button>
-          <Link className={classes.link} to="/editor">
-            {' '}
-            <Button
-              className={classes.button}
-              variant="contained"
-              color="primary"
-              startIcon={<SvgIcon component={PLusIcon} />}
-            >
-              New note
-            </Button>
-          </Link>
         </Box>
       </Box>
       <Divider className={classes.divider} />

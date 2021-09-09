@@ -15,7 +15,7 @@ import Box from '@material-ui/core/Box';
 import { ReactComponent as StarIcon } from '../../assets/icons/star_filled.svg';
 import UnFilledStarIcon from '../../assets/icons/Star_unfilled.svg';
 import NotesAction from '../common/editorActions/NotesActions';
-import { setNoteTitle, setSelectedNote } from '../../redux/reducers/editor';
+import { setNoteItem, setSelectedNote } from '../../redux/reducers/editor';
 import { noteActionsType } from '../../utils/common.utils';
 import { DeleteNote, EditName, Sharing } from '../common/editorActions';
 import AppModalUi from '../modal/AppModal';
@@ -71,20 +71,20 @@ export default function NoteTableDisplay() {
 
   const navigateToDetailsPage = (item) => {
     dispatch(setSelectedNote(item));
-    dispatch(setNoteTitle(item.title));
+    dispatch(setNoteItem(item));
     history.push(`/editor?type=edit&id=${item._id}`);
   };
 
   const renderActionUi = () => {
     switch (action.type) {
       case noteActionsType.RENAME:
-        return <EditName item={action.item} />;
+        return <EditName item={action.item} setOpen={setOpen} />;
       case noteActionsType.DELETE:
         return <DeleteNote item={action.item} setOpen={setOpen} />;
       case noteActionsType.SHARE:
         return <Sharing />;
       default:
-        return <EditName />;
+        return <EditName item={action.item} setOpen={setOpen} />;
     }
   };
 
@@ -106,7 +106,7 @@ export default function NoteTableDisplay() {
           </TableHead>
           <TableBody>
             {notes.map((row) => (
-              <TableRow className={classes.tableRow} key={row.name}>
+              <TableRow className={classes.tableRow} key={row._id}>
                 <TableCell component="th" scope="row">
                   <Box
                     onClick={() => navigateToDetailsPage(row)}
@@ -143,7 +143,7 @@ export default function NoteTableDisplay() {
       </TableContainer>
       {/* Mobile Version UI */}
       {notes.map((row) => (
-        <Box className={classes.mobileUI} key={row.name}>
+        <Box className={classes.mobileUI} key={row._id}>
           <Box display="flex" alignItems="center" justifyContent="space-between">
             <Box
               onClick={() => navigateToDetailsPage(row)}

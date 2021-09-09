@@ -21,3 +21,8 @@ if (process.env.NODE_ENV === 'development') {
 } else {
   DATASTORE_SCHEMA = 'https://markdown-editor.demos.testnet.verida.io/schema.json';
 }
+
+export const webLinks = {
+  DOCUMENTATION: 'https://docs.datastore.verida.io/#/',
+  WEBSITE: 'https://www.verida.io/'
+};

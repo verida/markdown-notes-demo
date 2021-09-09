@@ -2,10 +2,10 @@ import React from 'react';
 import NotesUI from '../components/editorview/NotesViewUI';
 import { NotesHeader } from '../components/common/index';
 
-const Home = () => {
+const Home = (props) => {
   return (
     <div>
-      <NotesHeader />
+      <NotesHeader {...props} />
       <NotesUI />
     </div>
   );

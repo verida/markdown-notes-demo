@@ -10,7 +10,7 @@ import { reduceStringLength } from '../../helpers/Editor.helpers';
 import { ReactComponent as StarIcon } from '../../assets/icons/star_filled.svg';
 import UnFilledStarIcon from '../../assets/icons/Star_unfilled.svg';
 import NotesAction from '../common/editorActions/NotesActions';
-import { setNoteTitle, setSelectedNote } from '../../redux/reducers/editor';
+import { setNoteItem, setSelectedNote } from '../../redux/reducers/editor';
 import AppModalUi from '../modal/AppModal';
 import { DeleteNote, EditName, Sharing } from '../common/editorActions';
 import { noteActionsType } from '../../utils/common.utils';
@@ -122,20 +122,20 @@ const NoteCardDisplay = () => {
 
   const onEdit = (item) => {
     dispatch(setSelectedNote(item));
-    dispatch(setNoteTitle(item.title));
+    dispatch(setNoteItem(item));
     history.push(`/editor?type=edit&id=${item._id}`);
   };
 
   const renderActionUi = () => {
     switch (action.type) {
       case noteActionsType.RENAME:
-        return <EditName item={action.item} />;
+        return <EditName item={action.item} setOpen={setOpen} />;
       case noteActionsType.DELETE:
         return <DeleteNote item={action.item} setOpen={setOpen} />;
       case noteActionsType.SHARE:
         return <Sharing />;
       default:
-        return <EditName />;
+        return <EditName item={action.item} setOpen={setOpen} />;
     }
   };
 

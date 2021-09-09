@@ -47,6 +47,7 @@ class MarkDownServices {
 
           this.dataStore = await window.veridaDApp.openDatastore(DATASTORE_SCHEMA);
           const notes = await this.dataStore.getMany();
+          console.log(notes, notes.length);
 
           this.profileInstance = await window.veridaDApp.openProfile(response.did, 'Verida: Vault');
 
@@ -90,9 +91,11 @@ class MarkDownServices {
 
   async postContent(data) {
     this.initApp();
+    console.log(data);
     try {
       await this.dataStore.save(data);
       let response = await this.dataStore.getMany();
+      console.log(response);
       return response;
     } catch (error) {
       return error;
@@ -101,19 +104,19 @@ class MarkDownServices {
 
   async deleteContent(item) {
     this.initApp();
-    console.log(item);
+    item._deleted = true;
     try {
       await this.dataStore.delete(item);
       let response = await this.dataStore.getMany();
       return response;
     } catch (error) {
+      console.log({ error });
       return error;
     }
   }
 
   async updateContent(item) {
     this.initApp();
-    console.log(item);
     try {
       await this.dataStore.save(item);
       let response = await this.dataStore.getMany();
