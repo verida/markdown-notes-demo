@@ -6,6 +6,7 @@ import AppBar from '@material-ui/core/AppBar';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { Box, CircularProgress, Container } from '@material-ui/core';
+import { Container } from '@material-ui/core';
 import Store from '../utils/store';
 import { VERIDA_USER_SIGNATURE } from '../constants';
 import AppHeader from '../components/common/Header';
@@ -111,6 +112,7 @@ const useStyles = makeStyles((theme) => ({
 const AppLayouts = ({ children }) => {
   const classes = useStyles();
   const { app, connecting } = useSelector((state) => state.webVault);
+
   const [open] = React.useState(false);
 
   const decryptedSignature = Store.get(VERIDA_USER_SIGNATURE);
@@ -182,6 +184,7 @@ const AppLayouts = ({ children }) => {
       </Box>
     );
   }
+
 
   return (
     <div className={classes.root}>
