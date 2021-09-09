@@ -1,5 +1,7 @@
 import React from 'react';
-import { Avatar, Grid, makeStyles, SvgIcon } from '@material-ui/core';
+import Markdown from 'markdown-to-jsx';
+import Moment from 'react-moment';
+import { Grid, IconButton, makeStyles, SvgIcon } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import { useSelector } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
@@ -14,10 +16,13 @@ const useStyles = makeStyles((theme) => ({
     height: '14.5rem',
     background: '#F7F8F9',
     border: '1px solid #E6E8EB',
-    boxSizing: 'border-box',
     borderRadius: '6px',
     margin: theme.spacing(3, 0),
-    position: 'relative'
+    position: 'relative',
+    '&:hover': {
+      background: '#EDECFB',
+      boxShadow: '0px 4px 15px rgba(66, 59, 206, 0.1)'
+    }
   },
   rootMobile: {
     width: '10.5rem',
@@ -27,17 +32,19 @@ const useStyles = makeStyles((theme) => ({
     boxSizing: 'border-box',
     borderRadius: '6px',
     margin: theme.spacing(3, 0)
-    // position: 'relative'
   },
   contentBox: {
     background: '#fff',
     maxHeight: 'calc(14.5rem - 4.188rem)',
     minHeight: 'calc(14.5rem - 4.188rem)',
     margin: '16px 16px 0 16px',
-    padding: '1rem 1.5rem 0 1.5rem'
+    padding: '1rem 1.5rem 0 1.5rem',
+    '& > *': {
+      fontSize: '0.8rem !important'
+    }
   },
   contentBoxMobile: {
-    fontSize: '0.5rem'
+    fontSize: '0.6rem '
   },
   panelTab: {
     width: '100%',
@@ -84,6 +91,9 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       display: 'block'
     }
+  },
+  timeIcon: {
+    margin: theme.spacing(0, 0.4)
   }
 }));
 
@@ -97,14 +107,21 @@ const NoteCardDisplay = () => {
         {notes.map((list) => (
           <Grid item md={3} sm={12} xs={12} key={list._id}>
             <Box m={2} className={classes.root}>
-              <Box className={classes.contentBox}>{reduceStringLength(list.body, 200)}</Box>
+              <Box className={classes.contentBox}>
+                <Markdown>{list.body}</Markdown>
+                {/* {reduceStringLength(list.body, 200)} */}
+              </Box>
               <Box className={classes.panelTab}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                   <Box display="flex" ml={1} alignItems="center">
                     {list.isFavorite ? (
-                      <SvgIcon component={StarIcon} />
+                      <IconButton>
+                        <SvgIcon component={StarIcon} />
+                      </IconButton>
                     ) : (
-                      <img src={UnFilledStarIcon} alt="star" />
+                      <IconButton>
+                        <img src={UnFilledStarIcon} alt="star" />
+                      </IconButton>
                     )}
                     <Typography className={classes.cartTitle}>
                       {/* {reduceStringLength(list.title, 13)} */}
@@ -113,25 +130,15 @@ const NoteCardDisplay = () => {
                   </Box>
                   <Box mr={-1}>
                     <NotesAction item={list} />
-                    <Box className={classes.avatar} display="flex">
-                      <Avatar
-                        src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"
-                        alt="user"
-                      />
-                      <Avatar
-                        src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"
-                        alt="user"
-                      />
-                      <Avatar
-                        src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"
-                        alt="user"
-                      />
-                    </Box>
+                    <Box className={classes.avatar} display="flex" />
                   </Box>
                 </Box>
                 <Box ml={2} className={classes.captionContainer}>
                   <Typography className={classes.caption} variant="caption">
-                    Edited 10 weeks ago
+                    Edited
+                    <Moment className={classes.timeIcon} fromNow>
+                      {list.modifiedAt}
+                    </Moment>
                   </Typography>
                 </Box>
               </Box>
@@ -153,13 +160,20 @@ const NoteCardDisplay = () => {
                 </Box>
                 <Box display="flex" ml={2} className={classes.captionContainer}>
                   <Typography className={classes.caption} variant="caption">
-                    Edited 10 weeks ago
+                    Edited
+                    <Moment className={classes.timeIcon} fromNow>
+                      {list.modifiedAt}
+                    </Moment>
                   </Typography>
                   <Box>
                     {list.isFavorite ? (
-                      <SvgIcon component={StarIcon} />
+                      <IconButton>
+                        <SvgIcon component={StarIcon} />
+                      </IconButton>
                     ) : (
-                      <img src={UnFilledStarIcon} alt="star" />
+                      <IconButton>
+                        <img src={UnFilledStarIcon} alt="star" />
+                      </IconButton>
                     )}
                   </Box>
                 </Box>

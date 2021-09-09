@@ -40,11 +40,16 @@ const webVault = createSlice({
       const error = action.payload;
       state.error = error;
       return state;
+    },
+    onLogout(state) {
+      state.avatar = null;
+      state.app = null;
+      return state;
     }
   }
 });
 
-export const { onError, onSuccessLogin, onConnecting, setUserAvatar, setUserProfile } =
+export const { onError, onSuccessLogin, onConnecting, setUserAvatar, setUserProfile, onLogout } =
   webVault.actions;
 
 export default webVault.reducer;

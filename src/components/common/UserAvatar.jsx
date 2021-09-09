@@ -1,10 +1,14 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import IconButton from '@material-ui/core/IconButton';
+import { useHistory } from 'react-router';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { Avatar, ListItemIcon, makeStyles, Typography } from '@material-ui/core';
 import ShareIcon from '../../assets/icons/Share.svg';
+import markDownServices from '../../api/services';
+import { setMarkdownNotes } from '../../redux/reducers/editor';
+import { onLogout } from '../../redux/reducers/auth';
 
 const useStyles = makeStyles((theme) => ({
   iconText: {
@@ -26,6 +30,8 @@ export default function UserAvatar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const { avatar } = useSelector((state) => state.webVault);
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -33,6 +39,14 @@ export default function UserAvatar() {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleSignOut = () => {
+    markDownServices.logout().then(() => {
+      dispatch(setMarkdownNotes([]));
+      dispatch(onLogout());
+      history.push('/connect');
+    });
   };
 
   return (
@@ -63,7 +77,7 @@ export default function UserAvatar() {
           }
         }}
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleSignOut}>
           <ListItemIcon>
             <img src={ShareIcon} alt="user" />
           </ListItemIcon>

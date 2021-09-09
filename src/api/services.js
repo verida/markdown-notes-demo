@@ -91,11 +91,7 @@ class MarkDownServices {
   async postContent(data) {
     this.initApp();
     try {
-      await this.dataStore.save({
-        title: data.title,
-        isFavorite: false,
-        body: data.markdownVal
-      });
+      await this.dataStore.save(data);
       let response = await this.dataStore.getMany();
       return response;
     } catch (error) {
