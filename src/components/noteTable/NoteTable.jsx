@@ -106,14 +106,15 @@ export default function NoteTableDisplay() {
             {notes.map((row) => (
               <TableRow className={classes.tableRow} key={row._id}>
                 <TableCell component="th" scope="row">
-                  <Box
-                    onClick={() => navigateToDetailsPage(row)}
-                    component="span"
-                    display="flex"
-                    alignItems="center"
-                  >
+                  <Box component="span" display="flex" alignItems="center">
                     <FavoriteIcon item={row} />
-                    <span className={classes.listName}>{row.title}</span>
+                    <span
+                      aria-hidden="true"
+                      onClick={() => navigateToDetailsPage(row)}
+                      className={classes.listName}
+                    >
+                      {row.title}
+                    </span>
                   </Box>
                 </TableCell>
                 <TableCell component="th" scope="row">
