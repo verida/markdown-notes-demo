@@ -35,14 +35,12 @@ const useStyles = makeStyles((theme) => ({
   },
   editPreviewButton: {
     background: '#F7F8F9',
-    border: '1px solid #F7F8F9',
-    textTransform: 'capitalize',
-    borderRadius: '6px 0px 0px 6px'
+    border: `1px solid ${theme.palette.primary.main}`,
+    textTransform: 'capitalize'
   },
   activeEditPreview: {
     background: '#EDECFB',
-    border: '1px solid #423BCE',
-    borderRadius: '6px 6px 6px 6px',
+    border: `1px solid ${theme.palette.primary.main}`,
     textTransform: 'capitalize'
   },
   buttonGroup: {

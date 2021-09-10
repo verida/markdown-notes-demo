@@ -46,7 +46,15 @@ const useStyles = makeStyles((theme) => ({
   starIcon: {
     margin: theme.spacing(-1, 0, 0, 0)
   },
-  editIon: {}
+  editIon: {},
+  inputClass: {
+    border: 'none',
+    borderBottom: '3px white solid',
+    outline: 'none',
+    fontWeight: 600,
+    fontSize: '24px',
+    width: 140
+  }
 }));
 
 const AppHeader = () => {
@@ -73,18 +81,7 @@ const AppHeader = () => {
           </Link>
           {location.pathname === '/editor' && (
             <div>
-              <input
-                value={noteItem.title}
-                onChange={handleTitle}
-                style={{
-                  border: 'none',
-                  borderBottom: '3px white solid',
-                  outline: 'none',
-                  fontWeight: 600,
-                  fontSize: '24px',
-                  width: 140
-                }}
-              />
+              <input value={noteItem.title} onChange={handleTitle} className={classes.inputClass} />
               {noteItem.isFavorite ? (
                 <IconButton className={classes.starIcon} onClick={handleFavorite}>
                   <img src={StarIcon} alt="star-icon" />

@@ -13,6 +13,16 @@ import {
 } from '../constants';
 import Store from '../utils/store';
 
+let filter = {
+  organization: 'markdown_notes'
+};
+
+let filterOptions = {
+  limit: 50,
+  skip: 0,
+  sort: ['title']
+};
+
 class MarkDownServices {
   veridaDapp;
   dataStore;
@@ -47,7 +57,6 @@ class MarkDownServices {
 
           this.dataStore = await window.veridaDApp.openDatastore(DATASTORE_SCHEMA);
           const notes = await this.dataStore.getMany();
-          console.log(notes, notes.length);
 
           this.profileInstance = await window.veridaDApp.openProfile(response.did, 'Verida: Vault');
 
@@ -94,7 +103,7 @@ class MarkDownServices {
     console.log(data);
     try {
       await this.dataStore.save(data);
-      let response = await this.dataStore.getMany();
+      let response = await this.getNotes();
       console.log(response);
       return response;
     } catch (error) {
@@ -107,7 +116,7 @@ class MarkDownServices {
     item._deleted = true;
     try {
       await this.dataStore.delete(item);
-      let response = await this.dataStore.getMany();
+      let response = await this.getNotes();
       return response;
     } catch (error) {
       console.log({ error });
@@ -119,9 +128,10 @@ class MarkDownServices {
     this.initApp();
     try {
       await this.dataStore.save(item);
-      let response = await this.dataStore.getMany();
+      let response = await this.getNotes();
       return response;
     } catch (error) {
+      console.log({ error });
       return error;
     }
   }
@@ -130,6 +140,7 @@ class MarkDownServices {
     this.initApp();
     try {
       const response = await this.dataStore.getMany();
+      // const response = await this.dataStore.getMany(filter, filterOptions);
       return response;
     } catch (error) {
       return error;

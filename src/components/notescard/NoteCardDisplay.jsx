@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
 import Markdown from 'markdown-to-jsx';
 import Moment from 'react-moment';
-import { Grid, IconButton, makeStyles, SvgIcon } from '@material-ui/core';
+import { Grid, makeStyles } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import Typography from '@material-ui/core/Typography';
 import { reduceStringLength } from '../../helpers/Editor.helpers';
-import { ReactComponent as StarIcon } from '../../assets/icons/star_filled.svg';
-import UnFilledStarIcon from '../../assets/icons/Star_unfilled.svg';
 import NotesAction from '../common/editorActions/NotesActions';
 import { setNoteItem, setSelectedNote } from '../../redux/reducers/editor';
 import AppModalUi from '../modal/AppModal';
 import { DeleteNote, EditName, Sharing } from '../common/editorActions';
 import { noteActionsType } from '../../utils/common.utils';
+import FavoriteIcon from '../common/editorActions/FavoriteIcon';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -154,19 +153,8 @@ const NoteCardDisplay = () => {
               <Box className={classes.panelTab}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                   <Box display="flex" ml={1} alignItems="center">
-                    {list.isFavorite ? (
-                      <IconButton size="small">
-                        <SvgIcon component={StarIcon} />
-                      </IconButton>
-                    ) : (
-                      <IconButton size="small">
-                        <img src={UnFilledStarIcon} alt="star" />
-                      </IconButton>
-                    )}
-                    <Typography className={classes.cartTitle}>
-                      {/* {reduceStringLength(list.title, 13)} */}
-                      {list.title}
-                    </Typography>
+                    <FavoriteIcon item={list} />
+                    <Typography className={classes.cartTitle}>{list.title}</Typography>
                   </Box>
                   <Box mr={-1}>
                     <NotesAction setAction={setAction} setOpen={setOpen} item={list} />
@@ -208,15 +196,7 @@ const NoteCardDisplay = () => {
                     </Moment>
                   </Typography>
                   <Box>
-                    {list.isFavorite ? (
-                      <IconButton size="small">
-                        <SvgIcon component={StarIcon} />
-                      </IconButton>
-                    ) : (
-                      <IconButton size="small">
-                        <img src={UnFilledStarIcon} alt="star" />
-                      </IconButton>
-                    )}
+                    <FavoriteIcon item={list} />
                   </Box>
                 </Box>
               </Box>

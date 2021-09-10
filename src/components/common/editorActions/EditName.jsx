@@ -25,10 +25,7 @@ const useStyles = makeStyles((theme) => ({
   button: {
     padding: '0px 24px',
     height: '40px',
-    background: '#36415C',
-    opacity: 0.5,
     borderRadius: '6px',
-    color: theme.palette.white,
     fontWeight: 'bold',
     textTransform: 'capitalize',
     marginLeft: '1rem',
@@ -66,7 +63,7 @@ const EditName = ({ item, setOpen }) => {
         value={titleName}
         type="text"
       />
-      <Button className={classes.button} onClick={handleEdit} variant="contained" color="inherit">
+      <Button className={classes.button} onClick={handleEdit} variant="contained" color="primary">
         Save Changes
       </Button>
     </Box>

@@ -67,8 +67,9 @@ const ConnectVault = ({ history }) => {
   const appInit = (data) => {
     // Todo: Fix Dispatch actions class
 
-    if (data?.error) {
+    if (data?.error || !data?.userProfile?.avatar) {
       toast.error(data?.error?.message);
+      dispatch(onConnecting());
       return;
     }
     dispatch(onSuccessLogin(data));
