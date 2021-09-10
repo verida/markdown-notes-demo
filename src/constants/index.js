@@ -13,6 +13,8 @@ export const APP_NAME = 'Markdown notes';
 export const USER_SESSION_KEY = 'verida_user_loggedin';
 export const VERIDA_USER_SIGNATURE = '_verida_auth_user_signature';
 
+// TODO: Refactor to use .env to add schema urls
+
 // eslint-disable-next-line import/no-mutable-exports
 export let DATASTORE_SCHEMA;
 
@@ -21,3 +23,8 @@ if (process.env.NODE_ENV === 'development') {
 } else {
   DATASTORE_SCHEMA = 'https://markdown-editor.demos.testnet.verida.io/schema.json';
 }
+
+export const webLinks = {
+  DOCUMENTATION: 'https://github.com/verida/markdown-notes-demo/blob/main/README.md',
+  WEBSITE: 'https://www.verida.io/'
+};

@@ -68,7 +68,7 @@ export default function UserAvatar() {
           margin: '3rem 1rem 0 -1.7rem'
         }}
         onClose={handleClose}
-        elevation={2}
+        elevation={0}
         PaperProps={{
           style: {
             width: '20ch',

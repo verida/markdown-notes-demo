@@ -6,8 +6,6 @@ import { setUserAvatar, setUserProfile } from '../redux/reducers/auth';
 export const AppContext = createContext();
 
 const ContextProvider = ({ children }) => {
-  const [appData] = useState('');
-
   const [open, setOpen] = useState(false);
 
   const dispatch = useDispatch();
@@ -36,7 +34,7 @@ const ContextProvider = ({ children }) => {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [appData]);
+  }, []);
 
   const values = {
     open,

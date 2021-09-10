@@ -16,15 +16,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function AppSnackBar({ snackPack, setSnackPack, messageInfo }) {
-  const handleClose = (event, reason) => {
+  const handleClose = (_, reason) => {
     if (reason === 'clickaway') {
       return;
     }
     setSnackPack(false);
-  };
-
-  const handleExited = () => {
-    // setMessageInfo(undefined);
   };
 
   const classes = useStyles();
@@ -39,7 +35,6 @@ export default function AppSnackBar({ snackPack, setSnackPack, messageInfo }) {
         open={snackPack}
         autoHideDuration={6000}
         onClose={handleClose}
-        onExited={handleExited}
         className={classes.content}
         message={messageInfo || undefined}
         action={

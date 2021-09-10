@@ -71,9 +71,6 @@ export default function AppModalUi({ children, open, setOpen, title }) {
           <span className={classes.title}>{title}</span>
         </DialogTitle>
         <DialogContent dividers>{children}</DialogContent>
-        {/* <DialogActions>
-
-        </DialogActions> */}
       </Dialog>
     </div>
   );

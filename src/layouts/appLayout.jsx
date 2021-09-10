@@ -19,6 +19,7 @@ const drawerWidth = 320;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
+    height: '100vh',
     background: theme.palette.white
   },
   appBar: {
@@ -135,8 +136,9 @@ const AppLayouts = ({ children }) => {
 
   const appInit = (data) => {
     // Todo: Fix Dispatch actions class
-    if (data?.error) {
+    if (data?.error || !data?.userProfile?.avatar) {
       toast.error(data?.error?.message);
+      dispatch(onConnecting());
       return;
     }
     dispatch(onSuccessLogin(data));
@@ -178,8 +180,10 @@ const AppLayouts = ({ children }) => {
             justifyContent="center"
             flexDirection="column"
             paddingY={2}
+            fontSize={20}
+            fontWeight={600}
           >
-            Reconnecting...
+            Connecting...
             <CircularProgress color="primary" />
           </Box>
         </Box>
