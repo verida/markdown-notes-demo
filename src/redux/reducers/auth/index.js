@@ -13,6 +13,9 @@ const webVault = createSlice({
     connectWithVault() {},
     onSuccessLogin(state, action) {
       const data = action.payload;
+      // @todo: handle no profile data
+      // should re-use `setUserAvatar`
+      /*
       const { avatar, name, country } = data?.userProfile;
       state.app = {
         name,
@@ -20,6 +23,7 @@ const webVault = createSlice({
       };
       const parseAvatarValue = JSON.parse(avatar);
       state.avatar = `data:image/${parseAvatarValue.format};base64,${parseAvatarValue.base64}`;
+      */
       state.connecting = !state.connecting;
       return state;
     },
@@ -27,6 +31,7 @@ const webVault = createSlice({
       state.connecting = !state.connecting;
     },
     setUserAvatar(state, action) {
+      // @todo: handle no avatar
       const parseAvatarValue = JSON.parse(action.payload);
       state.avatar = `data:image/${parseAvatarValue.format};base64,${parseAvatarValue.base64}`;
       state.connecting = !state.connecting;

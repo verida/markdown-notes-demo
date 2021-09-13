@@ -1,91 +1,117 @@
 /* eslint-disable */
 
-import Verida from '@verida/datastore';
-import { veridaVaultLogin } from '@verida/vault-auth-client';
+import { Network } from '@verida/client-ts';
+import { VaultAccount } from '@verida/account-web-vault';
 import {
   CLIENT_AUTH_NAME,
   DATASTORE_SCHEMA,
   LOGIN_URI,
   LOGO_URL,
   SERVER_URI,
-  USER_SESSION_KEY,
-  VERIDA_USER_SIGNATURE
+  USER_SESSION_KEY
 } from '../constants';
 import Store from '../utils/store';
 
 class MarkDownServices {
-  veridaDapp;
-  dataStore;
-  profileInstance;
+  veridaDapp = null;
+  dataStore = null;
+  profileInstance = null;
+  account = null;
+  did = null;
+  errors = {};
 
-  initApp() {
-    if (this.dataStore) return;
+  async initApp() {
+    if (this.dataStore) {
+      return;
+    }
+
     this.connectVault();
   }
 
-  connectVault(appCallbackFn) {
-    Verida.setConfig({
-      appName: CLIENT_AUTH_NAME
-    });
+  async onConnect(appCallbackFn) {
+    this.did = await this.account.did()
 
-    veridaVaultLogin({
-      loginUri: LOGIN_URI,
-      serverUri: SERVER_URI,
-      appName: CLIENT_AUTH_NAME,
-      logoUrl: LOGO_URL,
-      callback: async (response) => {
-        try {
-          const veridaDApp = new Verida({
-            did: response.did,
-            signature: response.signature,
-            // appName: APP_NAME
-            appName: CLIENT_AUTH_NAME
-          });
+    const context = this.veridaDapp;
+    this.dataStore = await context.openDatastore(DATASTORE_SCHEMA);
 
-          await veridaDApp.connect(true);
-          window.veridaDApp = veridaDApp;
+    // @todo: why fetching notes here? fetch on demand
+    const notes = await this.dataStore.getMany();
 
-          this.dataStore = await window.veridaDApp.openDatastore(DATASTORE_SCHEMA);
-          const notes = await this.dataStore.getMany();
+    const client = await context.getClient();
+    
+    // Commenting this out as profiles appears broken.
+    /*this.profileInstance = await client.openPublicProfile(this.did, 'Verida: Vault');
+    console.log('d', this.profileInstance);
 
-          this.profileInstance = await window.veridaDApp.openProfile(response.did, 'Verida: Vault');
+    // @todo: why fetching profile here? fetch on demand
+    const data = await this.profileInstance.getMany();
+    console.log('e');
 
-          const data = await this.profileInstance.getMany();
-          const userProfile = data.reduce((result, item) => {
-            result[item.key] = item.value;
-            return result;
-          }, {});
-          Store.set(USER_SESSION_KEY, true);
+    const userProfile = data.reduce((result, item) => {
+      result[item.key] = item.value;
+      return result;
+    }, {});*/
+    const userProfile = {};
 
-          if (appCallbackFn) {
-            appCallbackFn({
-              notes,
-              userProfile,
-              error: null
-            });
-          }
-        } catch (error) {
-          if (appCallbackFn) {
-            appCallbackFn({
-              notes: null,
-              userProfile: null,
-              error
-            });
-          }
-        }
+    Store.set(USER_SESSION_KEY, true);
+
+    if (appCallbackFn) {
+        appCallbackFn({
+          notes,
+          userProfile,
+          error: null
+        });
       }
-    });
+    } catch (error) {
+      if (appCallbackFn) {
+        appCallbackFn({
+          notes: null,
+          userProfile: null,
+          error
+        });
+      }
   }
 
-  async profileEventSubscription() {
-    this.initApp();
-    const userDB = await this.profileInstance._store.getDb();
-    const PouchDB = await userDB.getInstance();
+  async connectVault(appCallbackFn) {
+    this.account = new VaultAccount({
+      defaultDatabaseServer: {
+        type: 'VeridaDatabase',
+        endpointUri: 'https://db.testnet.verida.io:5002/'
+      },
+      defaultMessageServer: {
+        type: 'VeridaMessage',
+        endpointUri: 'https://db.testnet.verida.io:5002/'
+      },
+      vaultConfig: {
+        loginUri: LOGIN_URI,
+        serverUri: SERVER_URI,
+        logoUrl: LOGO_URL
+      }
+    });
+    
+    this.veridaDapp = await Network.connect({
+      client: {
+        defaultDatabaseServer: {
+          type: 'VeridaDatabase',
+          endpointUri: 'https://db.testnet.verida.io:5002/'
+        },
+        defaultMessageServer: {
+          type: 'VeridaMessage',
+          endpointUri: 'https://db.testnet.verida.io:5002/'
+        }
+      },
+      account: this.account,
+      context: {
+        name: CLIENT_AUTH_NAME
+      }
+    });
 
-    return {
-      userDB,
-      PouchDB
-    };
+    this.onConnect(appCallbackFn);
+  }
+
+  async onProfileChange(callback) {
+    await this.initApp();
+    this.profileInstance.listen(callback);
   }
 
   async postContent(data) {
@@ -100,14 +126,16 @@ class MarkDownServices {
   }
 
   async deleteContent(item) {
-    this.initApp();
-    console.log(item);
+    await this.initApp();
+
     try {
-      await this.dataStore.delete(item);
+      console.log('deleting', item);
+      const deleteResponse = await this.dataStore.delete(item);
       let response = await this.dataStore.getMany();
       return response;
-    } catch (error) {
-      return error;
+    } catch (err) {
+      console.error(err);
+      return [];
     }
   }
 
@@ -134,16 +162,10 @@ class MarkDownServices {
   }
 
   async logout() {
-    await window.veridaDApp.disconnect();
-    Store.remove(USER_SESSION_KEY);
-
-    //TODO : action from datastore library.
-
-    Store.remove(VERIDA_USER_SIGNATURE);
-    window.veridaDapp = null;
-    this.dataStore = {};
-    this.veridaDapp = {};
-    // this.profileInstance = {};
+    await this.veridaDapp.disconnect();
+    this.dataStore = null;
+    this.veridaDapp = null;
+    this.profileInstance = null;
   }
 }
 

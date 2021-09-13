@@ -31,6 +31,8 @@ const ContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (window.veridaDApp) {
+      // @todo: Fix this with the new event handler on profile instance
+      // .onProfileChange
       appServices.profileEventSubscription().then((data) => {
         userEvent(data);
       });
