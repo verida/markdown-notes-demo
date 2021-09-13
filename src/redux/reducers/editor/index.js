@@ -4,10 +4,7 @@ import markDownServices from '../../../api/services';
 const initialState = {
   notes: [],
   editorViewType: 'grid',
-  selectedNote: {
-    title: '',
-    body: ''
-  },
+  selectedNote: {},
   noteItem: {
     title: 'Untitled',
     isFavorite: false
@@ -60,8 +57,7 @@ const markdownEditor = createSlice({
     setSelectedNote(state, action) {
       const data = action.payload;
       state.selectedNote = {
-        title: data.title,
-        body: data.body
+        ...data
       };
     },
     setNoteTitle(state, action) {
@@ -76,13 +72,24 @@ const markdownEditor = createSlice({
       state = prevState;
       return state;
     },
-    setFavoriteItem(state, action) {
+    setNoteItem(state, action) {
       const data = action.payload;
       const prevState = {
         ...state,
         noteItem: {
+          title: data.title,
+          isFavorite: data.isFavorite
+        }
+      };
+      state = prevState;
+      return state;
+    },
+    setFavoriteItem(state) {
+      const prevState = {
+        ...state,
+        noteItem: {
           ...state.noteItem,
-          isFavorite: data
+          isFavorite: !state.noteItem.isFavorite
         }
       };
       state = prevState;
@@ -111,7 +118,8 @@ export const {
   switchDisplay,
   setSelectedNote,
   setNoteTitle,
-  setFavoriteItem
+  setFavoriteItem,
+  setNoteItem
 } = markdownEditor.actions;
 
 export default markdownEditor.reducer;

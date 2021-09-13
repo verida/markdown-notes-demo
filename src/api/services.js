@@ -12,6 +12,18 @@ import {
 } from '../constants';
 import Store from '../utils/store';
 
+//TODO: Customize FIlter Options
+
+// let filter = {
+//   organization: 'markdown_notes'
+// };
+
+// let filterOptions = {
+//   limit: 50,
+//   skip: 0,
+//   sort: ['title']
+// };
+
 class MarkDownServices {
   veridaDapp = null;
   dataStore = null;
@@ -118,7 +130,7 @@ class MarkDownServices {
     this.initApp();
     try {
       await this.dataStore.save(data);
-      let response = await this.dataStore.getMany();
+      let response = await this.getNotes();
       return response;
     } catch (error) {
       return error;
@@ -141,10 +153,9 @@ class MarkDownServices {
 
   async updateContent(item) {
     this.initApp();
-    console.log(item);
     try {
       await this.dataStore.save(item);
-      let response = await this.dataStore.getMany();
+      let response = await this.getNotes();
       return response;
     } catch (error) {
       return error;
@@ -155,6 +166,7 @@ class MarkDownServices {
     this.initApp();
     try {
       const response = await this.dataStore.getMany();
+      // const response = await this.dataStore.getMany(filter, filterOptions);
       return response;
     } catch (error) {
       return error;

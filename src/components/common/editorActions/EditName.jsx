@@ -25,10 +25,7 @@ const useStyles = makeStyles((theme) => ({
   button: {
     padding: '0px 24px',
     height: '40px',
-    background: '#36415C',
-    opacity: 0.5,
     borderRadius: '6px',
-    color: theme.palette.white,
     fontWeight: 'bold',
     textTransform: 'capitalize',
     marginLeft: '1rem',
@@ -39,32 +36,34 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const EditName = ({ item }) => {
+const EditName = ({ item, setOpen }) => {
   const classes = useStyles();
-  const [title, setTitle] = useState(item.title);
+  const [titleName, setTitleName] = useState(item.title);
   const dispatch = useDispatch();
 
   const handleEdit = () => {
+    const { title, ...rest } = item;
     const noteData = {
       data: {
-        ...item,
-        title
+        title: titleName,
+        ...rest
       },
       type: markdownActions.PATCH
     };
     dispatch(markdownApi(noteData));
+    setOpen(false);
   };
 
   return (
     <Box display="flex" alignItems="center" justifyContent="center" className={classes.root}>
       <input
-        onChange={(e) => setTitle(e.target.value)}
+        onChange={(e) => setTitleName(e.target.value)}
         className={classes.input}
         id="outlined-basic"
-        value={title}
+        value={titleName}
         type="text"
       />
-      <Button className={classes.button} onClick={handleEdit} variant="contained" color="inherit">
+      <Button className={classes.button} onClick={handleEdit} variant="contained" color="primary">
         Save Changes
       </Button>
     </Box>

@@ -8,17 +8,16 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
-import { IconButton, SvgIcon, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Box from '@material-ui/core/Box';
-import { ReactComponent as StarIcon } from '../../assets/icons/star_filled.svg';
-import UnFilledStarIcon from '../../assets/icons/Star_unfilled.svg';
 import NotesAction from '../common/editorActions/NotesActions';
-import { setNoteTitle, setSelectedNote } from '../../redux/reducers/editor';
+import { setNoteItem, setSelectedNote } from '../../redux/reducers/editor';
 import { noteActionsType } from '../../utils/common.utils';
 import { DeleteNote, EditName, Sharing } from '../common/editorActions';
 import AppModalUi from '../modal/AppModal';
+import FavoriteIcon from '../common/editorActions/FavoriteIcon';
 
 const useStyles = makeStyles((theme) => ({
   table: {
@@ -71,20 +70,20 @@ export default function NoteTableDisplay() {
 
   const navigateToDetailsPage = (item) => {
     dispatch(setSelectedNote(item));
-    dispatch(setNoteTitle(item.title));
+    dispatch(setNoteItem(item));
     history.push(`/editor?type=edit&id=${item._id}`);
   };
 
   const renderActionUi = () => {
     switch (action.type) {
       case noteActionsType.RENAME:
-        return <EditName item={action.item} />;
+        return <EditName item={action.item} setOpen={setOpen} />;
       case noteActionsType.DELETE:
         return <DeleteNote item={action.item} setOpen={setOpen} />;
       case noteActionsType.SHARE:
         return <Sharing />;
       default:
-        return <EditName />;
+        return <EditName item={action.item} setOpen={setOpen} />;
     }
   };
 
@@ -100,30 +99,22 @@ export default function NoteTableDisplay() {
               <TableCell>Name</TableCell>
               <TableCell>Owner</TableCell>
               <TableCell>Edited</TableCell>
-              <TableCell>Shared with</TableCell>
               <TableCell />
             </TableRow>
           </TableHead>
           <TableBody>
             {notes.map((row) => (
-              <TableRow className={classes.tableRow} key={row.name}>
+              <TableRow className={classes.tableRow} key={row._id}>
                 <TableCell component="th" scope="row">
-                  <Box
-                    onClick={() => navigateToDetailsPage(row)}
-                    component="span"
-                    display="flex"
-                    alignItems="center"
-                  >
-                    {row.isFavorite ? (
-                      <IconButton>
-                        <SvgIcon component={StarIcon} />
-                      </IconButton>
-                    ) : (
-                      <IconButton>
-                        <img src={UnFilledStarIcon} alt="star" />
-                      </IconButton>
-                    )}
-                    <span className={classes.listName}>{row.title}</span>
+                  <Box component="span" display="flex" alignItems="center">
+                    <FavoriteIcon item={row} />
+                    <span
+                      aria-hidden="true"
+                      onClick={() => navigateToDetailsPage(row)}
+                      className={classes.listName}
+                    >
+                      {row.title}
+                    </span>
                   </Box>
                 </TableCell>
                 <TableCell component="th" scope="row">
@@ -132,7 +123,6 @@ export default function NoteTableDisplay() {
                 <TableCell component="th" scope="row">
                   <Moment fromNow>{row.modifiedAt}</Moment>
                 </TableCell>
-                <TableCell component="th" scope="row" />
                 <TableCell component="th" scope="row">
                   <NotesAction setAction={setAction} setOpen={setOpen} item={row} />
                 </TableCell>
@@ -143,16 +133,17 @@ export default function NoteTableDisplay() {
       </TableContainer>
       {/* Mobile Version UI */}
       {notes.map((row) => (
-        <Box className={classes.mobileUI} key={row.name}>
+        <Box className={classes.mobileUI} key={row._id}>
           <Box display="flex" alignItems="center" justifyContent="space-between">
-            <Box
-              onClick={() => navigateToDetailsPage(row)}
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <StarIcon />
-              <span className={classes.listName}>{row.title}</span>
+            <Box display="flex" alignItems="center" justifyContent="space-between">
+              <FavoriteIcon item={row} />
+              <span
+                aria-hidden="true"
+                onClick={() => navigateToDetailsPage(row)}
+                className={classes.listName}
+              >
+                {row.title}
+              </span>
             </Box>
             <Box>
               <NotesAction etAction={setAction} setOpen={setOpen} item={row} />

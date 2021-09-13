@@ -20,11 +20,7 @@ const useStyles = makeStyles((theme) => ({
     color: '#041133',
     margin: theme.spacing(0, 2, 0, -3.7)
   },
-  moreIcon: {
-    [theme.breakpoints.down('sm')]: {
-      // transform: 'rotate(45deg) translateX(180px)'
-    }
-  }
+  moreIcon: {}
 }));
 
 export default function NotesAction({ item, setAction, setOpen }) {
@@ -103,7 +99,7 @@ export default function NotesAction({ item, setAction, setOpen }) {
             Rename
           </Typography>
         </MenuItem>
-        <MenuItem onClick={onDelete}>
+        <MenuItem disabled onClick={onDelete}>
           <ListItemIcon>
             <img alt="icon" src={TrashIcon} />
           </ListItemIcon>
