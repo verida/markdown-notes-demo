@@ -1,17 +1,31 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import AppLayouts from './layouts/appLayout';
-import Providers from './providers/Providers';
 
 import './libs';
 import Routes from './routes/Routes';
+import markDownServices from './api/services';
+import { setMarkdownNotes } from './redux/reducers/editor';
 
 const App = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    markDownServices.on('onError', (error) => {
+      toast.error(error?.message);
+    });
+
+    if (markDownServices.veridaDapp) {
+      markDownServices.listenDbChanges().then((data) => {
+        dispatch(setMarkdownNotes(data));
+      });
+    }
+  }, [dispatch]);
+
   return (
-    <Providers>
-      <AppLayouts>
-        <Routes />
-      </AppLayouts>
-    </Providers>
+    <AppLayouts>
+      <Routes />
+    </AppLayouts>
   );
 };
 

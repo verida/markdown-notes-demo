@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, ButtonGroup, IconButton, makeStyles } from '@material-ui/core';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import RichTextEditor from '../components/markdown/RichEditor';
 import TrashIcon from '../assets/icons/Trash.svg';
 import ArrowLeft from '../assets/icons/arrow_left.svg';
 import PreviewIcon from '../assets/icons/eye.svg';
 import EditIcon from '../assets/icons/Edit.svg';
-import { markdownActions, markdownApi } from '../redux/reducers/editor';
 import { browserQueries } from '../utils/common.utils';
 import AppSnackBar from '../components/snackbar/SnackBar';
+import markDownServices from '../api/services';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -56,7 +56,6 @@ const Editor = ({ history, location }) => {
     editor: true,
     preview: false
   });
-  const dispatch = useDispatch();
   const pageType = browserQueries(location).get('type');
   const { noteItem, selectedNote } = useSelector((state) => state.markdownEditor);
 
@@ -73,40 +72,32 @@ const Editor = ({ history, location }) => {
       });
     }
   };
-  const onAddNote = () => {
-    let item = {};
-    if (pageType === 'edit') {
-      const { title, isFavorite, body, ...rest } = selectedNote;
-      item = {
-        data: {
-          title: noteItem.title,
-          isFavorite: noteItem.isFavorite,
-          body: markdownVal,
-          ...rest
-        },
-        type: markdownActions.PATCH
-      };
-    } else {
-      item = {
-        data: {
-          title: noteItem.title,
-          isFavorite: noteItem.isFavorite,
-          body: markdownVal
-        },
-        type: markdownActions.POST
-      };
-    }
-    dispatch(markdownApi(item));
+
+  const updateNotes = () => {
+    const data = {
+      title: noteItem.title,
+      isFavorite: noteItem.isFavorite,
+      body: markdownVal,
+      _id: selectedNote._id
+    };
+    markDownServices.updateNote(data);
+    setSnackPack(!snackPack);
+    history.push('/');
+  };
+
+  const addNote = () => {
+    const data = {
+      title: noteItem.title,
+      isFavorite: noteItem.isFavorite,
+      body: markdownVal
+    };
+    markDownServices.onSave(data);
     setSnackPack(!snackPack);
     history.push('/');
   };
 
   const onDeleteNote = () => {
-    const data = {
-      type: markdownActions.DELETE,
-      data: selectedNote
-    };
-    dispatch(markdownApi(data));
+    markDownServices.deleteNote(selectedNote._id);
   };
 
   useEffect(() => {
@@ -155,7 +146,7 @@ const Editor = ({ history, location }) => {
             Share
           </Button> */}
           <Button
-            onClick={onAddNote}
+            onClick={pageType === 'edit' ? updateNotes : addNote}
             className={classes.saveButton}
             variant="contained"
             color="primary"

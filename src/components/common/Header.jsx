@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Button, IconButton, useMediaQuery } from '@material-ui/core';
 import { Link, useLocation } from 'react-router-dom';
@@ -13,6 +13,7 @@ import UnFilledStarIcon from '../../assets/icons/Star_unfilled.svg';
 import UserAvatar from './UserAvatar';
 import { setFavoriteItem, setNoteTitle } from '../../redux/reducers/editor';
 import { webLinks } from '../../constants';
+import markDownServices from '../../api/services';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -53,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
     outline: 'none',
     fontWeight: 600,
     fontSize: '24px',
-    width: 140
+    width: 190
   }
 }));
 
@@ -72,6 +73,13 @@ const AppHeader = () => {
   const handleFavorite = () => {
     dispatch(setFavoriteItem());
   };
+
+  useEffect(() => {
+    if (markDownServices.veridaDapp) {
+      markDownServices.profileEventSubscription().then(() => {});
+    }
+  }, [markDownServices]);
+
   return (
     <div className={classes.root}>
       {!matches ? (
@@ -93,34 +101,32 @@ const AppHeader = () => {
               )}
             </div>
           )}
-          {app?.name && (
-            <Box display="flex" alignItems="center" justifyContent="space-between">
-              {location.pathname === '/editor' ? (
-                <div />
-              ) : (
-                <>
-                  <Button
-                    href={webLinks.DOCUMENTATION}
-                    className={classes.links}
-                    target="_blank"
-                    startIcon={<img alt="link" src={LinkIcon} />}
-                  >
-                    Documentation
-                  </Button>
-                  <Button
-                    href={webLinks.WEBSITE}
-                    target="_blank"
-                    className={classes.links}
-                    startIcon={<img alt="link" src={LinkIcon} />}
-                  >
-                    Verida website
-                  </Button>
-                </>
-              )}
-              <span className={classes.profile}>{app.name}</span>
-              <UserAvatar />
-            </Box>
-          )}
+          <Box display="flex" alignItems="center" justifyContent="space-between">
+            {location.pathname === '/editor' ? (
+              <div />
+            ) : (
+              <>
+                <Button
+                  href={webLinks.DOCUMENTATION}
+                  className={classes.links}
+                  target="_blank"
+                  startIcon={<img alt="link" src={LinkIcon} />}
+                >
+                  Documentation
+                </Button>
+                <Button
+                  href={webLinks.WEBSITE}
+                  target="_blank"
+                  className={classes.links}
+                  startIcon={<img alt="link" src={LinkIcon} />}
+                >
+                  Verida website
+                </Button>
+              </>
+            )}
+            <span className={classes.profile}>{app?.name}</span>
+            <UserAvatar />
+          </Box>
         </Box>
       ) : (
         <Box display="flex" alignItems="center" justifyContent="space-between">

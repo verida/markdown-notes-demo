@@ -1,13 +1,10 @@
 import { Box, CircularProgress, makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
-import markDownServices from '../api/services';
+import { useSelector } from 'react-redux';
 import veridaButtonImage from '../assets/images/connect_with_verida_dark.png';
 
 import veridaLogo from '../assets/images/verida_logo.svg';
-import { onConnecting, onSuccessLogin } from '../redux/reducers/auth';
-import { setMarkdownNotes } from '../redux/reducers/editor';
+import useConnect from '../hooks/useConnect';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,34 +50,13 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       width: '22rem'
     }
-  },
-  logo: {
-    // margin: '3rem  0 0 0'
   }
 }));
 
-const ConnectVault = ({ history }) => {
+const ConnectVault = () => {
   const classes = useStyles();
-  const dispatch = useDispatch();
   const state = useSelector((state) => state.webVault);
-
-  const appInit = (data) => {
-    // Todo: Fix Dispatch actions class
-
-    if (data?.error || !data?.userProfile?.avatar) {
-      toast.error(data?.error?.message);
-      dispatch(onConnecting());
-      return;
-    }
-    dispatch(onSuccessLogin(data));
-    dispatch(setMarkdownNotes(data.notes));
-    history.push('/');
-  };
-
-  const initializeApp = () => {
-    dispatch(onConnecting());
-    markDownServices.connectVault(appInit);
-  };
+  const { connectVault: connect } = useConnect();
 
   return (
     <Box className={classes.root}>
@@ -102,7 +78,7 @@ const ConnectVault = ({ history }) => {
           <input
             className={classes.connectButton}
             disabled={state.connecting}
-            onClick={initializeApp}
+            onClick={connect}
             type="image"
             src={veridaButtonImage}
             alt="button"

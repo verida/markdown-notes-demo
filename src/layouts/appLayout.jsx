@@ -4,16 +4,13 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
 import { Box, CircularProgress, Container } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
 import Store from '../utils/store';
 import { VERIDA_USER_SIGNATURE } from '../constants';
 import AppHeader from '../components/common/Header';
-import markDownServices from '../api/services';
-import { onConnecting, onSuccessLogin } from '../redux/reducers/auth';
+import { onConnecting } from '../redux/reducers/auth';
 import veridaLogo from '../assets/images/verida_logo.svg';
-import { setMarkdownNotes } from '../redux/reducers/editor';
+import useConnect from '../hooks/useConnect';
 
 const drawerWidth = 320;
 const useStyles = makeStyles((theme) => ({
@@ -113,9 +110,7 @@ const useStyles = makeStyles((theme) => ({
 const AppLayouts = ({ children }) => {
   const classes = useStyles();
   const { app, connecting } = useSelector((state) => state.webVault);
-
-  const [open] = React.useState(false);
-  const history = useHistory();
+  const { connectVault } = useConnect();
 
   const decryptedSignature = Store.get(VERIDA_USER_SIGNATURE);
 
@@ -134,23 +129,9 @@ const AppLayouts = ({ children }) => {
     }
   };
 
-  const appInit = (data) => {
-    // Todo: Fix Dispatch actions class
-    if (data?.error || !data?.userProfile?.avatar) {
-      toast.error(data?.error?.message);
-      dispatch(onConnecting());
-      return;
-    }
-    dispatch(onSuccessLogin(data));
-    dispatch(setMarkdownNotes(data.notes));
-    history.push('/');
-  };
-
   useEffect(() => {
     if (decryptedSignature) {
-      // setConnecting(!connecting);
-      dispatch(onConnecting());
-      markDownServices.connectVault(appInit);
+      connectVault();
     }
   }, []);
 
@@ -193,26 +174,20 @@ const AppLayouts = ({ children }) => {
 
   return (
     <div className={classes.root}>
-      {app && (
-        <AppBar
-          color="inherit"
-          position="fixed"
-          className={clsx(classes.appBar, {
-            [classes.appBarShift]: open
-          })}
-        >
-          <Container fixed>
-            <AppHeader />
-          </Container>
-        </AppBar>
-      )}
       {app ? (
-        <Container fixed>
-          <main className={classes.content}>
-            <div className={classes.toolbar} />
-            {children}
-          </main>
-        </Container>
+        <>
+          <AppBar color="inherit" position="fixed" className={clsx(classes.appBar)}>
+            <Container fixed>
+              <AppHeader />
+            </Container>
+          </AppBar>
+          <Container fixed>
+            <main className={classes.content}>
+              <div className={classes.toolbar} />
+              {children}
+            </main>
+          </Container>
+        </>
       ) : (
         children
       )}
