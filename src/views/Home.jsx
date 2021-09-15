@@ -1,13 +1,14 @@
 import React from 'react';
+import { Box } from '@material-ui/core';
 import NotesUI from '../components/editorview/NotesViewUI';
 import { NotesHeader } from '../components/common/index';
 
 const Home = (props) => {
   return (
-    <div>
+    <Box>
       <NotesHeader {...props} />
       <NotesUI />
-    </div>
+    </Box>
   );
 };
 

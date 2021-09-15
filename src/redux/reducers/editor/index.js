@@ -1,5 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import markDownServices from '../../../api/services';
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   notes: [],
@@ -8,39 +7,13 @@ const initialState = {
   noteItem: {
     title: 'Untitled',
     isFavorite: false
-  },
-  error: ''
-};
-
-export const markdownActions = {
-  POST: 'onPostContent',
-  PATCH: 'onUpdateContent',
-  DELETE: 'onDeleteContent'
+  }
 };
 
 export const editorType = {
   GRID: 'grid',
   TABLE: 'table'
 };
-
-export const markdownApi = createAsyncThunk('editor/markdown', async (data) => {
-  switch (data.type) {
-    case markdownActions.POST: {
-      const response = await markDownServices.postContent(data.data);
-      return response;
-    }
-    case markdownActions.PATCH: {
-      const response = await markDownServices.updateContent(data.data);
-      return response;
-    }
-    case markdownActions.DELETE: {
-      const response = await markDownServices.deleteContent(data.data);
-      return response;
-    }
-    default:
-      break;
-  }
-});
 
 const markdownEditor = createSlice({
   initialState,
@@ -93,17 +66,6 @@ const markdownEditor = createSlice({
         }
       };
       state = prevState;
-      return state;
-    }
-  },
-  extraReducers: {
-    [markdownApi.fulfilled]: (state, action) => {
-      const notes = action.payload;
-      state.notes = notes;
-      return state;
-    },
-    [markdownApi.rejected]: (state) => {
-      state.error = 'something wrong';
       return state;
     }
   }

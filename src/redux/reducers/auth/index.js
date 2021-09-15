@@ -12,18 +12,15 @@ const webVault = createSlice({
   reducers: {
     connectWithVault() {},
     onSuccessLogin(state, action) {
-      const data = action.payload;
-      // @todo: handle no profile data
-      // should re-use `setUserAvatar`
-      /*
-      const { avatar, name, country } = data?.userProfile;
+      const user = action.payload;
+      if (user.avatar) {
+        const parseAvatarValue = JSON.parse(user?.avatar);
+        state.avatar = `data:image/${parseAvatarValue.format};base64,${parseAvatarValue.base64}`;
+      }
       state.app = {
-        name,
-        country
+        name: user?.name,
+        country: user?.country
       };
-      const parseAvatarValue = JSON.parse(avatar);
-      state.avatar = `data:image/${parseAvatarValue.format};base64,${parseAvatarValue.base64}`;
-      */
       state.connecting = !state.connecting;
       return state;
     },
@@ -41,11 +38,6 @@ const webVault = createSlice({
       state.app = action.payload;
       return state;
     },
-    onError(state, action) {
-      const error = action.payload;
-      state.error = error;
-      return state;
-    },
     onLogout(state) {
       state.avatar = null;
       state.app = null;
@@ -54,7 +46,7 @@ const webVault = createSlice({
   }
 });
 
-export const { onError, onSuccessLogin, onConnecting, setUserAvatar, setUserProfile, onLogout } =
+export const { onSuccessLogin, onConnecting, setUserAvatar, setUserProfile, onLogout } =
   webVault.actions;
 
 export default webVault.reducer;

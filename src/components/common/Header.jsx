@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
     outline: 'none',
     fontWeight: 600,
     fontSize: '24px',
-    width: 140
+    width: 190
   }
 }));
 
@@ -72,6 +72,7 @@ const AppHeader = () => {
   const handleFavorite = () => {
     dispatch(setFavoriteItem());
   };
+
   return (
     <div className={classes.root}>
       {!matches ? (
@@ -93,34 +94,32 @@ const AppHeader = () => {
               )}
             </div>
           )}
-          {app?.name && (
-            <Box display="flex" alignItems="center" justifyContent="space-between">
-              {location.pathname === '/editor' ? (
-                <div />
-              ) : (
-                <>
-                  <Button
-                    href={webLinks.DOCUMENTATION}
-                    className={classes.links}
-                    target="_blank"
-                    startIcon={<img alt="link" src={LinkIcon} />}
-                  >
-                    Documentation
-                  </Button>
-                  <Button
-                    href={webLinks.WEBSITE}
-                    target="_blank"
-                    className={classes.links}
-                    startIcon={<img alt="link" src={LinkIcon} />}
-                  >
-                    Verida website
-                  </Button>
-                </>
-              )}
-              <span className={classes.profile}>{app.name}</span>
-              <UserAvatar />
-            </Box>
-          )}
+          <Box display="flex" alignItems="center" justifyContent="space-between">
+            {location.pathname === '/editor' ? (
+              <div />
+            ) : (
+              <>
+                <Button
+                  href={webLinks.DOCUMENTATION}
+                  className={classes.links}
+                  target="_blank"
+                  startIcon={<img alt="link" src={LinkIcon} />}
+                >
+                  Documentation
+                </Button>
+                <Button
+                  href={webLinks.WEBSITE}
+                  target="_blank"
+                  className={classes.links}
+                  startIcon={<img alt="link" src={LinkIcon} />}
+                >
+                  Verida website
+                </Button>
+              </>
+            )}
+            <span className={classes.profile}>{app?.name}</span>
+            <UserAvatar />
+          </Box>
         </Box>
       ) : (
         <Box display="flex" alignItems="center" justifyContent="space-between">
