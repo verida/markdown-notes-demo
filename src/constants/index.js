@@ -2,8 +2,8 @@
  *  Vault Client Sign on URi
  */
 
-export const LOGIN_URI = 'https://vault.testnet.verida.io/mobile/auth-request.html';
-export const SERVER_URI = 'wss://auth-server.testnet.verida.io:7001';
+export const LOGIN_URI = 'https://vault.verida.io/request/';
+export const SERVER_URI = 'wss://auth-server.testnet.verida.io:7002';
 
 export const LOGO_URL = 'http://assets.verida.io/verida_logo.svg';
 
