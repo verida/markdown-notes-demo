@@ -13,13 +13,7 @@ const useConnect = () => {
       dispatch(onConnecting());
       return;
     }
-
-    const filterOptions = {
-      limit: 40,
-      skip: 0,
-      sort: [{ title: 'desc' }]
-    };
-    const notes = await markDownServices.fetchAllNotes({}, filterOptions);
+    const notes = await markDownServices.fetchAllNotes();
     const profile = await markDownServices.getUserProfile();
     dispatch(setMarkdownNotes(notes));
     dispatch(onSuccessLogin(profile));

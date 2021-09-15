@@ -76,20 +76,12 @@ const Editor = ({ history, location }) => {
     const data = {
       title: noteItem.title,
       isFavorite: noteItem.isFavorite,
-      body: mdValue,
-      _id: selectedNote._id
-    };
-    markDownServices.updateNote(data);
-    notifications();
-  };
-
-  const addNote = () => {
-    const data = {
-      title: noteItem.title,
-      isFavorite: noteItem.isFavorite,
       body: mdValue
     };
-    markDownServices.saveNote(data);
+    if (pageType === 'edit') {
+      data._id = selectedNote._id;
+    }
+    markDownServices.updateNote(data);
     notifications();
   };
 
@@ -144,7 +136,7 @@ const Editor = ({ history, location }) => {
             Share
           </Button> */}
           <Button
-            onClick={pageType === 'edit' ? updateNotes : addNote}
+            onClick={updateNotes}
             className={classes.saveButton}
             variant="contained"
             color="primary"

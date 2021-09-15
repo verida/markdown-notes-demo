@@ -58,7 +58,9 @@ class MarkDownServices extends EventEmitter {
     const user = Store.get(VERIDA_USER_SIGNATURE);
     try {
       await this.initApp();
-      this.profileInstance = await this.veridaDApp.openProfile(user.did, 'Verida: Vault');
+      if (!this.profileInstance) {
+        this.profileInstance = await this.veridaDApp.openProfile(user.did, 'Verida: Vault');
+      }
       const data = await this.profileInstance.getMany();
       const userProfile = data.reduce((result, item) => {
         result[item.key] = item.value;
@@ -99,12 +101,15 @@ class MarkDownServices extends EventEmitter {
   }
 
   async updateNote(data) {
-    await this.initApp();
     try {
-      await this.openNote(data._id);
-      const newItem = Object.assign(this.currentNote, data);
-      await this.dataStore.save(newItem);
-      await this.pushNotes();
+      await this.initApp();
+      if (data._id) {
+        await this.openNote(data._id);
+        const noteItem = Object.assign(this.currentNote, data);
+        await this.saveNote(noteItem);
+      } else {
+        await this.saveNote(data);
+      }
       return true;
     } catch (error) {
       this.handleErrors(error);
@@ -116,8 +121,8 @@ class MarkDownServices extends EventEmitter {
     let notes = [];
     try {
       await this.initApp();
-      const dataStore = await this.dataStore.openDatastore(DATASTORE_SCHEMA);
-      dataStore.changes(function (changeInfo) {
+      const dbInstance = await this.dataStore.openDatastore(DATASTORE_SCHEMA);
+      dbInstance.changes(function (changeInfo) {
         notes = changeInfo;
       });
       return notes;
@@ -139,38 +144,32 @@ class MarkDownServices extends EventEmitter {
   }
 
   async pushNotes() {
-    const filterOptions = {
-      limit: 40,
-      skip: 0,
-      sort: [{ title: 'desc' }]
-    };
     try {
-      const notes = await this.fetchAllNotes({}, filterOptions);
+      const notes = await this.fetchAllNotes();
       this.emit('onNoteChanged', notes);
     } catch (error) {
       this.handleErrors(error);
     }
   }
 
-  async fetchAllNotes(filter, options) {
+  async fetchAllNotes(options) {
+    const defaultOptions = {
+      limit: 40,
+      skip: 0,
+      sort: [{ title: 'desc' }]
+    };
+    const filter = options || defaultOptions;
     try {
       await this.initApp();
-      const response = await this.dataStore.getMany(filter, options);
+      const response = await this.dataStore.getMany({}, filter);
       return response;
     } catch (error) {
       this.handleErrors(error);
     }
   }
   async saveNote(item) {
-    try {
-      await this.initApp();
-      await this.dataStore.save(item);
-      await this.pushNotes();
-      return true;
-    } catch (error) {
-      this.handleErrors(error);
-      return false;
-    }
+    await this.dataStore.save(item);
+    await this.pushNotes();
   }
   handleErrors(error) {
     this.error = error;
