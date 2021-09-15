@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
 const Editor = ({ history, location }) => {
   const classes = useStyles();
   const [snackPack, setSnackPack] = useState(false);
-  const [markdownVal, setMarkdownVal] = useState('');
+  const [mdValue, setMDvalue] = useState('');
   const [modalView, setModalView] = useState({
     editor: true,
     preview: false
@@ -60,49 +60,47 @@ const Editor = ({ history, location }) => {
   const { noteItem, selectedNote } = useSelector((state) => state.markdownEditor);
 
   const handleView = (type) => {
-    if (type === 'editor') {
-      setModalView({
-        editor: true,
-        preview: false
-      });
-    } else {
-      setModalView({
-        editor: false,
-        preview: true
-      });
-    }
+    const isEdit = type === 'editor';
+    setModalView({
+      editor: isEdit && true,
+      preview: !isEdit && true
+    });
+  };
+
+  const notifications = () => {
+    setSnackPack(!snackPack);
+    history.push('/');
   };
 
   const updateNotes = () => {
     const data = {
       title: noteItem.title,
       isFavorite: noteItem.isFavorite,
-      body: markdownVal,
+      body: mdValue,
       _id: selectedNote._id
     };
     markDownServices.updateNote(data);
-    setSnackPack(!snackPack);
-    history.push('/');
+    notifications();
   };
 
   const addNote = () => {
     const data = {
       title: noteItem.title,
       isFavorite: noteItem.isFavorite,
-      body: markdownVal
+      body: mdValue
     };
-    markDownServices.onSave(data);
-    setSnackPack(!snackPack);
-    history.push('/');
+    markDownServices.saveNote(data);
+    notifications();
   };
 
   const onDeleteNote = () => {
     markDownServices.deleteNote(selectedNote._id);
+    notifications();
   };
 
   useEffect(() => {
-    if (pageType && pageType === 'edit') {
-      setMarkdownVal(selectedNote.body);
+    if (pageType === 'edit') {
+      setMDvalue(selectedNote.body);
     }
   }, [pageType, selectedNote.body]);
   return (
@@ -156,11 +154,7 @@ const Editor = ({ history, location }) => {
         </div>
       </Box>
       <div>
-        <RichTextEditor
-          preview={modalView.preview}
-          markdownVal={markdownVal}
-          setMarkdownVal={setMarkdownVal}
-        />
+        <RichTextEditor preview={modalView.preview} mdValue={mdValue} setMDValue={setMDvalue} />
       </div>
     </div>
   );

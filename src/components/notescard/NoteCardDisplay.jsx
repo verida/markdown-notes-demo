@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Markdown from 'markdown-to-jsx';
+import MDEditor from '@uiw/react-md-editor';
 import Moment from 'react-moment';
 import { Grid, makeStyles } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
@@ -148,7 +148,8 @@ const NoteCardDisplay = () => {
           <Grid item md={3} sm={12} xs={12} key={list._id}>
             <Box m={2} className={classes.root}>
               <Box className={classes.contentBox} onClick={() => onEdit(list)}>
-                <Markdown>{list.body}</Markdown>
+                <MDEditor.Markdown source={reduceStringLength(list.body, 130)} />
+                ....
               </Box>
               <Box className={classes.panelTab}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -181,7 +182,8 @@ const NoteCardDisplay = () => {
           <Grid item md={6} sm={12} xs={6} key={list._id}>
             <Box m={2} className={classes.rootMobile}>
               <Box className={classes.contentBoxMobile} onClick={() => onEdit(list)}>
-                {reduceStringLength(list.body, 300)}
+                {list.body.length > 100 ? list.body : reduceStringLength(list.body, 300)}
+                {/* {list.body.length > 100 ? list.body : reduceStringLength(list.body, 300)} */}
               </Box>
               <Box className={classes.panelTabMobile}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">

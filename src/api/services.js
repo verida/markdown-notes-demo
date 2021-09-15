@@ -25,11 +25,11 @@ class MarkDownServices extends EventEmitter {
       this.connectVault();
     }
   }
+
   connectVault(cb) {
     Verida.setConfig({
       appName: CLIENT_AUTH_NAME
     });
-
     veridaVaultLogin({
       loginUri: LOGIN_URI,
       serverUri: SERVER_URI,
@@ -42,23 +42,11 @@ class MarkDownServices extends EventEmitter {
             signature: response.signature,
             appName: CLIENT_AUTH_NAME
           });
-
           await veridaDApp.connect(true);
-
-          this.veridaDapp = veridaDApp;
-
           this.dataStore = await veridaDApp.openDatastore(DATASTORE_SCHEMA);
-          this.profileInstance = await veridaDApp.openProfile(response.did, 'Verida: Vault');
-
-          const data = await this.profileInstance.getMany();
-
-          const userProfile = data.reduce((result, item) => {
-            result[item.key] = item.value;
-            return result;
-          }, {});
-
+          this.veridaDApp = veridaDApp;
           if (cb) {
-            cb(userProfile);
+            cb();
           }
         } catch (error) {
           this.handleErrors(error);
@@ -66,21 +54,40 @@ class MarkDownServices extends EventEmitter {
       }
     });
   }
+  async getUserProfile() {
+    const user = Store.get(VERIDA_USER_SIGNATURE);
+    try {
+      await this.initApp();
+      this.profileInstance = await this.veridaDApp.openProfile(user.did, 'Verida: Vault');
+      const data = await this.profileInstance.getMany();
+      const userProfile = data.reduce((result, item) => {
+        result[item.key] = item.value;
+        return result;
+      }, {});
+      return userProfile;
+    } catch (error) {
+      this.handleErrors(error);
+    }
+  }
 
   async profileEventSubscription() {
     let userProfile = {};
     await this.initApp();
-    const userDB = await this.profileInstance._store.getDb();
-    const PouchDB = await userDB.getInstance();
-    PouchDB.changes({
-      since: 'now',
-      live: true
-    }).on('change', async (info) => {
-      userProfile = await userDB.get(info.id, {
-        rev: info.changes[0].rev
+    try {
+      const userDB = await this.profileInstance._store.getDb();
+      const PouchDB = await userDB.getInstance();
+      PouchDB.changes({
+        since: 'now',
+        live: true
+      }).on('change', async (info) => {
+        userProfile = await userDB.get(info.id, {
+          rev: info.changes[0].rev
+        });
       });
-    });
-    return userProfile;
+      return userProfile;
+    } catch (error) {
+      this.handleErrors(error);
+    }
   }
 
   async openNote(noteId) {
@@ -92,19 +99,24 @@ class MarkDownServices extends EventEmitter {
   }
 
   async updateNote(data) {
+    await this.initApp();
     try {
       await this.openNote(data._id);
       const newItem = Object.assign(this.currentNote, data);
       await this.dataStore.save(newItem);
+      await this.pushNotes();
+      return true;
     } catch (error) {
       this.handleErrors(error);
+      return false;
     }
   }
 
   async listenDbChanges() {
     let notes = [];
     try {
-      const dataStore = await this.veridaDapp.openDatastore(DATASTORE_SCHEMA);
+      await this.initApp();
+      const dataStore = await this.dataStore.openDatastore(DATASTORE_SCHEMA);
       dataStore.changes(function (changeInfo) {
         notes = changeInfo;
       });
@@ -118,6 +130,23 @@ class MarkDownServices extends EventEmitter {
     try {
       await this.openNote(id);
       await this.dataStore.delete(this.currentNote);
+      await this.pushNotes();
+      return true;
+    } catch (error) {
+      this.handleErrors(error);
+      return false;
+    }
+  }
+
+  async pushNotes() {
+    const filterOptions = {
+      limit: 40,
+      skip: 0,
+      sort: [{ title: 'desc' }]
+    };
+    try {
+      const notes = await this.fetchAllNotes({}, filterOptions);
+      this.emit('onNoteChanged', notes);
     } catch (error) {
       this.handleErrors(error);
     }
@@ -132,12 +161,15 @@ class MarkDownServices extends EventEmitter {
       this.handleErrors(error);
     }
   }
-  async onSave(item) {
+  async saveNote(item) {
     try {
       await this.initApp();
       await this.dataStore.save(item);
+      await this.pushNotes();
+      return true;
     } catch (error) {
       this.handleErrors(error);
+      return false;
     }
   }
   handleErrors(error) {

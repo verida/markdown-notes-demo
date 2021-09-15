@@ -10,16 +10,15 @@ import { setMarkdownNotes } from './redux/reducers/editor';
 
 const App = () => {
   const dispatch = useDispatch();
+
   useEffect(() => {
     markDownServices.on('onError', (error) => {
       toast.error(error?.message);
     });
 
-    if (markDownServices.veridaDapp) {
-      markDownServices.listenDbChanges().then((data) => {
-        dispatch(setMarkdownNotes(data));
-      });
-    }
+    markDownServices.on('onNoteChanged', (data) => {
+      dispatch(setMarkdownNotes(data));
+    });
   }, [dispatch]);
 
   return (

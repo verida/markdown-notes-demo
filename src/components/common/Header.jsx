@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Button, IconButton, useMediaQuery } from '@material-ui/core';
 import { Link, useLocation } from 'react-router-dom';
@@ -13,7 +13,6 @@ import UnFilledStarIcon from '../../assets/icons/Star_unfilled.svg';
 import UserAvatar from './UserAvatar';
 import { setFavoriteItem, setNoteTitle } from '../../redux/reducers/editor';
 import { webLinks } from '../../constants';
-import markDownServices from '../../api/services';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -73,12 +72,6 @@ const AppHeader = () => {
   const handleFavorite = () => {
     dispatch(setFavoriteItem());
   };
-
-  useEffect(() => {
-    if (markDownServices.veridaDapp) {
-      markDownServices.profileEventSubscription().then(() => {});
-    }
-  }, [markDownServices]);
 
   return (
     <div className={classes.root}>

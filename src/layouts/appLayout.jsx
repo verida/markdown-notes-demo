@@ -73,6 +73,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'flex-end',
     padding: theme.spacing(0.5, 1),
+    margin: theme.spacing(2.4, 0),
     // necessary for content to be below app bar
     ...theme.mixins.toolbar
   },
@@ -109,7 +110,7 @@ const useStyles = makeStyles((theme) => ({
 
 const AppLayouts = ({ children }) => {
   const classes = useStyles();
-  const { app, connecting } = useSelector((state) => state.webVault);
+  const { connecting } = useSelector((state) => state.webVault);
   const { connectVault } = useConnect();
 
   const decryptedSignature = Store.get(VERIDA_USER_SIGNATURE);
@@ -174,23 +175,17 @@ const AppLayouts = ({ children }) => {
 
   return (
     <div className={classes.root}>
-      {app ? (
-        <>
-          <AppBar color="inherit" position="fixed" className={clsx(classes.appBar)}>
-            <Container fixed>
-              <AppHeader />
-            </Container>
-          </AppBar>
-          <Container fixed>
-            <main className={classes.content}>
-              <div className={classes.toolbar} />
-              {children}
-            </main>
-          </Container>
-        </>
-      ) : (
-        children
-      )}
+      <AppBar color="inherit" position="fixed" className={clsx(classes.appBar)}>
+        <Container fixed>
+          <AppHeader />
+        </Container>
+      </AppBar>
+      <Container fixed>
+        <main className={classes.content}>
+          <div className={classes.toolbar} />
+          {children}
+        </main>
+      </Container>
     </div>
   );
 };
