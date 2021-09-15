@@ -8,38 +8,28 @@ import {
   LOGIN_URI,
   LOGO_URL,
   SERVER_URI,
-  USER_SESSION_KEY,
   VERIDA_USER_SIGNATURE
 } from '../constants';
 import Store from '../utils/store';
+const EventEmitter = require('events');
 
-//TODO: Customize FIlter Options
-
-// let filter = {
-//   organization: 'markdown_notes'
-// };
-
-// let filterOptions = {
-//   limit: 50,
-//   skip: 0,
-//   sort: ['title']
-// };
-
-class MarkDownServices {
+class MarkDownServices extends EventEmitter {
   veridaDapp;
   dataStore;
+  currentNote;
   profileInstance;
+  error = {};
 
-  initApp() {
-    if (this.dataStore) return;
-    this.connectVault();
+  async initApp() {
+    if (!this.dataStore) {
+      this.connectVault();
+    }
   }
 
-  connectVault(appCallbackFn) {
+  connectVault(cb) {
     Verida.setConfig({
       appName: CLIENT_AUTH_NAME
     });
-
     veridaVaultLogin({
       loginUri: LOGIN_URI,
       serverUri: SERVER_URI,
@@ -50,112 +40,147 @@ class MarkDownServices {
           const veridaDApp = new Verida({
             did: response.did,
             signature: response.signature,
-            // appName: APP_NAME
             appName: CLIENT_AUTH_NAME
           });
-
           await veridaDApp.connect(true);
-          window.veridaDApp = veridaDApp;
-
-          this.dataStore = await window.veridaDApp.openDatastore(DATASTORE_SCHEMA);
-          const notes = await this.dataStore.getMany();
-
-          this.profileInstance = await window.veridaDApp.openProfile(response.did, 'Verida: Vault');
-
-          const data = await this.profileInstance.getMany();
-          const userProfile = data.reduce((result, item) => {
-            result[item.key] = item.value;
-            return result;
-          }, {});
-          Store.set(USER_SESSION_KEY, true);
-
-          if (appCallbackFn) {
-            appCallbackFn({
-              notes,
-              userProfile,
-              error: null
-            });
+          this.dataStore = await veridaDApp.openDatastore(DATASTORE_SCHEMA);
+          this.veridaDApp = veridaDApp;
+          if (cb) {
+            cb();
           }
         } catch (error) {
-          if (appCallbackFn) {
-            appCallbackFn({
-              notes: null,
-              userProfile: null,
-              error
-            });
-          }
+          this.handleErrors(error);
         }
       }
     });
   }
+  async getUserProfile() {
+    const user = Store.get(VERIDA_USER_SIGNATURE);
+    try {
+      await this.initApp();
+      if (!this.profileInstance) {
+        this.profileInstance = await this.veridaDApp.openProfile(user.did, 'Verida: Vault');
+      }
+      const data = await this.profileInstance.getMany();
+      const userProfile = data.reduce((result, item) => {
+        result[item.key] = item.value;
+        return result;
+      }, {});
+      return userProfile;
+    } catch (error) {
+      this.handleErrors(error);
+    }
+  }
 
   async profileEventSubscription() {
-    this.initApp();
-    const userDB = await this.profileInstance._store.getDb();
-    const PouchDB = await userDB.getInstance();
+    let userProfile = {};
+    await this.initApp();
+    try {
+      const userDB = await this.profileInstance._store.getDb();
+      const PouchDB = await userDB.getInstance();
+      PouchDB.changes({
+        since: 'now',
+        live: true
+      }).on('change', async (info) => {
+        userProfile = await userDB.get(info.id, {
+          rev: info.changes[0].rev
+        });
+      });
+      return userProfile;
+    } catch (error) {
+      this.handleErrors(error);
+    }
+  }
 
-    return {
-      userDB,
-      PouchDB
+  async openNote(noteId) {
+    try {
+      this.currentNote = await this.dataStore.get(noteId);
+    } catch (error) {
+      this.handleErrors(error);
+    }
+  }
+
+  async updateNote(data) {
+    try {
+      await this.initApp();
+      if (data._id) {
+        await this.openNote(data._id);
+        const noteItem = Object.assign(this.currentNote, data);
+        await this.saveNote(noteItem);
+      } else {
+        await this.saveNote(data);
+      }
+      return true;
+    } catch (error) {
+      this.handleErrors(error);
+      return false;
+    }
+  }
+
+  async listenDbChanges() {
+    let notes = [];
+    try {
+      await this.initApp();
+      const dbInstance = await this.dataStore.openDatastore(DATASTORE_SCHEMA);
+      dbInstance.changes(function (changeInfo) {
+        notes = changeInfo;
+      });
+      return notes;
+    } catch (error) {
+      this.handleErrors(error);
+    }
+  }
+
+  async deleteNote(id) {
+    try {
+      await this.openNote(id);
+      await this.dataStore.delete(this.currentNote);
+      await this.pushNotes();
+      return true;
+    } catch (error) {
+      this.handleErrors(error);
+      return false;
+    }
+  }
+
+  async pushNotes() {
+    try {
+      const notes = await this.fetchAllNotes();
+      this.emit('onNoteChanged', notes);
+    } catch (error) {
+      this.handleErrors(error);
+    }
+  }
+
+  async fetchAllNotes(options) {
+    const defaultOptions = {
+      limit: 40,
+      skip: 0,
+      sort: [{ title: 'desc' }]
     };
-  }
-
-  async postContent(data) {
-    this.initApp();
+    const filter = options || defaultOptions;
     try {
-      await this.dataStore.save(data);
-      let response = await this.getNotes();
+      await this.initApp();
+      const response = await this.dataStore.getMany({}, filter);
       return response;
     } catch (error) {
-      return error;
+      this.handleErrors(error);
     }
   }
-
-  async deleteContent(item) {
-    this.initApp();
-
-    try {
-      await this.dataStore.delete(item);
-      let response = await this.getNotes();
-      return response;
-    } catch (error) {
-      return error;
-    }
+  async saveNote(item) {
+    await this.dataStore.save(item);
+    await this.pushNotes();
   }
-
-  async updateContent(item) {
-    this.initApp();
-    try {
-      await this.dataStore.save(item);
-      let response = await this.getNotes();
-      return response;
-    } catch (error) {
-      return error;
-    }
+  handleErrors(error) {
+    this.error = error;
+    this.emit('onError', error);
   }
-
-  async getNotes() {
-    this.initApp();
-    try {
-      const response = await this.dataStore.getMany();
-      // const response = await this.dataStore.getMany(filter, filterOptions);
-      return response;
-    } catch (error) {
-      return error;
-    }
-  }
-
-  async logout() {
-    await window.veridaDApp.disconnect();
-    Store.remove(USER_SESSION_KEY);
-
-    //TODO : action from datastore library.
-
+  logout() {
     Store.remove(VERIDA_USER_SIGNATURE);
-    window.veridaDapp = null;
+    this.veridaDApp.disconnect();
     this.dataStore = {};
     this.veridaDapp = {};
-    // this.profileInstance = {};
+    this.profileInstance = {};
   }
 }
 

@@ -118,7 +118,7 @@ export default function NoteTableDisplay() {
                   </Box>
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  {app.name}
+                  {app?.name}
                 </TableCell>
                 <TableCell component="th" scope="row">
                   <Moment fromNow>{row.modifiedAt}</Moment>
@@ -153,7 +153,7 @@ export default function NoteTableDisplay() {
             <Typography variant="subtitle1">
               <Moment fromNow>{row.modifiedAt}</Moment>
             </Typography>
-            <Typography variant="subtitle1">Owner :{app.name}</Typography>
+            <Typography variant="subtitle1">Owner :{app?.name}</Typography>
           </Box>
         </Box>
       ))}

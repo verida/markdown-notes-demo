@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { IconButton, makeStyles } from '@material-ui/core';
-import { useDispatch } from 'react-redux';
 import StarIcon from '../../../assets/icons/star_filled.svg';
 import UnFilledStarIcon from '../../../assets/icons/Star_unfilled.svg';
-import { markdownActions, markdownApi } from '../../../redux/reducers/editor';
 import { AppSnackBar } from '../../index';
+import markDownServices from '../../../api/services';
 
 const useStyles = makeStyles((theme) => ({
   starIcon: {
@@ -14,19 +13,14 @@ const useStyles = makeStyles((theme) => ({
 
 const FavoriteIcon = ({ item }) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
   const [snackPack, setSnackPack] = useState(false);
 
   const handleFavorite = () => {
-    const { isFavorite, ...rest } = item;
-    const selectedItem = {
-      data: {
-        isFavorite: !item.isFavorite,
-        ...rest
-      },
-      type: markdownActions.PATCH
+    const data = {
+      isFavorite: !item.isFavorite,
+      _id: item._id
     };
-    dispatch(markdownApi(selectedItem));
+    markDownServices.updateNote(data);
     setSnackPack(true);
   };
   return (

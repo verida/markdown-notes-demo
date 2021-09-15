@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, ButtonGroup, IconButton, makeStyles } from '@material-ui/core';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import RichTextEditor from '../components/markdown/RichEditor';
 import TrashIcon from '../assets/icons/Trash.svg';
 import ArrowLeft from '../assets/icons/arrow_left.svg';
 import PreviewIcon from '../assets/icons/eye.svg';
 import EditIcon from '../assets/icons/Edit.svg';
-import { markdownActions, markdownApi } from '../redux/reducers/editor';
 import { browserQueries } from '../utils/common.utils';
 import AppSnackBar from '../components/snackbar/SnackBar';
+import markDownServices from '../api/services';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -51,67 +51,48 @@ const useStyles = makeStyles((theme) => ({
 const Editor = ({ history, location }) => {
   const classes = useStyles();
   const [snackPack, setSnackPack] = useState(false);
-  const [markdownVal, setMarkdownVal] = useState('');
+  const [mdValue, setMDvalue] = useState('');
   const [modalView, setModalView] = useState({
     editor: true,
     preview: false
   });
-  const dispatch = useDispatch();
   const pageType = browserQueries(location).get('type');
   const { noteItem, selectedNote } = useSelector((state) => state.markdownEditor);
 
   const handleView = (type) => {
-    if (type === 'editor') {
-      setModalView({
-        editor: true,
-        preview: false
-      });
-    } else {
-      setModalView({
-        editor: false,
-        preview: true
-      });
-    }
+    const isEdit = type === 'editor';
+    setModalView({
+      editor: isEdit && true,
+      preview: !isEdit && true
+    });
   };
-  const onAddNote = () => {
-    let item = {};
-    if (pageType === 'edit') {
-      const { title, isFavorite, body, ...rest } = selectedNote;
-      item = {
-        data: {
-          title: noteItem.title,
-          isFavorite: noteItem.isFavorite,
-          body: markdownVal,
-          ...rest
-        },
-        type: markdownActions.PATCH
-      };
-    } else {
-      item = {
-        data: {
-          title: noteItem.title,
-          isFavorite: noteItem.isFavorite,
-          body: markdownVal
-        },
-        type: markdownActions.POST
-      };
-    }
-    dispatch(markdownApi(item));
+
+  const notifications = () => {
     setSnackPack(!snackPack);
     history.push('/');
   };
 
-  const onDeleteNote = () => {
+  const updateNotes = () => {
     const data = {
-      type: markdownActions.DELETE,
-      data: selectedNote
+      title: noteItem.title,
+      isFavorite: noteItem.isFavorite,
+      body: mdValue
     };
-    dispatch(markdownApi(data));
+    if (pageType === 'edit') {
+      data._id = selectedNote._id;
+    }
+    markDownServices.updateNote(data);
+    notifications();
+  };
+
+  const onDeleteNote = () => {
+    markDownServices.deleteNote(selectedNote._id);
+    notifications();
   };
 
   useEffect(() => {
-    if (pageType && pageType === 'edit') {
-      setMarkdownVal(selectedNote.body);
+    if (pageType === 'edit') {
+      setMDvalue(selectedNote.body);
     }
   }, [pageType, selectedNote.body]);
   return (
@@ -155,7 +136,7 @@ const Editor = ({ history, location }) => {
             Share
           </Button> */}
           <Button
-            onClick={onAddNote}
+            onClick={updateNotes}
             className={classes.saveButton}
             variant="contained"
             color="primary"
@@ -165,11 +146,7 @@ const Editor = ({ history, location }) => {
         </div>
       </Box>
       <div>
-        <RichTextEditor
-          preview={modalView.preview}
-          markdownVal={markdownVal}
-          setMarkdownVal={setMarkdownVal}
-        />
+        <RichTextEditor preview={modalView.preview} mdValue={mdValue} setMDValue={setMDvalue} />
       </div>
     </div>
   );

@@ -99,7 +99,7 @@ export default function NotesAction({ item, setAction, setOpen }) {
             Rename
           </Typography>
         </MenuItem>
-        <MenuItem disabled onClick={onDelete}>
+        <MenuItem onClick={onDelete}>
           <ListItemIcon>
             <img alt="icon" src={TrashIcon} />
           </ListItemIcon>

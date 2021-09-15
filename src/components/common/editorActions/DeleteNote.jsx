@@ -1,7 +1,6 @@
 import { Box, Button, makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { markdownActions, markdownApi } from '../../../redux/reducers/editor';
+import markDownServices from '../../../api/services';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -24,15 +23,12 @@ const useStyles = makeStyles(() => ({
 
 const DeleteNote = ({ item, setOpen }) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
 
   const handleDelete = () => {
-    const data = {
-      type: markdownActions.DELETE,
-      data: item
-    };
-    dispatch(markdownApi(data));
+    markDownServices.deleteNote(item._id);
+    setOpen(false);
   };
+
   return (
     <Box className={classes.root}>
       <Typography className={classes.body} variant="body1">

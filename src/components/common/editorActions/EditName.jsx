@@ -1,7 +1,6 @@
 import { Box, Button, makeStyles } from '@material-ui/core';
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { markdownActions, markdownApi } from '../../../redux/reducers/editor';
+import markDownServices from '../../../api/services';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,33 +38,32 @@ const useStyles = makeStyles((theme) => ({
 const EditName = ({ item, setOpen }) => {
   const classes = useStyles();
   const [titleName, setTitleName] = useState(item.title);
-  const dispatch = useDispatch();
 
-  const handleEdit = () => {
-    const { title, ...rest } = item;
-    const noteData = {
-      data: {
-        title: titleName,
-        ...rest
-      },
-      type: markdownActions.PATCH
+  const handleEdit = (event) => {
+    event.preventDefault();
+    const data = {
+      title: titleName,
+      _id: item._id
     };
-    dispatch(markdownApi(noteData));
+    markDownServices.updateNote(data);
     setOpen(false);
   };
 
   return (
     <Box display="flex" alignItems="center" justifyContent="center" className={classes.root}>
-      <input
-        onChange={(e) => setTitleName(e.target.value)}
-        className={classes.input}
-        id="outlined-basic"
-        value={titleName}
-        type="text"
-      />
-      <Button className={classes.button} onClick={handleEdit} variant="contained" color="primary">
-        Save Changes
-      </Button>
+      <form onSubmit={handleEdit}>
+        <input
+          onChange={(e) => setTitleName(e.target.value)}
+          className={classes.input}
+          id="outlined-basic"
+          value={titleName}
+          type="text"
+          required
+        />
+        <Button type="submit" className={classes.button} variant="contained" color="primary">
+          Save Changes
+        </Button>
+      </form>
     </Box>
   );
 };

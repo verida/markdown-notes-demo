@@ -7,7 +7,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { Avatar, ListItemIcon, makeStyles, Typography } from '@material-ui/core';
 import ShareIcon from '../../assets/icons/Share.svg';
 import markDownServices from '../../api/services';
-import { setMarkdownNotes } from '../../redux/reducers/editor';
 import { onLogout } from '../../redux/reducers/auth';
 
 const useStyles = makeStyles((theme) => ({
@@ -42,11 +41,9 @@ export default function UserAvatar() {
   };
 
   const handleSignOut = () => {
-    markDownServices.logout().then(() => {
-      dispatch(setMarkdownNotes([]));
-      dispatch(onLogout());
-      history.push('/connect');
-    });
+    markDownServices.veridaDapp.disconnect();
+    dispatch(onLogout());
+    history.push('/connect');
   };
 
   return (
@@ -57,7 +54,7 @@ export default function UserAvatar() {
         aria-haspopup="true"
         onClick={handleClick}
       >
-        <Avatar className={open ? classes.avatar : ''} alt="appData.name" src={avatar} />
+        <Avatar className={open ? classes.avatar : ''} alt="user" src={avatar} />
       </IconButton>
       <Menu
         id="long-menu"
