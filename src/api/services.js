@@ -11,7 +11,7 @@ import {
 } from '../constants';
 const EventEmitter = require('events');
 
-class MarkDownServices {
+class MarkDownServices extends EventEmitter {
   veridaDapp = null;
   dataStore = null;
   currentNote = null;
@@ -72,8 +72,11 @@ class MarkDownServices {
     try {
       await this.initApp();
       if (!this.profileInstance) {
-        this.profileInstance = await this.veridaDApp.openProfile(this.did, 'Verida: Vault');
+        const client = this.veridaDapp.getClient()
+        this.profileInstance = await client.openPublicProfile(this.did, 'Verida: Vault');
+        console.log(this.profileInstance)
       }
+      
       const data = await this.profileInstance.getMany();
       const userProfile = data.reduce((result, item) => {
         result[item.key] = item.value;
@@ -192,7 +195,7 @@ class MarkDownServices {
     this.emit('onError', error);
   }
 
-  logout() {
+  async logout() {
     await this.veridaDapp.disconnect();
     this.veridaDapp = null;
     this.dataStore = null;
