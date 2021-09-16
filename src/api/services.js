@@ -74,7 +74,6 @@ class MarkDownServices extends EventEmitter {
       if (!this.profileInstance) {
         const client = this.veridaDapp.getClient()
         this.profileInstance = await client.openPublicProfile(this.did, 'Verida: Vault');
-        console.log(this.profileInstance)
       }
       
       const data = await this.profileInstance.getMany();
