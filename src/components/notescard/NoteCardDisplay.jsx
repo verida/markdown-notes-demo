@@ -148,7 +148,7 @@ const NoteCardDisplay = () => {
           <Grid item md={3} sm={12} xs={12} key={list._id}>
             <Box m={2} className={classes.root}>
               <Box className={classes.contentBox} onClick={() => onEdit(list)}>
-                <MDEditor.Markdown source={reduceStringLength(list.body, 130)} />
+                <MDEditor.Markdown source={reduceStringLength(list.body, 50)} />
                 ....
               </Box>
               <Box className={classes.panelTab}>

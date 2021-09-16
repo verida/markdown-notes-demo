@@ -41,7 +41,7 @@ export default function UserAvatar() {
   };
 
   const handleSignOut = () => {
-    markDownServices.veridaDapp.disconnect();
+    markDownServices.logout();
     dispatch(onLogout());
     history.push('/connect');
   };
