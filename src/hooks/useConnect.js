@@ -20,9 +20,10 @@ const useConnect = () => {
     history.push('/');
   };
 
-  const connectVault = () => {
+  const connectVault = async () => {
     dispatch(onConnecting());
-    markDownServices.connectVault(authCb);
+    await markDownServices.initApp();
+    authCb();
   };
 
   return {
