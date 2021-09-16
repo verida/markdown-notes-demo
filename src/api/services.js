@@ -20,13 +20,23 @@ class MarkDownServices extends EventEmitter {
   did = null;
   error = {};
 
+  /**
+   * Public method for initializing this app
+   */
   async initApp() {
     if (!this.dataStore) {
-      this.connectVault();
+      await this.connectVault();
     }
   }
 
-  async connectVault(cb) {
+  appInitialized() {
+    return this.dataStore !== null
+  }
+
+  /**
+   * Private method for connecting to the vault
+   */
+  async connectVault() {
     this.account = new VaultAccount({
       defaultDatabaseServer: {
         type: 'VeridaDatabase',
@@ -63,14 +73,15 @@ class MarkDownServices extends EventEmitter {
     this.did = await this.account.did()
     this.dataStore = await this.veridaDapp.openDatastore(DATASTORE_SCHEMA);
 
-    if (cb) {
-      cb()
-    }
+    this.emit("initialized")
   }
 
   async getUserProfile() {
+    if (!this.appInitialized()) {
+      this.handleErrors(new Error("App isn't initialized"))
+    }
+
     try {
-      await this.initApp();
       if (!this.profileInstance) {
         const client = this.veridaDapp.getClient()
         this.profileInstance = await client.openPublicProfile(this.did, 'Verida: Vault');
@@ -89,8 +100,11 @@ class MarkDownServices extends EventEmitter {
 
   // @todo: fix event subscription
   async profileEventSubscription() {
+    if (!this.appInitialized()) {
+      this.handleErrors(new Error("App isn't initialized"))
+    }
+
     let userProfile = {};
-    await this.initApp();
     try {
       const userDB = await this.profileInstance._store.getDb();
       const PouchDB = await userDB.getInstance();
@@ -109,6 +123,10 @@ class MarkDownServices extends EventEmitter {
   }
 
   async openNote(noteId) {
+    if (!this.appInitialized()) {
+      this.handleErrors(new Error("App isn't initialized"))
+    }
+
     try {
       this.currentNote = await this.dataStore.get(noteId);
     } catch (error) {
@@ -117,8 +135,11 @@ class MarkDownServices extends EventEmitter {
   }
 
   async updateNote(data) {
+    if (!this.appInitialized()) {
+      this.handleErrors(new Error("App isn't initialized"))
+    }
+
     try {
-      await this.initApp();
       if (data._id) {
         await this.openNote(data._id);
         const noteItem = Object.assign(this.currentNote, data);
@@ -134,6 +155,10 @@ class MarkDownServices extends EventEmitter {
   }
 
   async deleteNote(id) {
+    if (!this.appInitialized()) {
+      this.handleErrors(new Error("App isn't initialized"))
+    }
+
     try {
       await this.openNote(id);
       await this.dataStore.delete(this.currentNote);
@@ -146,9 +171,12 @@ class MarkDownServices extends EventEmitter {
   }
 
   async listenDbChanges() {
+    if (!this.appInitialized()) {
+      this.handleErrors(new Error("App isn't initialized"))
+    }
+
     let notes = [];
     try {
-      await this.initApp();
       const dbInstance = await this.dataStore.openDatastore(DATASTORE_SCHEMA);
       dbInstance.changes(function (changeInfo) {
         notes = changeInfo;
@@ -160,6 +188,10 @@ class MarkDownServices extends EventEmitter {
   }
 
   async pushNotes() {
+    if (!this.appInitialized()) {
+      this.handleErrors(new Error("App isn't initialized"))
+    }
+
     try {
       const notes = await this.fetchAllNotes();
       this.emit('onNoteChanged', notes);
@@ -169,6 +201,10 @@ class MarkDownServices extends EventEmitter {
   }
 
   async fetchAllNotes(options) {
+    if (!this.appInitialized()) {
+      this.handleErrors(new Error("App isn't initialized"))
+    }
+
     const defaultOptions = {
       limit: 40,
       skip: 0,
@@ -176,7 +212,6 @@ class MarkDownServices extends EventEmitter {
     };
     const filter = options || defaultOptions;
     try {
-      await this.initApp();
       const response = await this.dataStore.getMany({}, filter);
       return response;
     } catch (error) {
@@ -185,6 +220,10 @@ class MarkDownServices extends EventEmitter {
   }
 
   async saveNote(item) {
+    if (!this.appInitialized()) {
+      this.handleErrors(new Error("App isn't initialized"))
+    }
+
     await this.dataStore.save(item);
     await this.pushNotes();
   }
@@ -195,7 +234,7 @@ class MarkDownServices extends EventEmitter {
   }
 
   async logout() {
-    await this.veridaDapp.disconnect();
+    await this.account.disconnect();
     this.veridaDapp = null;
     this.dataStore = null;
     this.currentNote = null;
