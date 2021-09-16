@@ -6,7 +6,6 @@ import Box from '@material-ui/core/Box';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import Typography from '@material-ui/core/Typography';
-import { reduceStringLength } from '../../helpers/Editor.helpers';
 import NotesAction from '../common/editorActions/NotesActions';
 import { setNoteItem, setSelectedNote } from '../../redux/reducers/editor';
 import AppModalUi from '../modal/AppModal';
@@ -44,6 +43,7 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: 'calc(14.5rem - 4.188rem)',
     minHeight: 'calc(14.5rem - 4.188rem)',
     margin: '16px 16px 0 16px',
+    overflow: 'hidden',
     padding: '1rem 1.5rem 0 1.5rem',
     '& > *': {
       fontSize: '0.8rem !important'
@@ -148,7 +148,7 @@ const NoteCardDisplay = () => {
           <Grid item md={3} sm={12} xs={12} key={list._id}>
             <Box m={2} className={classes.root}>
               <Box className={classes.contentBox} onClick={() => onEdit(list)}>
-                <MDEditor.Markdown source={reduceStringLength(list.body, 130)} />
+                <MDEditor.Markdown source={list.body} />
                 ....
               </Box>
               <Box className={classes.panelTab}>
@@ -182,8 +182,7 @@ const NoteCardDisplay = () => {
           <Grid item md={6} sm={12} xs={6} key={list._id}>
             <Box m={2} className={classes.rootMobile}>
               <Box className={classes.contentBoxMobile} onClick={() => onEdit(list)}>
-                {list.body.length > 100 ? list.body : reduceStringLength(list.body, 300)}
-                {/* {list.body.length > 100 ? list.body : reduceStringLength(list.body, 300)} */}
+                {list.body}
               </Box>
               <Box className={classes.panelTabMobile}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
