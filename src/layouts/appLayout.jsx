@@ -8,9 +8,9 @@ import { Box, CircularProgress, Container } from '@material-ui/core';
 import Store from '../utils/store';
 import { VERIDA_USER_SIGNATURE } from '../constants';
 import AppHeader from '../components/common/Header';
-import { onConnecting } from '../redux/reducers/auth';
 import veridaLogo from '../assets/images/verida_logo.svg';
 import useConnect from '../hooks/useConnect';
+import { onConnecting } from '../redux/reducers/auth/index';
 
 const drawerWidth = 320;
 const useStyles = makeStyles((theme) => ({
@@ -110,7 +110,7 @@ const useStyles = makeStyles((theme) => ({
 
 const AppLayouts = ({ children }) => {
   const classes = useStyles();
-  const { connecting } = useSelector((state) => state.webVault);
+  const { connecting, connected } = useSelector((state) => state.webVault);
   const { connectVault } = useConnect();
 
   const decryptedSignature = Store.get(VERIDA_USER_SIGNATURE);
@@ -175,17 +175,23 @@ const AppLayouts = ({ children }) => {
 
   return (
     <div className={classes.root}>
-      <AppBar color="inherit" position="fixed" className={clsx(classes.appBar)}>
-        <Container fixed>
-          <AppHeader />
-        </Container>
-      </AppBar>
-      <Container fixed>
-        <main className={classes.content}>
-          <div className={classes.toolbar} />
-          {children}
-        </main>
-      </Container>
+      {connected ? (
+        <>
+          <AppBar color="inherit" position="fixed" className={clsx(classes.appBar)}>
+            <Container fixed>
+              <AppHeader />
+            </Container>
+          </AppBar>
+          <Container fixed>
+            <main className={classes.content}>
+              <div className={classes.toolbar} />
+              {children}
+            </main>
+          </Container>
+        </>
+      ) : (
+        children
+      )}
     </div>
   );
 };

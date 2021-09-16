@@ -1,8 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
+import Store from '../../../utils/store';
 
+const connected = Store.get('connect') || false;
 const initialState = {
   app: null,
   avatar: null,
+  connected,
   connecting: false
 };
 
@@ -10,10 +13,9 @@ const webVault = createSlice({
   initialState,
   name: 'webVault',
   reducers: {
-    connectWithVault() {},
     onSuccessLogin(state, action) {
       const user = action.payload;
-      if (user.avatar) {
+      if (user?.avatar) {
         const parseAvatarValue = JSON.parse(user?.avatar);
         state.avatar = `data:image/${parseAvatarValue.format};base64,${parseAvatarValue.base64}`;
       }
@@ -21,6 +23,8 @@ const webVault = createSlice({
         name: user?.name,
         country: user?.country
       };
+      Store.set('connect', true);
+      state.connected = true;
       state.connecting = !state.connecting;
       return state;
     },
@@ -38,6 +42,8 @@ const webVault = createSlice({
       return state;
     },
     onLogout(state) {
+      Store.remove('connect');
+      state.connected = false;
       state.avatar = null;
       state.app = null;
       return state;
