@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import markDownServices from '../../../api/services';
 
 const initialState = {
   app: null,
@@ -12,7 +13,7 @@ const webVault = createSlice({
   reducers: {
     connectWithVault() {},
     onSuccessLogin(state, action) {
-      const user = action.payload;
+      const user = markDownServices.profile;
       if (user.avatar) {
         const parseAvatarValue = JSON.parse(user?.avatar);
         state.avatar = `data:image/${parseAvatarValue.format};base64,${parseAvatarValue.base64}`;

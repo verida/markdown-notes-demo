@@ -81,7 +81,7 @@ const Editor = ({ history, location }) => {
     if (pageType === 'edit') {
       data._id = selectedNote._id;
     }
-    markDownServices.updateNote(data);
+    markDownServices.saveNote(data);
     notifications();
   };
 

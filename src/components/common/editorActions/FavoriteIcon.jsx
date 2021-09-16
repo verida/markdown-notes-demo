@@ -20,7 +20,7 @@ const FavoriteIcon = ({ item }) => {
       isFavorite: !item.isFavorite,
       _id: item._id
     };
-    markDownServices.updateNote(data);
+    markDownServices.saveNote(data);
     setSnackPack(true);
   };
   return (

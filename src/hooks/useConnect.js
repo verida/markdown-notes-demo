@@ -13,16 +13,20 @@ const useConnect = () => {
       dispatch(onConnecting());
       return;
     }
-    const notes = await markDownServices.fetchAllNotes();
-    const profile = await markDownServices.getUserProfile();
-    dispatch(setMarkdownNotes(notes));
-    dispatch(onSuccessLogin(profile));
+
+    dispatch(onConnecting());
+    dispatch(onSuccessLogin());
+
     history.push('/');
   };
 
   const connectVault = async () => {
-    dispatch(onConnecting());
+    markDownServices.on('notesChanged', (notes) => {
+      dispatch(setMarkdownNotes(notes));
+    });
+
     await markDownServices.initApp();
+
     authCb();
   };
 
