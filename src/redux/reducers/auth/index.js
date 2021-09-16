@@ -16,7 +16,6 @@ const webVault = createSlice({
     onSuccessLogin(state, action) {
       const user = action.payload;
       if (user?.avatar) {
-
         const parseAvatarValue = JSON.parse(user?.avatar);
         state.avatar = `data:image/${parseAvatarValue.format};base64,${parseAvatarValue.base64}`;
       }
