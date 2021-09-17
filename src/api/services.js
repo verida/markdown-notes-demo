@@ -41,19 +41,9 @@ class MarkDownServices extends EventEmitter {
    */
   async connectVault() {
     this.account = new VaultAccount({
-      defaultDatabaseServer: {
-        type: 'VeridaDatabase',
-        endpointUri: 'https://db.testnet.verida.io:5002/'
-      },
-      defaultMessageServer: {
-        type: 'VeridaMessage',
-        endpointUri: 'https://db.testnet.verida.io:5002/'
-      },
-      vaultConfig: {
-        loginUri: LOGIN_URI,
-        serverUri: SERVER_URI,
-        logoUrl: LOGO_URL
-      }
+      loginUri: LOGIN_URI,
+      serverUri: SERVER_URI,
+      logoUrl: LOGO_URL
     });
     
     this.veridaDapp = await Network.connect({

@@ -4,18 +4,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Route, Redirect } from 'react-router-dom';
-import { VERIDA_USER_SIGNATURE } from '../constants';
+import markDownServices from '../api/services';
 import Store from '../utils/store';
 
 const AuthGuard = (props) => {
   const { location, component: Component, ...rest } = props;
-  const decryptedSignature = Store.get(VERIDA_USER_SIGNATURE);
+  const isLoggedIn = markDownServices.appInitialized();
 
   return (
     <Route
       {...rest}
       render={(props) =>
-        decryptedSignature ? (
+        isLoggedIn ? (
           <Component {...props} />
         ) : (
           <Redirect
