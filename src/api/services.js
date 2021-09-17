@@ -93,7 +93,6 @@ class MarkDownServices extends EventEmitter {
   async initNotes() {
     const services = this
     const cb = async function() {
-      console.log(services)
       services.notes = await services.fetchAllNotes()
       services.emit("notesChanged", services.notes)
     }
