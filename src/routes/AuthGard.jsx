@@ -5,7 +5,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Route, Redirect } from 'react-router-dom';
 import markDownServices from '../api/services';
-import Store from '../utils/store';
 
 const AuthGuard = (props) => {
   const { location, component: Component, ...rest } = props;

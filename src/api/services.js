@@ -2,13 +2,7 @@
 
 import { Network } from '@verida/client-ts';
 import { VaultAccount } from '@verida/account-web-vault';
-import {
-  CLIENT_AUTH_NAME,
-  DATASTORE_SCHEMA,
-  LOGIN_URI,
-  LOGO_URL,
-  SERVER_URI
-} from '../constants';
+import { CLIENT_AUTH_NAME, DATASTORE_SCHEMA, LOGIN_URI, LOGO_URL, SERVER_URI } from '../constants';
 const EventEmitter = require('events');
 
 class MarkDownServices extends EventEmitter {
@@ -33,7 +27,7 @@ class MarkDownServices extends EventEmitter {
   }
 
   appInitialized() {
-    return this.dataStore !== null
+    return this.dataStore !== null;
   }
 
   /**
@@ -45,7 +39,7 @@ class MarkDownServices extends EventEmitter {
       serverUri: SERVER_URI,
       logoUrl: LOGO_URL
     });
-    
+
     this.veridaDapp = await Network.connect({
       client: {
         defaultDatabaseServer: {
@@ -65,45 +59,45 @@ class MarkDownServices extends EventEmitter {
 
     this.did = await this.account.did();
     this.dataStore = await this.veridaDapp.openDatastore(DATASTORE_SCHEMA);
-    await this.initProfile()
-    await this.initNotes()
+    await this.initProfile();
+    await this.initNotes();
 
-    this.emit("initialized")
+    this.emit('initialized');
   }
 
   async initProfile() {
-    const services = this
-    const client = this.veridaDapp.getClient()
+    const services = this;
+    const client = this.veridaDapp.getClient();
     this.profileInstance = await client.openPublicProfile(this.did, 'Verida: Vault');
 
-    const cb = async function() {
+    const cb = async function () {
       const data = await services.profileInstance.getMany();
       services.profile = data.reduce((result, item) => {
         result[item.key] = item.value;
         return result;
       }, {});
 
-      services.emit("profileChanged", services.profile);
-    }
+      services.emit('profileChanged', services.profile);
+    };
 
     this.profileInstance.listen(cb);
-    cb()
+    cb();
   }
 
   async initNotes() {
-    const services = this
-    const cb = async function() {
-      services.notes = await services.fetchAllNotes()
-      services.emit("notesChanged", services.notes)
-    }
+    const services = this;
+    const cb = async function () {
+      services.notes = await services.fetchAllNotes();
+      services.emit('notesChanged', services.notes);
+    };
 
-    this.dataStore.changes(cb)
-    cb()
+    this.dataStore.changes(cb);
+    cb();
   }
 
   async openNote(noteId) {
     if (!this.appInitialized()) {
-      this.handleErrors(new Error("App isn't initialized"))
+      this.handleErrors(new Error("App isn't initialized"));
     }
 
     try {
@@ -115,7 +109,7 @@ class MarkDownServices extends EventEmitter {
 
   async saveNote(data) {
     if (!this.appInitialized()) {
-      this.handleErrors(new Error("App isn't initialized"))
+      this.handleErrors(new Error("App isn't initialized"));
     }
 
     try {
@@ -136,7 +130,7 @@ class MarkDownServices extends EventEmitter {
 
   async deleteNote(id) {
     if (!this.appInitialized()) {
-      this.handleErrors(new Error("App isn't initialized"))
+      this.handleErrors(new Error("App isn't initialized"));
     }
 
     try {
@@ -151,7 +145,7 @@ class MarkDownServices extends EventEmitter {
 
   async fetchAllNotes(options) {
     if (!this.appInitialized()) {
-      this.handleErrors(new Error("App isn't initialized"))
+      this.handleErrors(new Error("App isn't initialized"));
     }
 
     const defaultOptions = {
@@ -170,7 +164,7 @@ class MarkDownServices extends EventEmitter {
 
   handleErrors(error) {
     this.error = error;
-    this.emit('onError', error);
+    this.emit('error', error);
   }
 
   async logout() {

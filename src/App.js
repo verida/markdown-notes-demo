@@ -7,17 +7,22 @@ import './libs';
 import Routes from './routes/Routes';
 import markDownServices from './api/services';
 import { setMarkdownNotes } from './redux/reducers/editor';
+import { setUserProfile } from './redux/reducers/auth';
 
 const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    markDownServices.on('onError', (error) => {
+    markDownServices.on('error', (error) => {
       toast.error(error?.message);
     });
 
-    markDownServices.on('onNoteChanged', (data) => {
+    markDownServices.on('notesChanged', (data) => {
       dispatch(setMarkdownNotes(data));
+    });
+
+    markDownServices.on('profileChanged', () => {
+      dispatch(setUserProfile());
     });
   }, [dispatch]);
 

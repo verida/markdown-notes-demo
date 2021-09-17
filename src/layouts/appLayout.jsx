@@ -5,12 +5,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, CircularProgress, Container } from '@material-ui/core';
-import Store from '../utils/store';
-import { VERIDA_USER_SIGNATURE } from '../constants';
 import AppHeader from '../components/common/Header';
 import veridaLogo from '../assets/images/verida_logo.svg';
 import useConnect from '../hooks/useConnect';
 import { onConnecting } from '../redux/reducers/auth/index';
+import markDownServices from '../api/services';
 
 const drawerWidth = 320;
 const useStyles = makeStyles((theme) => ({
@@ -110,10 +109,9 @@ const useStyles = makeStyles((theme) => ({
 
 const AppLayouts = ({ children }) => {
   const classes = useStyles();
-  const { connecting, connected } = useSelector((state) => state.webVault);
+  const { connecting } = useSelector((state) => state.webVault);
   const { connectVault } = useConnect();
-
-  const decryptedSignature = Store.get(VERIDA_USER_SIGNATURE);
+  const isLoggedIn = markDownServices.appInitialized();
 
   const dispatch = useDispatch();
 
@@ -131,7 +129,7 @@ const AppLayouts = ({ children }) => {
   };
 
   useEffect(() => {
-    if (decryptedSignature) {
+    if (!isLoggedIn) {
       connectVault();
     }
   }, []);
@@ -175,7 +173,7 @@ const AppLayouts = ({ children }) => {
 
   return (
     <div className={classes.root}>
-      {connected ? (
+      {isLoggedIn ? (
         <>
           <AppBar color="inherit" position="fixed" className={clsx(classes.appBar)}>
             <Container fixed>
