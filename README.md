@@ -1,22 +1,22 @@
-# Getting Started with Markdown Demo Note
+# Verida Markdown Notes Demo
 
-see link here to view App Demo : [markdown-editor](https://markdown-editor.demos.testnet.verida.io/)
+View working App Demo here:: [markdown-editor](https://markdown-editor.demos.testnet.verida.io/)
 
----
 ## About 
----
 
-Markdown demo note is a Decentralized Note  App which integrates with the verida datastore library and Verida Vault  that allows users to save encrypted notes to their database.
+The [Verida](https://www.verida.io/) Markdown Notes Demo is a Decentralized Note App which integrates with the  Verida Datastore library and [Verida Vault](https://vault.verida.io/request/index.html) that allows users to save encrypted notes to their database.
+
+You will need the Verida Vault app to access this. Currently the iOS Test Flight build required for this is available [here](https://testflight.apple.com/join/8vWRf8Kv)
+
+### Architecture
+![image](https://user-images.githubusercontent.com/87622993/133723269-42317c35-16f8-4e6c-95ef-92abd656a700.png)
 
 
 ### Support
 [Join our Discord](https://discord.gg/YzW3ku6ZvB) to tell us about what you are building and for support. 
 
-
-
 ## Tools 
 
-------
 ### Tech Stack 
 
 -  JavaScript / React Library
@@ -26,7 +26,6 @@ Markdown demo note is a Decentralized Note  App which integrates with the verida
 -  [verida js](https://github.com/verida/verida-js)
 
 
-____
 ## Available Scripts
 
 In the project directory, you can run:
@@ -45,8 +44,6 @@ Builds the app for production to the `build` folder.
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
 
-_____
-
 ## Add local Verida Dependencies
 
 This is only required if building against a version of the dependencies that isn't in a released NPM package.
@@ -57,7 +54,6 @@ This is only required if building against a version of the dependencies that isn
   * `yarn link "@verida/account-web-vault"`
 
 
----
 ## Releases
 To do a release:
 
@@ -65,9 +61,9 @@ To do a release:
 2. `git push tags`
 3. `gren release --tags=vX.X.X` (to build release notes on Github)
 
-----
+
 ## Deployment
-To deploy to 
+To deploy to the [Markdown Notes Demo site on Verida Testnet](https://markdown-editor.demos.testnet.verida.io/)
 
 1. `rm -rf node_modules`
 2. `yarn`  to install dependencies
