@@ -8,6 +8,12 @@ see link here to view App Demo : [markdown-editor](https://markdown-editor.demos
 
 Markdown demo note is a Decentralized Note  App which integrates with the verida datastore library and Verida Vault  that allows users to save encrypted notes to their database.
 
+
+### Support
+[Join our Discord](https://discord.gg/YzW3ku6ZvB) to tell us about what you are building and for support. 
+
+
+
 ## Tools 
 
 ------
@@ -17,41 +23,11 @@ Markdown demo note is a Decentralized Note  App which integrates with the verida
 
 
 ### Verida Libraries
--  [verida datastore](https://github.com/verida/vault-auth-client)
+-  [verida js](https://github.com/verida/verida-js)
 
--  [verida Auth Client](https://github.com/verida/vault-auth-client)
-
-
-## Add Verida-Auth-Client Dependency(Locally)
-
-_____
-
-To get the `@verida-auth-client` library working locally on your machines please follow these steps:
-
-1. Clone the verida auth client repo [https://github.com/verida/vault-auth-client](https://github.com/verida/vault-auth-client)
-
-2. npm install
-
-3. npm run build
-
-4. npm link
-
-5. Then go to the markdown project and run npm link @verida/vault-auth-client
-
-
-That will register the library to the project.
-
-
-## Deployment
-
-----
-1. `yarn`  to install dependencies
-2. `yarn build` to generate a compiled build folder for deployment
-3. `deploy.sh` to deploy to the AWS environment defined in the `AWS_PROFILE` environment variable.
-
-## Available Scripts
 
 ____
+## Available Scripts
 
 In the project directory, you can run:
 
@@ -67,4 +43,36 @@ You will also see any lint errors in the console.
 
 Builds the app for production to the `build` folder.
 It correctly bundles React in production mode and optimizes the build for the best performance.
+
+
+_____
+
+## Add local Verida Dependencies
+
+This is only required if building against a version of the dependencies that isn't in a released NPM package.
+
+* Build and link the [verida-js](https://github.com/verida/verida-js) packages as described in [README.md](https://github.com/verida/verida-js/blob/main/README.md)
+* Return to the local directory for this repo and
+  * `yarn link "@verida/client-ts"`
+  * `yarn link "@verida/account-web-vault"`
+
+
+---
+## Releases
+To do a release:
+
+1. `git tag -a vX.X.X` 
+2. `git push tags`
+3. `gren release --tags=vX.X.X` (to build release notes on Github)
+
+----
+## Deployment
+To deploy to 
+
+1. `rm -rf node_modules`
+2. `yarn`  to install dependencies
+4. `yarn build` to generate a compiled build folder for deployment
+4. `deploy.sh` to deploy to the AWS environment defined in the `AWS_PROFILE` environment variable.
+
+
 
