@@ -1,98 +1,105 @@
 /* eslint-disable */
 
-import Verida from '@verida/datastore';
-import { veridaVaultLogin } from '@verida/vault-auth-client';
-import {
-  CLIENT_AUTH_NAME,
-  DATASTORE_SCHEMA,
-  LOGIN_URI,
-  LOGO_URL,
-  SERVER_URI,
-  VERIDA_USER_SIGNATURE
-} from '../constants';
-import Store from '../utils/store';
+import { Network } from '@verida/client-ts';
+import { VaultAccount } from '@verida/account-web-vault';
+import { CLIENT_AUTH_NAME, DATASTORE_SCHEMA, LOGIN_URI, LOGO_URL, SERVER_URI } from '../constants';
 const EventEmitter = require('events');
 
 class MarkDownServices extends EventEmitter {
-  veridaDapp;
-  dataStore;
-  currentNote;
-  profileInstance;
+  veridaDapp = null;
+  dataStore = null;
+  currentNote = null;
+  profileInstance = null;
+  account = null;
+  did = null;
   error = {};
 
+  notes = [];
+  profile = {};
+
+  /**
+   * Public method for initializing this app
+   */
   async initApp() {
     if (!this.dataStore) {
-      this.connectVault();
+      await this.connectVault();
     }
   }
 
-  connectVault(cb) {
-    Verida.setConfig({
-      appName: CLIENT_AUTH_NAME
-    });
-    veridaVaultLogin({
+  appInitialized() {
+    return this.dataStore !== null;
+  }
+
+  /**
+   * Private method for connecting to the vault
+   */
+  async connectVault() {
+    this.account = new VaultAccount({
       loginUri: LOGIN_URI,
       serverUri: SERVER_URI,
-      appName: CLIENT_AUTH_NAME,
-      logoUrl: LOGO_URL,
-      callback: async (response) => {
-        try {
-          const veridaDApp = new Verida({
-            did: response.did,
-            signature: response.signature,
-            appName: CLIENT_AUTH_NAME
-          });
-          await veridaDApp.connect(true);
-          this.dataStore = await veridaDApp.openDatastore(DATASTORE_SCHEMA);
-          this.veridaDApp = veridaDApp;
-          if (cb) {
-            cb();
-          }
-        } catch (error) {
-          this.handleErrors(error);
+      logoUrl: LOGO_URL
+    });
+
+    this.veridaDapp = await Network.connect({
+      client: {
+        defaultDatabaseServer: {
+          type: 'VeridaDatabase',
+          endpointUri: 'https://db.testnet.verida.io:5002/'
+        },
+        defaultMessageServer: {
+          type: 'VeridaMessage',
+          endpointUri: 'https://db.testnet.verida.io:5002/'
         }
+      },
+      account: this.account,
+      context: {
+        name: CLIENT_AUTH_NAME
       }
     });
+
+    this.did = await this.account.did();
+    this.dataStore = await this.veridaDapp.openDatastore(DATASTORE_SCHEMA);
+    await this.initProfile();
+    await this.initNotes();
+
+    this.emit('initialized');
   }
-  async getUserProfile() {
-    const user = Store.get(VERIDA_USER_SIGNATURE);
-    try {
-      await this.initApp();
-      if (!this.profileInstance) {
-        this.profileInstance = await this.veridaDApp.openProfile(user.did, 'Verida: Vault');
-      }
-      const data = await this.profileInstance.getMany();
-      const userProfile = data.reduce((result, item) => {
+
+  async initProfile() {
+    const services = this;
+    const client = this.veridaDapp.getClient();
+    this.profileInstance = await client.openPublicProfile(this.did, 'Verida: Vault');
+
+    const cb = async function () {
+      const data = await services.profileInstance.getMany();
+      services.profile = data.reduce((result, item) => {
         result[item.key] = item.value;
         return result;
       }, {});
-      return userProfile;
-    } catch (error) {
-      this.handleErrors(error);
-    }
+
+      services.emit('profileChanged', services.profile);
+    };
+
+    this.profileInstance.listen(cb);
+    cb();
   }
 
-  async profileEventSubscription() {
-    let userProfile = {};
-    await this.initApp();
-    try {
-      const userDB = await this.profileInstance._store.getDb();
-      const PouchDB = await userDB.getInstance();
-      PouchDB.changes({
-        since: 'now',
-        live: true
-      }).on('change', async (info) => {
-        userProfile = await userDB.get(info.id, {
-          rev: info.changes[0].rev
-        });
-      });
-      return userProfile;
-    } catch (error) {
-      this.handleErrors(error);
-    }
+  async initNotes() {
+    const services = this;
+    const cb = async function () {
+      services.notes = await services.fetchAllNotes();
+      services.emit('notesChanged', services.notes);
+    };
+
+    this.dataStore.changes(cb);
+    cb();
   }
 
   async openNote(noteId) {
+    if (!this.appInitialized()) {
+      this.handleErrors(new Error("App isn't initialized"));
+    }
+
     try {
       this.currentNote = await this.dataStore.get(noteId);
     } catch (error) {
@@ -100,42 +107,35 @@ class MarkDownServices extends EventEmitter {
     }
   }
 
-  async updateNote(data) {
+  async saveNote(data) {
+    if (!this.appInitialized()) {
+      this.handleErrors(new Error("App isn't initialized"));
+    }
+
     try {
-      await this.initApp();
       if (data._id) {
         await this.openNote(data._id);
         const noteItem = Object.assign(this.currentNote, data);
-        await this.saveNote(noteItem);
+        await this.dataStore.save(noteItem);
       } else {
-        await this.saveNote(data);
+        await this.dataStore.save(data);
       }
+
       return true;
     } catch (error) {
       this.handleErrors(error);
       return false;
-    }
-  }
-
-  async listenDbChanges() {
-    let notes = [];
-    try {
-      await this.initApp();
-      const dbInstance = await this.dataStore.openDatastore(DATASTORE_SCHEMA);
-      dbInstance.changes(function (changeInfo) {
-        notes = changeInfo;
-      });
-      return notes;
-    } catch (error) {
-      this.handleErrors(error);
     }
   }
 
   async deleteNote(id) {
+    if (!this.appInitialized()) {
+      this.handleErrors(new Error("App isn't initialized"));
+    }
+
     try {
       await this.openNote(id);
       await this.dataStore.delete(this.currentNote);
-      await this.pushNotes();
       return true;
     } catch (error) {
       this.handleErrors(error);
@@ -143,16 +143,11 @@ class MarkDownServices extends EventEmitter {
     }
   }
 
-  async pushNotes() {
-    try {
-      const notes = await this.fetchAllNotes();
-      this.emit('onNoteChanged', notes);
-    } catch (error) {
-      this.handleErrors(error);
-    }
-  }
-
   async fetchAllNotes(options) {
+    if (!this.appInitialized()) {
+      this.handleErrors(new Error("App isn't initialized"));
+    }
+
     const defaultOptions = {
       limit: 40,
       skip: 0,
@@ -160,27 +155,29 @@ class MarkDownServices extends EventEmitter {
     };
     const filter = options || defaultOptions;
     try {
-      await this.initApp();
       const response = await this.dataStore.getMany({}, filter);
       return response;
     } catch (error) {
       this.handleErrors(error);
     }
   }
-  async saveNote(item) {
-    await this.dataStore.save(item);
-    await this.pushNotes();
-  }
+
   handleErrors(error) {
     this.error = error;
-    this.emit('onError', error);
+    this.emit('error', error);
   }
-  logout() {
-    Store.remove(VERIDA_USER_SIGNATURE);
-    this.veridaDApp.disconnect();
-    this.dataStore = {};
-    this.veridaDapp = {};
-    this.profileInstance = {};
+
+  async logout() {
+    await this.account.disconnect();
+    this.veridaDapp = null;
+    this.dataStore = null;
+    this.currentNote = null;
+    this.profileInstance = null;
+    this.account = null;
+    this.did = null;
+    this.error = {};
+    this.notes = [];
+    this.profile = {};
   }
 }
 

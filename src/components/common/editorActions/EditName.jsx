@@ -45,7 +45,7 @@ const EditName = ({ item, setOpen }) => {
       title: titleName,
       _id: item._id
     };
-    markDownServices.updateNote(data);
+    markDownServices.saveNote(data);
     setOpen(false);
   };
 
