@@ -115,16 +115,9 @@ const AppLayouts = ({ children }) => {
 
   const dispatch = useDispatch();
 
-  const modal = document.getElementById('verida-modal');
-  const closeModal = document.getElementById('verida-modal-close');
-
   const handleClickAway = (event) => {
-    if (
-      (event.target === modal && modal !== null) ||
-      (event.target === closeModal && closeModal !== null)
-    ) {
+    if (event.target.id === 'verida-modal' || event.target.id === 'verida-modal-close') {
       dispatch(onConnecting());
-      modal.style.display = 'none';
     }
   };
 

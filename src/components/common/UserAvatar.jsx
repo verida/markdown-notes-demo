@@ -41,9 +41,10 @@ export default function UserAvatar() {
   };
 
   const handleSignOut = () => {
-    markDownServices.logout();
-    dispatch(onLogout());
-    history.push('/connect');
+    markDownServices.logout().then(() => {
+      dispatch(onLogout());
+      history.push('/connect');
+    });
   };
 
   return (

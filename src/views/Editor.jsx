@@ -6,9 +6,11 @@ import TrashIcon from '../assets/icons/Trash.svg';
 import ArrowLeft from '../assets/icons/arrow_left.svg';
 import PreviewIcon from '../assets/icons/eye.svg';
 import EditIcon from '../assets/icons/Edit.svg';
-import { browserQueries } from '../utils/common.utils';
+import { browserQueries, noteActionsType } from '../utils/common.utils';
 import AppSnackBar from '../components/snackbar/SnackBar';
 import markDownServices from '../api/services';
+import AppModalUi from '../components/modal/AppModal';
+import { DeleteNote } from '../components/common/editorActions';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -56,7 +58,14 @@ const Editor = ({ history, location }) => {
     editor: true,
     preview: false
   });
+  const [open, setOpen] = useState(false);
+  const [action, setAction] = useState({
+    title: 'delete',
+    type: '',
+    item: {}
+  });
   const pageType = browserQueries(location).get('type');
+
   const { noteItem, selectedNote } = useSelector((state) => state.markdownEditor);
 
   const handleView = (type) => {
@@ -86,8 +95,12 @@ const Editor = ({ history, location }) => {
   };
 
   const onDeleteNote = () => {
-    markDownServices.deleteNote(selectedNote._id);
-    notifications();
+    setAction({
+      title: 'Are you sure you want to delete?',
+      type: noteActionsType.DELETE,
+      item: selectedNote
+    });
+    setOpen(true);
   };
 
   useEffect(() => {
@@ -100,7 +113,9 @@ const Editor = ({ history, location }) => {
       {setSnackPack && (
         <AppSnackBar messageInfo="Note Updated" setSnackPack={setSnackPack} snackPack={snackPack} />
       )}
-
+      <AppModalUi open={open} setOpen={setOpen} title={action.title}>
+        <DeleteNote redirect item={action.item} setOpen={setOpen} />
+      </AppModalUi>
       <Box justifyContent="space-between" display="flex" alignItems="center">
         <IconButton onClick={() => history.goBack()}>
           <img src={ArrowLeft} className={classes.arrowBackIcon} alt="go-back" />
