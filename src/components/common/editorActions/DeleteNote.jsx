@@ -1,5 +1,6 @@
 import { Box, Button, makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import markDownServices from '../../../api/services';
 
 const useStyles = makeStyles(() => ({
@@ -21,12 +22,16 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const DeleteNote = ({ item, setOpen }) => {
+const DeleteNote = ({ item, setOpen, redirect }) => {
   const classes = useStyles();
+  const history = useHistory();
 
   const handleDelete = () => {
     markDownServices.deleteNote(item._id);
     setOpen(false);
+    if (redirect) {
+      history.push('/');
+    }
   };
 
   return (
