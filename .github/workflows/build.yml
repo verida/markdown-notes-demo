@@ -9,4 +9,5 @@ jobs:
         with:
           node-version: '12.20.0'
           cache: 'yarn'
+      - run: yarn install
       - run: yarn build
