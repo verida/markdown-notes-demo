@@ -8,6 +8,8 @@ The [Verida](https://www.verida.io/) Markdown Notes Demo is a Decentralized Note
 
 You will need the Verida Vault app to access this. Currently the iOS Test Flight build required for this is available [here](https://testflight.apple.com/join/8vWRf8Kv)
 
+See our [Medium article](https://medium.com/verida/verida-markdown-editor-ecd00314a8b4) for a deeper technical walk through of how this all works. 
+
 ### Architecture
 ![image](https://user-images.githubusercontent.com/87622993/133723269-42317c35-16f8-4e6c-95ef-92abd656a700.png)
 
