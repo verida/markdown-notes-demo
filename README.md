@@ -6,7 +6,7 @@ View working App Demo here:: [markdown-editor](https://markdown-editor.demos.tes
 
 The [Verida](https://www.verida.io/) Markdown Notes Demo is a Decentralized Note App which integrates with the  Verida Datastore library and [Verida Vault](https://vault.verida.io/request/index.html) that allows users to save encrypted notes to their database.
 
-You will need the Verida Vault app to access this. Currently the iOS Test Flight build required for this is available [here](https://testflight.apple.com/join/8vWRf8Kv)
+You will need the Verida Vault app to access this. Contact us for access via [Discord](https://discord.gg/YzW3ku6ZvB).
 
 See our [Medium article](https://medium.com/verida/verida-markdown-editor-ecd00314a8b4) for a deeper technical walk through of how this all works. 
 
