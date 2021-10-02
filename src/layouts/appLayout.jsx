@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Box, CircularProgress, Container } from '@material-ui/core';
 import AppHeader from '../components/common/Header';
 import veridaLogo from '../assets/images/verida_logo.svg';
-import useConnect from '../hooks/useConnect';
 import { onConnecting } from '../redux/reducers/auth/index';
 import markDownServices from '../api/services';
 
@@ -110,7 +109,6 @@ const useStyles = makeStyles((theme) => ({
 const AppLayouts = ({ children }) => {
   const classes = useStyles();
   const { connecting } = useSelector((state) => state.webVault);
-  const { connectVault } = useConnect();
   const isLoggedIn = markDownServices.appInitialized();
 
   const dispatch = useDispatch();
@@ -120,12 +118,6 @@ const AppLayouts = ({ children }) => {
       dispatch(onConnecting());
     }
   };
-
-  useEffect(() => {
-    if (!isLoggedIn) {
-      connectVault();
-    }
-  }, []);
 
   useEffect(() => {
     window.addEventListener('click', handleClickAway);
