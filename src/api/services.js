@@ -6,7 +6,7 @@ import { CLIENT_AUTH_NAME, DATASTORE_SCHEMA, LOGIN_URI, LOGO_URL, SERVER_URI } f
 const EventEmitter = require('events');
 
 class MarkDownServices extends EventEmitter {
-  veridaDapp = null;
+  context = null;
   dataStore = null;
   currentNote = null;
   profileInstance = null;
@@ -40,7 +40,7 @@ class MarkDownServices extends EventEmitter {
       logoUrl: LOGO_URL
     });
 
-    this.veridaDapp = await Network.connect({
+    this.context = await Network.connect({
       client: {
         defaultDatabaseServer: {
           type: 'VeridaDatabase',
@@ -58,7 +58,7 @@ class MarkDownServices extends EventEmitter {
     });
 
     this.did = await this.account.did();
-    this.dataStore = await this.veridaDapp.openDatastore(DATASTORE_SCHEMA);
+    this.dataStore = await this.context.openDatastore(DATASTORE_SCHEMA);
     await this.initProfile();
     await this.initNotes();
 
@@ -67,7 +67,7 @@ class MarkDownServices extends EventEmitter {
 
   async initProfile() {
     const services = this;
-    const client = this.veridaDapp.getClient();
+    const client = this.context.getClient();
     this.profileInstance = await client.openPublicProfile(this.did, 'Verida: Vault');
 
     const cb = async function () {
@@ -169,7 +169,7 @@ class MarkDownServices extends EventEmitter {
 
   async logout() {
     await this.account.disconnect();
-    this.veridaDapp = null;
+    this.context = null;
     this.dataStore = null;
     this.currentNote = null;
     this.profileInstance = null;
