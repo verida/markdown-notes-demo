@@ -10,10 +10,7 @@ export const LOGO_URL = 'http://assets.verida.io/verida_logo.svg';
 export const CLIENT_AUTH_NAME = 'Verida: Markdown Notes Demo';
 export const APP_NAME = 'Markdown notes';
 
-export const DATASTORE_SCHEMA =
-  process.env.NODE_ENV === 'development'
-    ? 'http://localhost:3008/schema.json'
-    : 'https://markdown-editor.demos.testnet.verida.io/schema.json';
+export const DATASTORE_SCHEMA = `${window.location.href}schema.json`;
 
 export const webLinks = {
   DOCUMENTATION: 'https://github.com/verida/markdown-notes-demo/blob/main/README.md',
