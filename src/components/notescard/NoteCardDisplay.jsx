@@ -144,66 +144,74 @@ const NoteCardDisplay = () => {
         {renderActionUi()}
       </AppModalUi>
       <Grid container spacing={1} className={classes.tableContainer}>
-        {notes.map((list) => (
-          <Grid item md={3} sm={12} xs={12} key={list._id}>
-            <Box m={2} className={classes.root}>
-              <Box className={classes.contentBox} onClick={() => onEdit(list)}>
-                <MDEditor.Markdown source={list.body} />
-                ....
-              </Box>
-              <Box className={classes.panelTab}>
-                <Box display="flex" justifyContent="space-between" alignItems="center">
-                  <Box display="flex" ml={1} alignItems="center">
-                    <FavoriteIcon item={list} />
-                    <Typography className={classes.cartTitle}>{list.title}</Typography>
+        {notes.length ? (
+          notes.map((list) => (
+            <Grid item md={3} sm={12} xs={12} key={list._id}>
+              <Box m={2} className={classes.root}>
+                <Box className={classes.contentBox} onClick={() => onEdit(list)}>
+                  <MDEditor.Markdown source={list.body} />
+                  ....
+                </Box>
+                <Box className={classes.panelTab}>
+                  <Box display="flex" justifyContent="space-between" alignItems="center">
+                    <Box display="flex" ml={1} alignItems="center">
+                      <FavoriteIcon item={list} />
+                      <Typography className={classes.cartTitle}>{list.title}</Typography>
+                    </Box>
+                    <Box mr={-1}>
+                      <NotesAction setAction={setAction} setOpen={setOpen} item={list} />
+                      <Box className={classes.avatar} display="flex" />
+                    </Box>
                   </Box>
-                  <Box mr={-1}>
-                    <NotesAction setAction={setAction} setOpen={setOpen} item={list} />
-                    <Box className={classes.avatar} display="flex" />
+                  <Box ml={2} className={classes.captionContainer}>
+                    <Typography className={classes.caption} variant="caption">
+                      Edited
+                      <Moment className={classes.timeIcon} fromNow>
+                        {list.modifiedAt}
+                      </Moment>
+                    </Typography>
                   </Box>
                 </Box>
-                <Box ml={2} className={classes.captionContainer}>
-                  <Typography className={classes.caption} variant="caption">
-                    Edited
-                    <Moment className={classes.timeIcon} fromNow>
-                      {list.modifiedAt}
-                    </Moment>
-                  </Typography>
-                </Box>
               </Box>
-            </Box>
-          </Grid>
-        ))}
+            </Grid>
+          ))
+        ) : (
+          <Box>No Notes</Box>
+        )}
       </Grid>
 
       {/* Mobile Version UI */}
       <Grid container className={classes.mobileUI}>
-        {notes.map((list) => (
-          <Grid item md={6} sm={12} xs={6} key={list._id}>
-            <Box m={2} className={classes.rootMobile}>
-              <Box className={classes.contentBoxMobile} onClick={() => onEdit(list)}>
-                {list.body}
-              </Box>
-              <Box className={classes.panelTabMobile}>
-                <Box display="flex" justifyContent="space-between" alignItems="center">
-                  <NotesAction item={list} />
-                  <Typography className={classes.cartTitle}>Notes title</Typography>
+        {notes.length ? (
+          notes.map((list) => (
+            <Grid item md={6} sm={12} xs={6} key={list._id}>
+              <Box m={2} className={classes.rootMobile}>
+                <Box className={classes.contentBoxMobile} onClick={() => onEdit(list)}>
+                  {list.body}
                 </Box>
-                <Box display="flex" ml={2} className={classes.captionContainer}>
-                  <Typography className={classes.caption} variant="caption">
-                    Edited
-                    <Moment className={classes.timeIcon} fromNow>
-                      {list.modifiedAt}
-                    </Moment>
-                  </Typography>
-                  <Box>
-                    <FavoriteIcon item={list} />
+                <Box className={classes.panelTabMobile}>
+                  <Box display="flex" justifyContent="space-between" alignItems="center">
+                    <NotesAction item={list} />
+                    <Typography className={classes.cartTitle}>Notes title</Typography>
+                  </Box>
+                  <Box display="flex" ml={2} className={classes.captionContainer}>
+                    <Typography className={classes.caption} variant="caption">
+                      Edited
+                      <Moment className={classes.timeIcon} fromNow>
+                        {list.modifiedAt}
+                      </Moment>
+                    </Typography>
+                    <Box>
+                      <FavoriteIcon item={list} />
+                    </Box>
                   </Box>
                 </Box>
               </Box>
-            </Box>
-          </Grid>
-        ))}
+            </Grid>
+          ))
+        ) : (
+          <Box>No Notes</Box>
+        )}
       </Grid>
     </>
   );
