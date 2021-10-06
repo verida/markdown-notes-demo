@@ -144,7 +144,8 @@ const NoteCardDisplay = () => {
         {renderActionUi()}
       </AppModalUi>
       <Grid container spacing={1} className={classes.tableContainer}>
-        {notes.map((list) => (
+        {notes ? (
+        notes.map((list) => (
           <Grid item md={3} sm={12} xs={12} key={list._id}>
             <Box m={2} className={classes.root}>
               <Box className={classes.contentBox} onClick={() => onEdit(list)}>
@@ -173,12 +174,14 @@ const NoteCardDisplay = () => {
               </Box>
             </Box>
           </Grid>
-        ))}
+        ))
+        ) : (<Grid />)}
       </Grid>
 
       {/* Mobile Version UI */}
       <Grid container className={classes.mobileUI}>
-        {notes.map((list) => (
+        {notes ? (
+        notes.map((list) => (
           <Grid item md={6} sm={12} xs={6} key={list._id}>
             <Box m={2} className={classes.rootMobile}>
               <Box className={classes.contentBoxMobile} onClick={() => onEdit(list)}>
@@ -203,7 +206,8 @@ const NoteCardDisplay = () => {
               </Box>
             </Box>
           </Grid>
-        ))}
+        ))
+        ) : (<Grid />)}
       </Grid>
     </>
   );
