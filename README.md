@@ -65,12 +65,7 @@ To do a release:
 
 
 ## Deployment
-To deploy to the [Markdown Notes Demo site on Verida Testnet](https://markdown-editor.demos.testnet.verida.io/)
 
-1. `rm -rf node_modules`
-2. `yarn`  to install dependencies
-4. `yarn build` to generate a compiled build folder for deployment
-4. `deploy.sh` to deploy to the AWS environment defined in the `AWS_PROFILE` environment variable.
-
+Deployment to the [Markdown Notes Demo site on Verida Testnet](https://markdown-editor.demos.testnet.verida.io/) automatically done via [AWS Amplify](https://us-east-2.console.aws.amazon.com/amplify/) for all new commits to the `main` branch. 
 
 
