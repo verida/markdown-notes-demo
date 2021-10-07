@@ -112,6 +112,7 @@ const AppLayouts = ({ children }) => {
   const { connecting } = useSelector((state) => state.webVault);
   const { connectVault } = useConnect();
   const isLoggedIn = markDownServices.appInitialized();
+  const hasSession = markDownServices.hasSession();
 
   const dispatch = useDispatch();
 
@@ -122,7 +123,7 @@ const AppLayouts = ({ children }) => {
   };
 
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (!isLoggedIn && hasSession) {
       connectVault();
     }
   }, []);

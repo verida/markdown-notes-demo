@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import { Network } from '@verida/client-ts';
-import { VaultAccount } from '@verida/account-web-vault';
+import { VaultAccount, hasSession } from '@verida/account-web-vault';
 import { CLIENT_AUTH_NAME, DATASTORE_SCHEMA, LOGIN_URI, LOGO_URL, SERVER_URI } from '../constants';
 const EventEmitter = require('events');
 
@@ -28,6 +28,10 @@ class MarkDownServices extends EventEmitter {
 
   appInitialized() {
     return this.dataStore !== null;
+  }
+
+  hasSession() {
+    return hasSession(CLIENT_AUTH_NAME);
   }
 
   /**
