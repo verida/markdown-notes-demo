@@ -30,6 +30,8 @@ See our [Medium article](https://medium.com/verida/verida-markdown-editor-ecd003
 
 ## Available Scripts
 
+We use [nvm](https://github.com/nvm-sh/nvm) to manage our node version. Run `nvm use` to pick up the correct version.
+
 In the project directory, you can run:
 
 ### `yarn start`
@@ -59,9 +61,10 @@ This is only required if building against a version of the dependencies that isn
 ## Releases
 To do a release:
 
-1. `git tag -a vX.X.X` 
-2. `git push tags`
-3. `gren release --tags=vX.X.X` (to build release notes on Github)
+1. `nvm use`
+2. `git tag -a vX.X.X` 
+3. `git push --tags`
+4. `gren release --tags=vX.X.X` (to build release notes on Github)
 
 
 ## Deployment
