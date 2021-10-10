@@ -62,13 +62,23 @@ This is only required if building against a version of the dependencies that isn
 To do a release:
 
 1. `nvm use`
-2. `git tag -a vX.X.X` 
-3. `git push --tags`
-4. `gren release --tags=vX.X.X` (to build release notes on Github)
+2. `git checkout develop`
+3. `git tag -a vX.X.X` 
+4. `git push --tags`
+5. `gren release --tags=vX.X.X` (to build release notes on Github)
 
 
 ## Deployment
 
 Deployment to the [Markdown Notes Demo site on Verida Testnet](https://markdown-editor.demos.testnet.verida.io/) automatically done via [AWS Amplify](https://us-east-2.console.aws.amazon.com/amplify/) for all new commits to the `main` branch. 
+
+The process for this is:
+
+1. Tag the release on the develop branch (see above)
+2. `git checkout main`
+3. `git merge develop`
+4. `git push`
+
+AWS Amplify will now build and deploy the `main` branch. 
 
 
