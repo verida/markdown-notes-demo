@@ -71,27 +71,25 @@ class MarkDownServices extends EventEmitter {
 
   async initProfile() {
     const services = this;
-    const client = this.context.getClient();
-    this.profileInstance = await client.openPublicProfile(this.did, 'Verida: Vault');
-
-    const cb = async function () {
+    const client = await services.context.getClient();
+    services.profileInstance = await client.openPublicProfile(services.did, 'Verida: Vault');
+    const cb = async () => {
       const data = await services.profileInstance.getMany();
       services.profile = data.reduce((result, item) => {
         result[item.key] = item.value;
         return result;
       }, {});
-
       services.emit('profileChanged', services.profile);
     };
-
-    this.profileInstance.listen(cb);
-    cb();
+    services.profileInstance.listen(cb);
+    await cb();
   }
 
   async initNotes() {
     const services = this;
     const cb = async function () {
       services.notes = await services.fetchAllNotes();
+      console.log(services.notes);
       services.emit('notesChanged', services.notes);
     };
 
@@ -160,6 +158,7 @@ class MarkDownServices extends EventEmitter {
     const filter = options || defaultOptions;
     try {
       const response = await this.dataStore.getMany({}, filter);
+      console.log(response);
       return response;
     } catch (error) {
       this.handleErrors(error);
