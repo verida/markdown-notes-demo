@@ -3,12 +3,11 @@ import React, { useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Box, CircularProgress, Container } from '@material-ui/core';
 import AppHeader from '../components/common/Header';
 import veridaLogo from '../assets/images/verida_logo.svg';
 import useConnect from '../hooks/useConnect';
-import { onConnecting } from '../redux/reducers/auth/index';
 import markDownServices from '../api/services';
 
 const drawerWidth = 320;
@@ -114,27 +113,11 @@ const AppLayouts = ({ children }) => {
   const isLoggedIn = markDownServices.appInitialized();
   const hasSession = markDownServices.hasSession();
 
-  const dispatch = useDispatch();
-
-  const handleClickAway = (event) => {
-    if (event.target.id === 'verida-modal' || event.target.id === 'verida-modal-close') {
-      dispatch(onConnecting());
-    }
-  };
-
   useEffect(() => {
     if (!isLoggedIn && hasSession) {
       connectVault();
     }
   }, []);
-
-  useEffect(() => {
-    window.addEventListener('click', handleClickAway);
-
-    return () => {
-      window.removeEventListener('click', handleClickAway);
-    };
-  }, [connecting]);
 
   if (connecting) {
     return (

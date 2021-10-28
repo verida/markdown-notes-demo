@@ -1,16 +1,13 @@
-/**
- *  Vault Client Sign on URi
- */
+// eslint-disable-next-line import/no-unresolved
+import { EnvironmentType } from '@verida/client-ts';
 
-export const LOGIN_URI = 'https://vault.verida.io/request/';
-export const SERVER_URI = 'wss://auth-server.testnet.verida.io:7002';
-
-export const LOGO_URL = 'http://assets.verida.io/verida_logo.svg';
-
-export const CLIENT_AUTH_NAME = 'Verida: Markdown Notes Demo';
-export const APP_NAME = 'Markdown notes';
+export const CONTEXT_NAME = 'Verida: Markdown Notes Demo';
 
 export const DATASTORE_SCHEMA = `${window.location.origin}/schema.json`;
+
+export const VERIDA_ENVIRONMENT = EnvironmentType.TESTNET;
+
+export const VERIDA_TESTNET_DEFAULT_SERVER = 'https://db.testnet.verida.io:5002/';
 
 export const webLinks = {
   DOCUMENTATION: 'https://github.com/verida/markdown-notes-demo/blob/main/README.md',

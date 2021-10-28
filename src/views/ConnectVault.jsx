@@ -74,7 +74,7 @@ const ConnectVault = () => {
         <Typography className={classes.contentBody} variant="body1">
           Use the button below to connect with Verida Vault
         </Typography>
-        <Box m={3}>
+        <Box display="flex" alignItems="center" justifyContent="center" m={3}>
           <input
             className={classes.connectButton}
             disabled={state.connecting}
