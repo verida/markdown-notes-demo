@@ -2,7 +2,12 @@
 
 import { Network } from '@verida/client-ts';
 import { VaultAccount, hasSession } from '@verida/account-web-vault';
-import { CLIENT_AUTH_NAME, DATASTORE_SCHEMA, LOGIN_URI, LOGO_URL, SERVER_URI } from '../constants';
+import {
+  CONTEXT_NAME,
+  DATASTORE_SCHEMA,
+  VERIDA_ENVIRONMENT,
+  VERIDA_TESTNET_DEFAULT_SERVER
+} from '../constants';
 const EventEmitter = require('events');
 
 class MarkDownServices extends EventEmitter {
@@ -31,7 +36,9 @@ class MarkDownServices extends EventEmitter {
   }
 
   hasSession() {
-    return hasSession(CLIENT_AUTH_NAME);
+    return hasSession(CONTEXT_NAME);
+
+    return '';
   }
 
   /**
@@ -39,29 +46,33 @@ class MarkDownServices extends EventEmitter {
    */
   async connectVault() {
     this.account = new VaultAccount({
-      loginUri: LOGIN_URI,
-      serverUri: SERVER_URI,
-      logoUrl: LOGO_URL
+      defaultDatabaseServer: {
+        type: 'VeridaDatabase',
+        endpointUri: VERIDA_TESTNET_DEFAULT_SERVER
+      },
+      defaultMessageServer: {
+        type: 'VeridaMessage',
+        endpointUri: VERIDA_TESTNET_DEFAULT_SERVER
+      }
     });
 
     this.context = await Network.connect({
       client: {
-        defaultDatabaseServer: {
-          type: 'VeridaDatabase',
-          endpointUri: 'https://db.testnet.verida.io:5002/'
-        },
-        defaultMessageServer: {
-          type: 'VeridaMessage',
-          endpointUri: 'https://db.testnet.verida.io:5002/'
-        }
+        environment: VERIDA_ENVIRONMENT
       },
       account: this.account,
       context: {
-        name: CLIENT_AUTH_NAME
+        name: CONTEXT_NAME
       }
     });
 
+    if (!this.context) {
+      this.emit('authenticationCancelled');
+      return;
+    }
+
     this.did = await this.account.did();
+
     this.dataStore = await this.context.openDatastore(DATASTORE_SCHEMA);
     await this.initProfile();
     await this.initNotes();
@@ -89,7 +100,6 @@ class MarkDownServices extends EventEmitter {
     const services = this;
     const cb = async function () {
       services.notes = await services.fetchAllNotes();
-      console.log(services.notes);
       services.emit('notesChanged', services.notes);
     };
 
@@ -122,7 +132,6 @@ class MarkDownServices extends EventEmitter {
       } else {
         await this.dataStore.save(data);
       }
-
       return true;
     } catch (error) {
       this.handleErrors(error);
@@ -158,7 +167,6 @@ class MarkDownServices extends EventEmitter {
     const filter = options || defaultOptions;
     try {
       const response = await this.dataStore.getMany({}, filter);
-      console.log(response);
       return response;
     } catch (error) {
       this.handleErrors(error);
@@ -171,7 +179,7 @@ class MarkDownServices extends EventEmitter {
   }
 
   async logout() {
-    await this.account.disconnect();
+    await this.context.getAccount().disconnect(CONTEXT_NAME);
     this.context = null;
     this.dataStore = null;
     this.currentNote = null;

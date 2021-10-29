@@ -24,8 +24,8 @@ const webVault = createSlice({
       state.connected = true;
       return state;
     },
-    onConnecting(state) {
-      state.connecting = !state.connecting;
+    onConnecting(state, action) {
+      state.connecting = action.payload;
     },
     onLogout(state) {
       state.connected = false;

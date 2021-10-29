@@ -1,5 +1,6 @@
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
+import { toast } from 'react-toastify';
 import markDownServices from '../api/services';
 import { onConnecting } from '../redux/reducers/auth';
 
@@ -8,22 +9,16 @@ const useConnect = () => {
 
   const dispatch = useDispatch();
 
-  const authCb = async () => {
-    if (markDownServices.error?.message) {
-      dispatch(onConnecting());
-      return;
-    }
-
-    dispatch(onConnecting());
-
-    history.push('/');
-  };
-
   const connectVault = async () => {
-    dispatch(onConnecting());
-
-    await markDownServices.initApp();
-    authCb();
+    dispatch(onConnecting(true));
+    try {
+      await markDownServices.initApp();
+      history.push('/');
+    } catch (error) {
+      toast.error(markDownServices.error?.message);
+    } finally {
+      dispatch(onConnecting(false));
+    }
   };
 
   return {
