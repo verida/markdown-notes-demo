@@ -37,8 +37,6 @@ class MarkDownServices extends EventEmitter {
 
   hasSession() {
     return hasSession(CONTEXT_NAME);
-
-    return '';
   }
 
   /**
@@ -60,7 +58,6 @@ class MarkDownServices extends EventEmitter {
       client: {
         environment: VERIDA_ENVIRONMENT
       },
-
       account: this.account,
       context: {
         name: CONTEXT_NAME
