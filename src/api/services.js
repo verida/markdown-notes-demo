@@ -85,7 +85,8 @@ class MarkDownServices extends EventEmitter {
       const data = await services.profileInstance.getMany();
       services.profile = {
         name: data.name,
-        country: data.country
+        country: data.country,
+        avatar: data?.avatar?.uri
       };
       services.emit('profileChanged', services.profile);
     };
