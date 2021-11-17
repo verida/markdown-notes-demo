@@ -37,8 +37,6 @@ class MarkDownServices extends EventEmitter {
 
   hasSession() {
     return hasSession(CONTEXT_NAME);
-
-    return '';
   }
 
   /**
@@ -70,7 +68,6 @@ class MarkDownServices extends EventEmitter {
       this.emit('authenticationCancelled');
       return;
     }
-
     this.did = await this.account.did();
 
     this.dataStore = await this.context.openDatastore(DATASTORE_SCHEMA);
@@ -86,10 +83,11 @@ class MarkDownServices extends EventEmitter {
     services.profileInstance = await client.openPublicProfile(services.did, 'Verida: Vault');
     const cb = async () => {
       const data = await services.profileInstance.getMany();
-      services.profile = data.reduce((result, item) => {
-        result[item.key] = item.value;
-        return result;
-      }, {});
+      services.profile = {
+        name: data.name,
+        country: data.country,
+        avatar: data?.avatar?.uri
+      };
       services.emit('profileChanged', services.profile);
     };
     services.profileInstance.listen(cb);
@@ -100,6 +98,7 @@ class MarkDownServices extends EventEmitter {
     const services = this;
     const cb = async function () {
       services.notes = await services.fetchAllNotes();
+      console.log(services.notes);
       services.emit('notesChanged', services.notes);
     };
 

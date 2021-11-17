@@ -14,8 +14,7 @@ const webVault = createSlice({
     setUserProfile(state) {
       const user = markDownServices.profile;
       if (user.avatar) {
-        const parseAvatarValue = JSON.parse(user?.avatar);
-        state.avatar = `data:image/${parseAvatarValue.format};base64,${parseAvatarValue.base64}`;
+        state.avatar = user.avatar;
       }
       state.app = {
         name: user.name,

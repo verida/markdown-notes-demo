@@ -20,7 +20,9 @@ const markdownEditor = createSlice({
   name: 'markdownEditor',
   reducers: {
     setMarkdownNotes(state, action) {
-      state.notes = action.payload;
+      if (action.payload && action.payload.length) {
+        state.notes = action.payload;
+      }
       return state;
     },
     switchDisplay(state, action) {
