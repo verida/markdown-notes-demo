@@ -98,12 +98,10 @@ class MarkDownServices extends EventEmitter {
     const services = this;
     const cb = async function () {
       services.notes = await services.fetchAllNotes();
-      console.log(services.notes);
       services.emit('notesChanged', services.notes);
     };
-
     this.dataStore.changes(cb);
-    cb();
+    await cb();
   }
 
   async openNote(noteId) {
@@ -142,10 +140,10 @@ class MarkDownServices extends EventEmitter {
     if (!this.appInitialized()) {
       this.handleErrors(new Error("App isn't initialized"));
     }
-
     try {
       await this.openNote(id);
       await this.dataStore.delete(this.currentNote);
+      this.initNotes();
       return true;
     } catch (error) {
       this.handleErrors(error);
@@ -163,6 +161,7 @@ class MarkDownServices extends EventEmitter {
       skip: 0,
       sort: [{ title: 'desc' }]
     };
+
     const filter = options || defaultOptions;
     try {
       const response = await this.dataStore.getMany({}, filter);
