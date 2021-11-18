@@ -100,9 +100,8 @@ class MarkDownServices extends EventEmitter {
       services.notes = await services.fetchAllNotes();
       services.emit('notesChanged', services.notes);
     };
-
     this.dataStore.changes(cb);
-    cb();
+    await cb();
   }
 
   async openNote(noteId) {
@@ -141,10 +140,10 @@ class MarkDownServices extends EventEmitter {
     if (!this.appInitialized()) {
       this.handleErrors(new Error("App isn't initialized"));
     }
-
     try {
       await this.openNote(id);
       await this.dataStore.delete(this.currentNote);
+      this.initNotes();
       return true;
     } catch (error) {
       this.handleErrors(error);
