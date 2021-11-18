@@ -98,7 +98,6 @@ class MarkDownServices extends EventEmitter {
     const services = this;
     const cb = async function () {
       services.notes = await services.fetchAllNotes();
-      console.log(services.notes);
       services.emit('notesChanged', services.notes);
     };
 
@@ -163,6 +162,7 @@ class MarkDownServices extends EventEmitter {
       skip: 0,
       sort: [{ title: 'desc' }]
     };
+
     const filter = options || defaultOptions;
     try {
       const response = await this.dataStore.getMany({}, filter);
