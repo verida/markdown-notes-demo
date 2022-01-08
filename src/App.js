@@ -18,7 +18,9 @@ const App = () => {
     });
 
     markDownServices.on('notesChanged', (data) => {
-      dispatch(setMarkdownNotes(data));
+      if (data && Array.isArray(data)) {
+        dispatch(setMarkdownNotes(data));
+      }
     });
 
     markDownServices.on('profileChanged', () => {
