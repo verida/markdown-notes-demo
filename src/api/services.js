@@ -2,6 +2,7 @@
 
 import { Network, EnvironmentType } from '@verida/client-ts';
 import { VaultAccount, hasSession } from '@verida/account-web-vault';
+
 const EventEmitter = require('events');
 
 const { REACT_APP_LOGO_URL, REACT_APP_CONTEXT_NAME } = process.env;
