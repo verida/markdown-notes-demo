@@ -1,15 +1,11 @@
 /* eslint-disable */
 
-import { Network } from '@verida/client-ts';
+import { Network, EnvironmentType } from '@verida/client-ts';
 import { VaultAccount, hasSession } from '@verida/account-web-vault';
-import {
-  CONTEXT_NAME,
-  DATASTORE_SCHEMA,
-  VERIDA_ENVIRONMENT,
-  VERIDA_TESTNET_DEFAULT_SERVER
-} from '../constants';
+
 const EventEmitter = require('events');
 
+const { REACT_APP_LOGO_URL, REACT_APP_CONTEXT_NAME } = process.env;
 class MarkDownServices extends EventEmitter {
   context = null;
   dataStore = null;
@@ -36,7 +32,7 @@ class MarkDownServices extends EventEmitter {
   }
 
   hasSession() {
-    return hasSession(CONTEXT_NAME);
+    return hasSession(REACT_APP_CONTEXT_NAME);
   }
 
   /**
@@ -44,23 +40,16 @@ class MarkDownServices extends EventEmitter {
    */
   async connectVault() {
     this.account = new VaultAccount({
-      defaultDatabaseServer: {
-        type: 'VeridaDatabase',
-        endpointUri: VERIDA_TESTNET_DEFAULT_SERVER
-      },
-      defaultMessageServer: {
-        type: 'VeridaMessage',
-        endpointUri: VERIDA_TESTNET_DEFAULT_SERVER
-      }
+      logoUrl: REACT_APP_LOGO_URL
     });
 
     this.context = await Network.connect({
       client: {
-        environment: VERIDA_ENVIRONMENT
+        environment: EnvironmentType.TESTNET
       },
       account: this.account,
       context: {
-        name: CONTEXT_NAME
+        name: REACT_APP_CONTEXT_NAME
       }
     });
 
@@ -70,7 +59,7 @@ class MarkDownServices extends EventEmitter {
     }
     this.did = await this.account.did();
 
-    this.dataStore = await this.context.openDatastore(DATASTORE_SCHEMA);
+    this.dataStore = await this.context.openDatastore(`${window.location.origin}/schema.json`);
     await this.initProfile();
     await this.initNotes();
 
@@ -177,7 +166,7 @@ class MarkDownServices extends EventEmitter {
   }
 
   async logout() {
-    await this.context.getAccount().disconnect(CONTEXT_NAME);
+    await this.context.getAccount().disconnect(REACT_APP_CONTEXT_NAME);
     this.context = null;
     this.dataStore = null;
     this.currentNote = null;
