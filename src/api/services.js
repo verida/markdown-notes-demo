@@ -40,7 +40,9 @@ class MarkDownServices extends EventEmitter {
    */
   async connectVault() {
     this.account = new VaultAccount({
-      logoUrl: REACT_APP_LOGO_URL
+      request: {
+        logoUrl: REACT_APP_LOGO_URL
+      }
     });
 
     this.context = await Network.connect({
