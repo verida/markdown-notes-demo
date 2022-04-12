@@ -127,7 +127,8 @@ const AppHeader = () => {
             <MenuIcon />
           </IconButton>
           <img className={classes.logoMobile} src={appLogo} alt="app" />
-          <img className={classes.editIon} src={EditIcon} alt="edit" />
+          {/* <img className={classes.editIon} src={EditIcon} alt="edit" /> */}
+          <UserAvatar />
         </Box>
       )}
     </div>
