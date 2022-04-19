@@ -6,7 +6,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import MenuIcon from '@material-ui/icons/Menu';
 import appLogo from '../../assets/images/verida_logo.svg';
-import EditIcon from '../../assets/icons/Edit.svg';
+// import EditIcon from '../../assets/icons/Edit.svg';
 import LinkIcon from '../../assets/icons/external_link.svg';
 import StarIcon from '../../assets/icons/star_filled.svg';
 import UnFilledStarIcon from '../../assets/icons/Star_unfilled.svg';
@@ -127,7 +127,8 @@ const AppHeader = () => {
             <MenuIcon />
           </IconButton>
           <img className={classes.logoMobile} src={appLogo} alt="app" />
-          <img className={classes.editIon} src={EditIcon} alt="edit" />
+          {/* <img className={classes.editIon} src={EditIcon} alt="edit" /> */}
+          <UserAvatar />
         </Box>
       )}
     </div>
