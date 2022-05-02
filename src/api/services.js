@@ -112,6 +112,7 @@ class MarkDownServices extends EventEmitter {
       services.emit('notesChanged', services.notes);
     };
     this.dataStore.changes(listenNoteChange);
+    // await listenNoteChange();
   }
 
   async openNote(noteId) {

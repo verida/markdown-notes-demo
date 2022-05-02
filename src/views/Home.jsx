@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Box, CircularProgress } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
+import { Box, CircularProgress } from '@material-ui/core';
 import { toast } from 'react-toastify';
 import NotesUI from '../components/editorview/NotesViewUI';
 import { NotesHeader } from '../components/common/index';
@@ -25,6 +25,12 @@ const Home = (props) => {
         }
       })();
     }
+
+    markDownServices.on('notesChanged', (data) => {
+      if (data && Array.isArray(data)) {
+        dispatch(setMarkdownNotes(data));
+      }
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
