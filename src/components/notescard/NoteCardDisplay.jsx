@@ -176,7 +176,18 @@ const NoteCardDisplay = () => {
             </Grid>
           ))
         ) : (
-          <Box>No Notes</Box>
+          <Box
+            mt={4}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            flexDirection="column"
+            paddingY={2}
+            fontSize={20}
+            fontWeight={600}
+          >
+            No Notes
+          </Box>
         )}
       </Grid>
 

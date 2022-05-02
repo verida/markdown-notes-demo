@@ -18,13 +18,12 @@ const App = () => {
     });
 
     markDownServices.on('notesChanged', (data) => {
-      if (data && Array.isArray(data)) {
-        dispatch(setMarkdownNotes(data));
-      }
+      console.log(data);
+      dispatch(setMarkdownNotes(data));
     });
 
-    markDownServices.on('profileChanged', () => {
-      dispatch(setUserProfile());
+    markDownServices.on('profileChanged', (profile) => {
+      dispatch(setUserProfile(profile));
     });
   }, [dispatch]);
 
