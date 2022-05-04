@@ -14,21 +14,17 @@ class MarkDownServices extends EventEmitter {
   account = null;
   did = null;
   error = {};
+  isConnected = false;
 
   notes = [];
-  profile = {};
+  profile = null;
 
   /**
    * Public method for initializing this app
    */
-  async initApp() {
-    if (!this.dataStore) {
-      await this.connectVault();
-    }
-  }
 
   appInitialized() {
-    return this.dataStore !== null;
+    return this.dataStore !== undefined;
   }
 
   hasSession() {
@@ -59,40 +55,63 @@ class MarkDownServices extends EventEmitter {
       this.emit('authenticationCancelled');
       return;
     }
+
     this.did = await this.account.did();
 
     this.dataStore = await this.context.openDatastore(`${window.location.origin}/schema.json`);
-    await this.initProfile();
-    await this.initNotes();
+
+    await this.initNotesEventLister();
+
+    await this.initProfileEventLister();
+
+    await this.getProfile();
+
+    if (this.context) {
+      this.isConnected = true;
+    }
 
     this.emit('initialized');
   }
 
-  async initProfile() {
+  async initProfileEventLister() {
     const services = this;
-    const client = await services.context.getClient();
-    services.profileInstance = await client.openPublicProfile(services.did, 'Verida: Vault');
-    const cb = async () => {
-      const data = await services.profileInstance.getMany();
-      services.profile = {
-        name: data.name,
-        country: data.country,
-        avatar: data?.avatar?.uri
-      };
-      services.emit('profileChanged', services.profile);
+    const profileInstance = await services.getProfileClient();
+    const listenProfileChange = async () => {
+      const data = await profileInstance.getMany();
+      this.buildProfileData(data);
+      this.emit('profileChanged', this.profile);
     };
-    services.profileInstance.listen(cb);
-    await cb();
+    profileInstance.listen(listenProfileChange);
   }
 
-  async initNotes() {
+  async getProfileClient() {
+    const client = await this.context.getClient();
+    const profileInstance = await client.openPublicProfile(this.did, 'Verida: Vault');
+    return profileInstance;
+  }
+
+  buildProfileData(data) {
+    this.profile = {
+      name: data.name,
+      country: data.country,
+      avatar: data?.avatar?.uri
+    };
+  }
+
+  async getProfile() {
+    const profileInstance = await this.getProfileClient();
+    const data = await profileInstance.getMany();
+    this.buildProfileData(data);
+    return true;
+  }
+
+  async initNotesEventLister() {
     const services = this;
-    const cb = async function () {
-      services.notes = await services.fetchAllNotes();
+    const listenNoteChange = async function () {
+      services.notes = await services.getNotes();
       services.emit('notesChanged', services.notes);
     };
-    this.dataStore.changes(cb);
-    await cb();
+    this.dataStore.changes(listenNoteChange);
   }
 
   async openNote(noteId) {
@@ -134,7 +153,6 @@ class MarkDownServices extends EventEmitter {
     try {
       await this.openNote(id);
       await this.dataStore.delete(this.currentNote);
-      this.initNotes();
       return true;
     } catch (error) {
       this.handleErrors(error);
@@ -142,7 +160,7 @@ class MarkDownServices extends EventEmitter {
     }
   }
 
-  async fetchAllNotes(options) {
+  async getNotes(options) {
     if (!this.appInitialized()) {
       this.handleErrors(new Error("App isn't initialized"));
     }
@@ -154,9 +172,10 @@ class MarkDownServices extends EventEmitter {
     };
 
     const filter = options || defaultOptions;
+
     try {
       const response = await this.dataStore.getMany({}, filter);
-      return response;
+      return response || [];
     } catch (error) {
       this.handleErrors(error);
     }
@@ -178,6 +197,7 @@ class MarkDownServices extends EventEmitter {
     this.error = {};
     this.notes = [];
     this.profile = {};
+    this.isConnected = false;
   }
 }
 

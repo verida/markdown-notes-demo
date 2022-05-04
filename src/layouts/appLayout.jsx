@@ -110,7 +110,7 @@ const AppLayouts = ({ children }) => {
   const classes = useStyles();
   const { connecting } = useSelector((state) => state.webVault);
   const { connectVault } = useConnect();
-  const isLoggedIn = markDownServices.appInitialized();
+  const isLoggedIn = markDownServices.isConnected;
   const hasSession = markDownServices.hasSession();
 
   useEffect(() => {

@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import veridaButtonImage from '../assets/images/connect_with_verida_dark.png';
 
 import veridaLogo from '../assets/images/verida_logo.svg';
+
 import useConnect from '../hooks/useConnect';
 
 const useStyles = makeStyles((theme) => ({

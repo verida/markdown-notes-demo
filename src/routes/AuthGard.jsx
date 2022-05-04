@@ -8,7 +8,7 @@ import markDownServices from '../api/services';
 
 const AuthGuard = (props) => {
   const { location, component: Component, ...rest } = props;
-  const isLoggedIn = markDownServices.appInitialized();
+  const isLoggedIn = markDownServices.isConnected;
 
   return (
     <Route
