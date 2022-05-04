@@ -153,7 +153,6 @@ class MarkDownServices extends EventEmitter {
     try {
       await this.openNote(id);
       await this.dataStore.delete(this.currentNote);
-      this.initNotes();
       return true;
     } catch (error) {
       this.handleErrors(error);
@@ -176,7 +175,7 @@ class MarkDownServices extends EventEmitter {
 
     try {
       const response = await this.dataStore.getMany({}, filter);
-      return response;
+      return response || [];
     } catch (error) {
       this.handleErrors(error);
     }

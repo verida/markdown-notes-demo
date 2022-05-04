@@ -12,19 +12,17 @@ const Home = (props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (markDownServices.dataStore) {
-      (async () => {
-        setLoading(true);
-        try {
-          const notes = await markDownServices.getNotes();
-          dispatch(setMarkdownNotes(notes));
-        } catch (error) {
-          toast.error(markDownServices.error?.message);
-        } finally {
-          setLoading(false);
-        }
-      })();
-    }
+    (async () => {
+      setLoading(true);
+      try {
+        const notes = await markDownServices.getNotes();
+        dispatch(setMarkdownNotes(notes));
+      } catch (error) {
+        toast.error(markDownServices.error?.message);
+      } finally {
+        setLoading(false);
+      }
+    })();
 
     markDownServices.on('notesChanged', (data) => {
       if (data && Array.isArray(data)) {
