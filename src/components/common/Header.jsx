@@ -4,9 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Box, Button, IconButton, useMediaQuery } from '@material-ui/core';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import MenuIcon from '@material-ui/icons/Menu';
 import appLogo from '../../assets/images/verida_logo.svg';
-// import EditIcon from '../../assets/icons/Edit.svg';
 import LinkIcon from '../../assets/icons/external_link.svg';
 import StarIcon from '../../assets/icons/star_filled.svg';
 import UnFilledStarIcon from '../../assets/icons/Star_unfilled.svg';
@@ -33,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   },
   img: {},
   logoMobile: {
-    margin: 'auto'
+    margin: 'auto 0'
   },
   links: {
     color: '#687085',
@@ -55,7 +53,12 @@ const useStyles = makeStyles((theme) => ({
     outline: 'none',
     fontWeight: 600,
     fontSize: '24px',
-    width: 190
+    width: 190,
+
+    '&::placeholder': {
+      fontSize: '14px',
+      fontStyle: 'italic'
+    }
   }
 }));
 
@@ -81,6 +84,30 @@ const AppHeader = () => {
     });
   }, [dispatch]);
 
+  const editHeaderBar = (
+    <>
+      {location.pathname === '/editor' && (
+        <div>
+          <input
+            value={noteItem.title}
+            onChange={handleTitle}
+            className={classes.inputClass}
+            placeholder="Enter note title here "
+          />
+          {noteItem.isFavorite ? (
+            <IconButton className={classes.starIcon} onClick={handleFavorite}>
+              <img src={StarIcon} alt="star-icon" />
+            </IconButton>
+          ) : (
+            <IconButton className={classes.starIcon} onClick={handleFavorite}>
+              <img src={UnFilledStarIcon} alt="star" />
+            </IconButton>
+          )}
+        </div>
+      )}
+    </>
+  );
+
   return (
     <div className={classes.root}>
       {!matches ? (
@@ -88,20 +115,7 @@ const AppHeader = () => {
           <Link to="/" className={classes.title}>
             <img className={classes.img} src={appLogo} alt="app" />
           </Link>
-          {location.pathname === '/editor' && (
-            <div>
-              <input value={noteItem.title} onChange={handleTitle} className={classes.inputClass} />
-              {noteItem.isFavorite ? (
-                <IconButton className={classes.starIcon} onClick={handleFavorite}>
-                  <img src={StarIcon} alt="star-icon" />
-                </IconButton>
-              ) : (
-                <IconButton className={classes.starIcon} onClick={handleFavorite}>
-                  <img src={UnFilledStarIcon} alt="star" />
-                </IconButton>
-              )}
-            </div>
-          )}
+          {editHeaderBar}
           <Box display="flex" alignItems="center" justifyContent="space-between">
             {location.pathname === '/editor' ? (
               <div />
@@ -131,11 +145,10 @@ const AppHeader = () => {
         </Box>
       ) : (
         <Box display="flex" alignItems="center" justifyContent="space-between">
-          <IconButton>
-            <MenuIcon />
-          </IconButton>
-          <img className={classes.logoMobile} src={appLogo} alt="app" />
-          {/* <img className={classes.editIon} src={EditIcon} alt="edit" /> */}
+          {location.pathname !== '/editor' && (
+            <img className={classes.logoMobile} src={appLogo} alt="app" />
+          )}
+          {editHeaderBar}
           <UserAvatar />
         </Box>
       )}

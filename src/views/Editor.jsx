@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, ButtonGroup, IconButton, makeStyles } from '@material-ui/core';
+import { Box, Button, ButtonGroup, IconButton, makeStyles, useMediaQuery } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import RichTextEditor from '../components/markdown/RichEditor';
 import TrashIcon from '../assets/icons/Trash.svg';
 import ArrowLeft from '../assets/icons/arrow_left.svg';
+import SaveNote from '../assets/icons/new_note.svg';
 import PreviewIcon from '../assets/icons/eye.svg';
 import EditIcon from '../assets/icons/Edit.svg';
 import { browserQueries, noteActionsType } from '../utils/common.utils';
@@ -24,7 +25,6 @@ const useStyles = makeStyles((theme) => ({
     background: '#687085',
     padding: '0.5rem'
   },
-  trashIcon: {},
   actionButton: {
     padding: '0.5rem 1.5rem',
     margin: '0 1rem',
@@ -33,7 +33,16 @@ const useStyles = makeStyles((theme) => ({
   },
   saveButton: {
     fontWeight: 'bold',
-    padding: '0.5rem 1.5rem'
+    padding: '0.5rem 1.5rem',
+    [theme.breakpoints.down('sm')]: {
+      display: 'none'
+    }
+  },
+  saveButtonMobile: {
+    visibility: 'hidden',
+    [theme.breakpoints.down('sm')]: {
+      visibility: 'visible'
+    }
   },
   editPreviewButton: {
     background: '#F7F8F9',
@@ -46,12 +55,16 @@ const useStyles = makeStyles((theme) => ({
     textTransform: 'capitalize'
   },
   buttonGroup: {
-    margin: theme.spacing(0, 0, 0, 5)
+    margin: theme.spacing(0, 0, 0, 5),
+    [theme.breakpoints.down('sm')]: {
+      margin: theme.spacing(0, 1)
+    }
   }
 }));
 
 const Editor = ({ history, location }) => {
   const classes = useStyles();
+  const matches = useMediaQuery('(max-width:768px)');
   const [snackPack, setSnackPack] = useState(false);
   const [mdValue, setMDvalue] = useState('');
   const [modalView, setModalView] = useState({
@@ -131,25 +144,28 @@ const Editor = ({ history, location }) => {
             className={modalView.editor ? classes.activeEditPreview : classes.editPreviewButton}
             startIcon={<img src={EditIcon} alt="edit" />}
           >
-            Editor
+            {!matches && 'Editor'}
           </Button>
           <Button
             className={modalView.preview ? classes.activeEditPreview : classes.editPreviewButton}
             onClick={() => handleView('preview')}
             startIcon={<img src={PreviewIcon} alt="preview" />}
           >
-            Preview
+            {!matches && 'Preview'}
           </Button>
         </ButtonGroup>
         <div>
           {pageType === 'edit' && (
             <IconButton onClick={onDeleteNote}>
-              <img className={classes.trashIcon} alt="icon" src={TrashIcon} />
+              <img alt="icon" src={TrashIcon} />
             </IconButton>
           )}
           {/* <Button className={classes.actionButton} variant="outlined" color="primary">
             Share
           </Button> */}
+          <IconButton className={classes.saveButtonMobile} onClick={updateNotes}>
+            <img alt="icon" src={SaveNote} />
+          </IconButton>
           <Button
             onClick={updateNotes}
             className={classes.saveButton}

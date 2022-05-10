@@ -10,7 +10,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import React from 'react';
 import TableIcon from '../../assets/icons/Table.svg';
-// import ImportIcon from '../../assets/icons/Import.svg';
+import SaveNote from '../../assets/icons/new_note.svg';
 import { ReactComponent as PLusIcon } from '../../assets/icons/Plus.svg';
 import GridIcon from '../../assets/icons/grid_icon.svg';
 import {
@@ -21,13 +21,15 @@ import {
 } from '../../redux/reducers/editor';
 
 const useStyles = makeStyles((theme) => ({
-  root: {},
   title: {
     fontStyle: 'normal',
     fontWeight: 'bold',
     fontSize: '34px',
     lineHeight: '100%',
-    color: '#041133'
+    color: '#041133',
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '24px'
+    }
   },
   button: {
     width: '10rem',
@@ -36,6 +38,14 @@ const useStyles = makeStyles((theme) => ({
     textTransform: 'capitalize',
     [theme.breakpoints.down('sm')]: {
       display: 'none'
+    }
+  },
+  buttonMobile: {
+    display: 'none',
+    height: '4rem',
+    width: '4rem',
+    [theme.breakpoints.down('sm')]: {
+      display: 'inline'
     }
   },
   tableIcon: {
@@ -98,13 +108,6 @@ const NotesHeader = ({ history }) => {
               <img src={TableIcon} alt="title" />
             </IconButton>
           )}
-          {/* <Button
-            className={classes.button}
-            variant="outlined"
-            startIcon={<img src={ImportIcon} alt="import" />}
-          >
-            Import note
-          </Button> */}
           <Button
             className={classes.button}
             variant="contained"
@@ -114,6 +117,9 @@ const NotesHeader = ({ history }) => {
           >
             New note
           </Button>
+          <IconButton className={classes.buttonMobile} onClick={addNewNote}>
+            <img alt="icon" src={SaveNote} />
+          </IconButton>
         </Box>
       </Box>
       <Divider className={classes.divider} />

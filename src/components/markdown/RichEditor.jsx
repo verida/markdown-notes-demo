@@ -17,14 +17,12 @@ const RichTextEditor = ({ mdValue, setMDValue, preview }) => {
 
   return (
     <div className={classes.root}>
-      <div className="container">
-        <MDEditor
-          preview={preview ? 'preview' : 'live'}
-          value={mdValue}
-          height={500}
-          onChange={setMDValue}
-        />
-      </div>
+      <MDEditor
+        preview={preview ? 'preview' : 'live'}
+        value={mdValue}
+        height={500}
+        onChange={setMDValue}
+      />
     </div>
   );
 };
