@@ -15,17 +15,20 @@ import FavoriteIcon from '../common/editorActions/FavoriteIcon';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: '16.9rem',
+    // width: '16.9rem',
     height: '14.5rem',
     background: '#F7F8F9',
     border: '1px solid #E6E8EB',
     borderRadius: '6px',
-    margin: theme.spacing(3, 0),
+    margin: theme.spacing(3, 'auto'),
     cursor: 'pointer',
     position: 'relative',
     '&:hover': {
       background: '#EDECFB',
       boxShadow: '0px 4px 15px rgba(66, 59, 206, 0.1)'
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: 'auto'
     }
   },
   rootMobile: {
@@ -89,13 +92,13 @@ const useStyles = makeStyles((theme) => ({
   },
   tableContainer: {
     [theme.breakpoints.down('sm')]: {
-      display: 'none'
+      // display: 'none'
     }
   },
   mobileUI: {
     display: 'none',
     [theme.breakpoints.down('sm')]: {
-      display: 'block'
+      display: 'none'
     }
   },
   timeIcon: {
@@ -146,7 +149,7 @@ const NoteCardDisplay = () => {
       <Grid container spacing={1} className={classes.tableContainer}>
         {notes.length ? (
           notes.map((list) => (
-            <Grid item md={3} sm={12} xs={12} key={list._id}>
+            <Grid item md={3} sm={6} xs={6} key={list._id}>
               <Box m={2} className={classes.root}>
                 <Box className={classes.contentBox} onClick={() => onEdit(list)}>
                   <MDEditor.Markdown source={list.body} />
@@ -188,40 +191,6 @@ const NoteCardDisplay = () => {
           >
             No Notes
           </Box>
-        )}
-      </Grid>
-
-      {/* Mobile Version UI */}
-      <Grid container className={classes.mobileUI}>
-        {notes.length ? (
-          notes.map((list) => (
-            <Grid item md={6} sm={12} xs={6} key={list._id}>
-              <Box m={2} className={classes.rootMobile}>
-                <Box className={classes.contentBoxMobile} onClick={() => onEdit(list)}>
-                  {list.body}
-                </Box>
-                <Box className={classes.panelTabMobile}>
-                  <Box display="flex" justifyContent="space-between" alignItems="center">
-                    <NotesAction item={list} />
-                    <Typography className={classes.cartTitle}>Notes title</Typography>
-                  </Box>
-                  <Box display="flex" ml={2} className={classes.captionContainer}>
-                    <Typography className={classes.caption} variant="caption">
-                      Edited
-                      <Moment className={classes.timeIcon} fromNow>
-                        {list.modifiedAt}
-                      </Moment>
-                    </Typography>
-                    <Box>
-                      <FavoriteIcon item={list} />
-                    </Box>
-                  </Box>
-                </Box>
-              </Box>
-            </Grid>
-          ))
-        ) : (
-          <Box>No Notes</Box>
         )}
       </Grid>
     </>
