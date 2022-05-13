@@ -174,8 +174,8 @@ class MarkDownServices extends EventEmitter {
     const filter = options || defaultOptions;
 
     try {
-      const response = await this.dataStore.getMany({}, filter);
-      return response || [];
+      const notes = await this.dataStore.getMany({}, filter);
+      return notes || [];
     } catch (error) {
       this.handleErrors(error);
     }
