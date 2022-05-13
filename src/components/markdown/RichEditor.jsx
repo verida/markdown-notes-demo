@@ -1,6 +1,7 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, useMediaQuery } from '@material-ui/core';
 import MDEditor from '@uiw/react-md-editor';
+import { MOBILE_MEDIA_WIDTH } from '../../constants';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -14,11 +15,19 @@ const useStyles = makeStyles(() => ({
 
 const RichTextEditor = ({ mdValue, setMDValue, preview }) => {
   const classes = useStyles();
+  const matches = useMediaQuery(MOBILE_MEDIA_WIDTH);
+
+  const handleEditorPreview = () => {
+    if (matches) {
+      return preview ? 'preview' : 'edit';
+    }
+    return preview ? 'preview' : 'live';
+  };
 
   return (
     <div className={classes.root}>
       <MDEditor
-        preview={preview ? 'preview' : 'live'}
+        preview={handleEditorPreview()}
         value={mdValue}
         height={500}
         onChange={setMDValue}

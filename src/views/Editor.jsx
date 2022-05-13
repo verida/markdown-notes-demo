@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import RichTextEditor from '../components/markdown/RichEditor';
 import TrashIcon from '../assets/icons/Trash.svg';
 import ArrowLeft from '../assets/icons/arrow_left.svg';
-import SaveNote from '../assets/icons/new_note.svg';
+import SaveNote from '../assets/icons/update_note.svg';
 import PreviewIcon from '../assets/icons/eye.svg';
 import EditIcon from '../assets/icons/Edit.svg';
 import { browserQueries, noteActionsType } from '../utils/common.utils';
@@ -12,6 +12,7 @@ import AppSnackBar from '../components/snackbar/SnackBar';
 import markDownServices from '../api/services';
 import AppModalUi from '../components/modal/AppModal';
 import { DeleteNote } from '../components/common/editorActions';
+import { MOBILE_MEDIA_WIDTH } from '../constants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -64,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Editor = ({ history, location }) => {
   const classes = useStyles();
-  const matches = useMediaQuery('(max-width:768px)');
+  const matches = useMediaQuery(MOBILE_MEDIA_WIDTH);
   const [snackPack, setSnackPack] = useState(false);
   const [mdValue, setMDvalue] = useState('');
   const [modalView, setModalView] = useState({
