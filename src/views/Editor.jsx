@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, ButtonGroup, IconButton, makeStyles, useMediaQuery } from '@material-ui/core';
 import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import RichTextEditor from '../components/markdown/RichEditor';
 import TrashIcon from '../assets/icons/Trash.svg';
 import ArrowLeft from '../assets/icons/arrow_left.svg';
@@ -101,9 +102,21 @@ const Editor = ({ history, location }) => {
       isFavorite: noteItem.isFavorite,
       body: mdValue
     };
+
     if (pageType === 'edit') {
       data._id = selectedNote._id;
     }
+
+    if (!noteItem.title) {
+      toast.error('Please enter note title');
+      return;
+    }
+
+    if (!mdValue) {
+      toast.error('Please enter notes in the editor');
+      return;
+    }
+
     markDownServices.saveNote(data);
     notifications();
   };
