@@ -112,11 +112,6 @@ const Editor = ({ history, location }) => {
       return;
     }
 
-    if (!mdValue) {
-      toast.error('Please enter notes in the editor');
-      return;
-    }
-
     markDownServices.saveNote(data);
     notifications();
   };
