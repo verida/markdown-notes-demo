@@ -14,7 +14,7 @@
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "@uiw/react-md-editor": "3.4.14",
-    "@verida/client-ts": "^1.1.14",
+    "@verida/client-ts": "^2.0.1",
     "@verida/account-web-vault": "^1.1.11",
     "markdown-to-jsx": "^7.1.3",
     "moment": "^2.29.2",
