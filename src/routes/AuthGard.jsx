@@ -1,6 +1,3 @@
-/* eslint-disable react/jsx-curly-newline */
-/* eslint-disable implicit-arrow-linebreak */
-/* eslint-disable no-confusing-arrow */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Route, Redirect } from 'react-router-dom';
@@ -13,9 +10,8 @@ const AuthGuard = (props) => {
   return (
     <Route
       {...rest}
-      render={(props) =>
-        isLoggedIn ? (
-          <Component {...props} />
+      render={(props) => (isLoggedIn ? (
+        <Component {...props} />
         ) : (
           <Redirect
             to={{
@@ -23,8 +19,7 @@ const AuthGuard = (props) => {
               state: props.location
             }}
           />
-        )
-      }
+        ))}
     />
   );
 };
