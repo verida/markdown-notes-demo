@@ -1,7 +1,8 @@
 /* eslint-disable */
 
-import { Network, EnvironmentType } from '@verida/client-ts';
+import { Network } from '@verida/client-ts';
 import { VaultAccount, hasSession } from '@verida/account-web-vault';
+import { EnvironmentType } from '@verida/types'
 
 const EventEmitter = require('events');
 
