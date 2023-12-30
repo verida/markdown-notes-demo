@@ -2,11 +2,21 @@
 
 import { Network } from '@verida/client-ts';
 import { VaultAccount, hasSession } from '@verida/account-web-vault';
-import { EnvironmentType } from '@verida/types'
+import { EnvironmentType } from '@verida/types';
 
 const EventEmitter = require('events');
 
-const { REACT_APP_LOGO_URL, REACT_APP_CONTEXT_NAME } = process.env;
+const { REACT_APP_VERIDA_NETWORK, REACT_APP_LOGO_URL, REACT_APP_CONTEXT_NAME } = process.env;
+
+const network =
+  REACT_APP_VERIDA_NETWORK === EnvironmentType.MAINNET
+    ? EnvironmentType.MAINNET
+    : REACT_APP_VERIDA_NETWORK === EnvironmentType.TESTNET
+    ? EnvironmentType.TESTNET
+    : REACT_APP_VERIDA_NETWORK === EnvironmentType.DEVNET
+    ? EnvironmentType.DEVNET
+    : EnvironmentType.TESTNET;
+
 class MarkDownServices extends EventEmitter {
   _did = null;
   _context = null;
@@ -35,12 +45,13 @@ class MarkDownServices extends EventEmitter {
     this._account = new VaultAccount({
       request: {
         logoUrl: REACT_APP_LOGO_URL
-      }
+      },
+      environment: network
     });
 
     this._context = await Network.connect({
       client: {
-        environment: EnvironmentType.TESTNET
+        environment: network
       },
       account: this._account,
       context: {
